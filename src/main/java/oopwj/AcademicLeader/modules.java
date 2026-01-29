@@ -323,14 +323,72 @@ public class modules extends javax.swing.JFrame {
     }//GEN-LAST:event_ExitActionPerformed
 
     private void saveData () {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter("src\\main\\java\\oopwj\\modules.txt"))) {
+        try {
+            // First, read all existing modules from file and maintain order
+            List<String> allLines = new ArrayList<>();
+            Map<String, int[]> currentModuleMap = new HashMap<>();  // moduleId -> [modelRowIndex, exists]
+            
+            try (BufferedReader reader = new BufferedReader(new FileReader("src\\main\\java\\oopwj\\modules.txt"))) {
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    String trimmed = line.trim();
+                    if (!trimmed.isEmpty()) {
+                        allLines.add(trimmed);
+                    }
+                }
+            } catch (IOException e) {
+                // File might not exist yet, that's okay
+            }
+            
+            // Build a map of current modules for quick lookup
             for (int i = 0; i < model.getRowCount(); i++) {
                 String moduleId = model.getValueAt(i, 0).toString();
-                String moduleName = model.getValueAt(i, 1).toString();
-                String lecturerName = model.getValueAt(i, 2).toString();
-                String lecturerId = lecturerNameToId.getOrDefault(lecturerName, lecturerName);
-                writer.write(moduleId + "," + moduleName + "," + lecturerId);
-                writer.newLine();
+                currentModuleMap.put(moduleId, new int[]{i, 1});  // row index and exists flag
+            }
+            
+            // Now write back in original order, updating current academic leader's modules
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter("src\\main\\java\\oopwj\\modules.txt"))) {
+                // Process existing lines in order
+                for (String line : allLines) {
+                    String[] parts = line.split(",");
+                    if (parts.length >= 3) {
+                        String moduleId = parts[0].trim();
+                        String academicLeaderId = parts[2].trim();
+                        
+                        // If this module belongs to the current academic leader, update it from model
+                        if (academicLeaderId.equals(this.academicLeaderID)) {
+                            int[] modelInfo = currentModuleMap.get(moduleId);
+                            if (modelInfo != null && modelInfo[1] == 1) {
+                                // Found in model, write updated version
+                                int modelRow = modelInfo[0];
+                                String moduleName = model.getValueAt(modelRow, 1).toString();
+                                String lecturerName = model.getValueAt(modelRow, 2).toString();
+                                String lecturerId = lecturerNameToId.getOrDefault(lecturerName, lecturerName);
+                                writer.write(moduleId + "," + moduleName + "," + this.academicLeaderID + "," + lecturerId);
+                                writer.newLine();
+                                modelInfo[1] = 0;  // Mark as written
+                            }
+                            // If not found in model, it was deleted, so skip it
+                        } else {
+                            // This module belongs to another academic leader, keep as is
+                            writer.write(line);
+                            writer.newLine();
+                        }
+                    }
+                }
+                
+                // Write any new modules that weren't in the original file
+                for (int i = 0; i < model.getRowCount(); i++) {
+                    String moduleId = model.getValueAt(i, 0).toString();
+                    int[] modelInfo = currentModuleMap.get(moduleId);
+                    if (modelInfo != null && modelInfo[1] == 1) {  // Not yet written
+                        String moduleName = model.getValueAt(i, 1).toString();
+                        String lecturerName = model.getValueAt(i, 2).toString();
+                        String lecturerId = lecturerNameToId.getOrDefault(lecturerName, lecturerName);
+                        writer.write(moduleId + "," + moduleName + "," + this.academicLeaderID + "," + lecturerId);
+                        writer.newLine();
+                    }
+                }
             }
         } catch (IOException e) {
             JOptionPane.showMessageDialog(this, "An error occurred while saving the data: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
@@ -379,6 +437,34 @@ public class modules extends javax.swing.JFrame {
 
     private String getNextModuleId() {
         int maxId = 0;
+        
+        // First, check all modules in the file (not just the current model)
+        try (BufferedReader reader = new BufferedReader(new FileReader("src\\main\\java\\oopwj\\modules.txt"))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String trimmed = line.trim();
+                if (!trimmed.isEmpty()) {
+                    String[] parts = trimmed.split(",");
+                    if (parts.length > 0) {
+                        String id = parts[0].trim();
+                        if (id.matches("M\\d+")) {
+                            try {
+                                int numeric = Integer.parseInt(id.substring(1));
+                                if (numeric > maxId) {
+                                    maxId = numeric;
+                                }
+                            } catch (NumberFormatException ignored) {
+                                // skip malformed ids
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (IOException e) {
+            // File might not exist yet, that's okay
+        }
+        
+        // Also check the current model in case new modules haven't been saved yet
         for (int i = 0; i < model.getRowCount(); i++) {
             Object value = model.getValueAt(i, 0);
             if (value != null) {
@@ -395,7 +481,8 @@ public class modules extends javax.swing.JFrame {
                 }
             }
         }
-        return String.format("M%02d", maxId + 1);
+        
+        return String.format("M%03d", maxId + 1);
     }
     
     private void enableSearch() {

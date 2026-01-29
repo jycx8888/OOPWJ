@@ -1,5 +1,5 @@
-M01,Data Management,AC010,L101
-M02,Object Oriented Programming with Java,AC010,L02
-M03,System Development Methods,AC010,NONE
-M04,System and Network Administration,AC124,NONE
-M05,Innovation Process,AC124,NONE
+M001,Data Management,AC010,L101
+M002,Object Oriented Programming with Java,AC010,L101
+M003,System Development Methods,AC010,L001
+M004,System and Network Administration,AC124,NONE
+M005,Innovation Process,AC124,NONE
