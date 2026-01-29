@@ -72,26 +72,26 @@ public class CreateUserPage extends javax.swing.JDialog {
     private String getFileByRole(String role) {
     switch (role) {
         case "Student" -> {
-            return "student.txt";
+            return "src\\main\\java\\oopwj\\student.txt";
             }
         case "Admin" -> {
-            return "admin.txt";
+            return "src\\main\\java\\oopwj\\admin.txt";
             }
         case "Lecturer" -> {
-            return "lecturer.txt";
+            return "src\\main\\java\\oopwj\\lecturer.txt";
             }
         case "Academic Leader" -> {
-            return "academicLeader.txt";
+            return "src\\main\\java\\oopwj\\academicLeader.txt";
             }
         default -> throw new IllegalArgumentException("Unknown role");
     }
 }
     private boolean idExists(String userId) {
     String[] files = {
-        "student.txt",
-        "lecturer.txt",
-        "academicLeader.txt",
-        "admin.txt"
+        "src\\main\\java\\oopwj\\student.txt",
+        "src\\main\\java\\oopwj\\lecturer.txt",
+        "src\\main\\java\\oopwj\\academicLeader.txt",
+        "src\\main\\java\\oopwj\\admin.txt"
     };
 
     for (String file : files) {

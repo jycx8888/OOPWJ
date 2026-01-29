@@ -23,8 +23,8 @@ public class AssignLecturerPage extends javax.swing.JFrame {
         initComponents();
         setLocationRelativeTo(null);
         
-        loadUsers(LecturerList,"lecturer.txt", "Lecturer");
-        loadUsers(AcademicList,"academicLeader.txt", "Academic Leader");
+        loadUsers(LecturerList,"src\\main\\java\\oopwj\\lecturer.txt", "Lecturer");
+        loadUsers(AcademicList,"src\\main\\java\\oopwj\\academicLeader.txt", "Academic Leader");
         
         lecturerSorter = new TableRowSorter<>(
             (DefaultTableModel) LecturerList.getModel());
@@ -47,7 +47,7 @@ public class AssignLecturerPage extends javax.swing.JFrame {
         while ((line = br.readLine()) != null) {
             String[] values = line.split(",");
             
-            if (file.equals("academicLeader.txt")) {
+            if (file.equals("src\\main\\java\\oopwj\\academicLeader.txt")) {
                 Object[] row = {
                     values[1].trim(),
                     values[0].trim(),
@@ -56,7 +56,7 @@ public class AssignLecturerPage extends javax.swing.JFrame {
                 list.addRow(row);
             }
 
-            else if (file.equals("lecturer.txt")) {
+            else if (file.equals("src\\main\\java\\oopwj\\lecturer.txt")) {
                 Object[] row = {
                     values[1].trim(),
                     values[0].trim(),
@@ -308,14 +308,14 @@ public class AssignLecturerPage extends javax.swing.JFrame {
         DefaultTableModel lecturerModel = (DefaultTableModel) LecturerList.getModel();
         DefaultTableModel academicModel = (DefaultTableModel) AcademicList.getModel();
 
-        String lecturerName = lecturerModel.getValueAt(lecturerRow, 1).toString();
-        String lecturerId   = lecturerModel.getValueAt(lecturerRow, 0).toString();
+        String lecturerName = lecturerModel.getValueAt(lecturerRow, 0).toString();
+        String lecturerId   = lecturerModel.getValueAt(lecturerRow, 1).toString();
         String assignedAL   = lecturerModel.getValueAt(lecturerRow, 3) == null
                                 ? "" : lecturerModel.getValueAt(lecturerRow, 3).toString();
 
         String academicId   = academicModel.getValueAt(academicRow, 1).toString();
 
-        if (!assignedAL.isEmpty()) {
+        if (!assignedAL.equals("None")) {
             JOptionPane.showMessageDialog(this,
                     "This lecturer is already assigned to an Academic Leader.",
                     "Already Assigned",
@@ -334,8 +334,8 @@ public class AssignLecturerPage extends javax.swing.JFrame {
             return;
         }
 
-        File inputFile = new File("lecturer.txt");
-        File tempFile  = new File("lecturer_temp.txt");
+        File inputFile = new File("src\\main\\java\\oopwj\\lecturer.txt");
+        File tempFile  = new File("src\\main\\java\\oopwj\\lecturer_temp.txt");
 
         try (BufferedReader reader = new BufferedReader(new FileReader(inputFile));
              BufferedWriter writer = new BufferedWriter(new FileWriter(tempFile))) {
@@ -368,7 +368,7 @@ public class AssignLecturerPage extends javax.swing.JFrame {
             return;
         }
 
-        loadUsers(LecturerList, "lecturer.txt", "Lecturer");
+        loadUsers(LecturerList, "src\\main\\java\\oopwj\\lecturer.txt", "Lecturer");
         AcademicList.clearSelection();
 
         JOptionPane.showMessageDialog(this,
@@ -395,14 +395,14 @@ public class AssignLecturerPage extends javax.swing.JFrame {
         DefaultTableModel lecturerModel = (DefaultTableModel) LecturerList.getModel();
         DefaultTableModel academicModel = (DefaultTableModel) AcademicList.getModel();
 
-        String lecturerName = lecturerModel.getValueAt(lecturerRow, 1).toString();
-        String lecturerId   = lecturerModel.getValueAt(lecturerRow, 0).toString();
+        String lecturerName = lecturerModel.getValueAt(lecturerRow, 0).toString();
+        String lecturerId   = lecturerModel.getValueAt(lecturerRow, 1).toString();
         String oldAL        = lecturerModel.getValueAt(lecturerRow, 3) == null 
                                 ? "" : lecturerModel.getValueAt(lecturerRow, 3).toString();
 
         String newAL        = academicModel.getValueAt(academicRow, 1).toString();
 
-        if (oldAL.isEmpty()) {
+        if (oldAL.equals("None")) {
             JOptionPane.showMessageDialog(this, 
                     "This lecturer is not yet assigned. Use 'Assign' button instead.", 
                     "Not Assigned", JOptionPane.WARNING_MESSAGE);
@@ -419,8 +419,8 @@ public class AssignLecturerPage extends javax.swing.JFrame {
 
         if (confirm != JOptionPane.YES_OPTION) return;
 
-        File inputFile = new File("lecturer.txt");
-        File tempFile  = new File("lecturer_temp.txt");
+        File inputFile = new File("src\\main\\java\\oopwj\\lecturer.txt");
+        File tempFile  = new File("src\\main\\java\\oopwj\\lecturer_temp.txt");
 
         try (BufferedReader reader = new BufferedReader(new FileReader(inputFile));
              BufferedWriter writer = new BufferedWriter(new FileWriter(tempFile))) {
@@ -445,7 +445,7 @@ public class AssignLecturerPage extends javax.swing.JFrame {
             return;
         }
 
-        loadUsers(LecturerList, "lecturer.txt", "Lecturer");
+        loadUsers(LecturerList, "src\\main\\java\\oopwj\\lecturer.txt", "Lecturer");
         AcademicList.clearSelection();
 
         JOptionPane.showMessageDialog(this, "Lecturer updated successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);

@@ -31,7 +31,7 @@ public class CreateClassPage extends javax.swing.JFrame {
     DefaultTableModel model = (DefaultTableModel) moduleTable.getModel();
     model.setRowCount(0);
 
-    try (BufferedReader br = new BufferedReader(new FileReader("modules.txt"))) {
+    try (BufferedReader br = new BufferedReader(new FileReader("src\\main\\java\\oopwj\\modules.txt"))) {
         String line;
         while ((line = br.readLine()) != null) {
             String[] data = line.split(",");
@@ -51,7 +51,7 @@ public class CreateClassPage extends javax.swing.JFrame {
 
     Map<String, String> assignments = loadClassAssignments();
 
-    try (BufferedReader br = new BufferedReader(new FileReader("class.txt"))) {
+    try (BufferedReader br = new BufferedReader(new FileReader("src\\main\\java\\oopwj\\class.txt"))) {
         String line;
         while ((line = br.readLine()) != null) {
             String[] data = line.split(",");
@@ -116,7 +116,7 @@ public class CreateClassPage extends javax.swing.JFrame {
     private Map<String, String> loadClassAssignments() {
     Map<String, String> assignments = new HashMap<>();
 
-    File file = new File("class.txt");
+    File file = new File("src\\main\\java\\oopwj\\class.txt");
     if (!file.exists()) return assignments;
 
     try (BufferedReader br = new BufferedReader(new FileReader(file))) {
@@ -351,8 +351,8 @@ public class CreateClassPage extends javax.swing.JFrame {
 
         if (confirm != JOptionPane.YES_OPTION) return;
 
-        File inputFile = new File("class.txt");
-        File tempFile = new File("class_temp.txt");
+        File inputFile = new File("src\\main\\java\\oopwj\\class.txt");
+        File tempFile = new File("src\\main\\java\\oopwj\\class_temp.txt");
 
         try (BufferedReader br = new BufferedReader(new FileReader(inputFile));
              BufferedWriter bw = new BufferedWriter(new FileWriter(tempFile))) {
@@ -399,8 +399,8 @@ public class CreateClassPage extends javax.swing.JFrame {
         String classroomId = model.getValueAt(modelRow, 0).toString();
         String classroomName = model.getValueAt(modelRow, 1).toString();
 
-        File inputFile = new File("class.txt");
-        File tempFile = new File("class_temp.txt");
+        File inputFile = new File("src\\main\\java\\oopwj\\class.txt");
+        File tempFile = new File("src\\main\\java\\oopwj\\class_temp.txt");
 
         try (BufferedReader br = new BufferedReader(new FileReader(inputFile));
              BufferedWriter bw = new BufferedWriter(new FileWriter(tempFile))) {
@@ -453,8 +453,8 @@ public class CreateClassPage extends javax.swing.JFrame {
         String moduleId = mModel.getValueAt(mRow, 0).toString();
         String currentModule = cModel.getValueAt(cRow, 2).toString();
 
-        File inputFile = new File("class.txt");
-        File tempFile = new File("class_temp.txt");
+        File inputFile = new File("src\\main\\java\\oopwj\\class.txt");
+        File tempFile = new File("src\\main\\java\\oopwj\\class_temp.txt");
 
         if (currentModule.equals("None")) {
             JOptionPane.showMessageDialog(this, """
