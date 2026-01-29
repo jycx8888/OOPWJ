@@ -127,14 +127,14 @@ public class academicLeader extends javax.swing.JFrame {
 
     private void modulesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_modulesActionPerformed
         // TODO add your handling code here:
-        modules m = new modules();
+        modules m = new modules(this.loggedInUserID);
         m.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_modulesActionPerformed
 
     private void generateReportsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_generateReportsActionPerformed
         // TODO add your handling code here:
-        generateReports gr = new generateReports();
+        generateReports gr = new generateReports(this.loggedInUserID);
         gr.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_generateReportsActionPerformed

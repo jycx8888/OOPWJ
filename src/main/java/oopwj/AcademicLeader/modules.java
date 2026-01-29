@@ -25,8 +25,14 @@ public class modules extends javax.swing.JFrame {
     private final List<String> lecturers = new ArrayList<>();
     private final Map<String, String> lecturerIdToName = new HashMap<>();
     private final Map<String, String> lecturerNameToId = new HashMap<>();
+    private String academicLeaderID;  // Store the logged-in Academic Leader ID
     
     public modules() {
+        this(null);  // Default constructor for backward compatibility
+    }
+    
+    public modules(String academicLeaderID) {
+        this.academicLeaderID = academicLeaderID;
         try{
         model.setColumnIdentifiers(columnNames);
         loadLecturersFromFile();
@@ -40,11 +46,23 @@ public class modules extends javax.swing.JFrame {
             for (int i = 0; i < values.length; i++) {
                 values[i] = values[i].trim();
             }
-            if (values.length == 3) {
-                String lecturerName = lecturerIdToName.getOrDefault(values[2], values[2]);
+            
+            // Filter modules: only show modules under this Academic Leader
+            if (values.length >= 3) {
+                String moduleACID = values[2];  // Academic Leader ID
+                
+                // If academicLeaderID is set, only show modules belonging to this AC
+                if (this.academicLeaderID != null && !moduleACID.equals(this.academicLeaderID)) {
+                    continue;  // Skip modules not belonging to this AC
+                }
+                
+                String lecturerName = lecturerIdToName.getOrDefault(values[3], values[3]);
                 model.addRow(new Object[]{values[0], values[1], lecturerName});
             } else if (values.length == 2) {
-                model.addRow(new Object[]{values[0], values[1], "NONE"});
+                // For backward compatibility, check if we should still display
+                if (this.academicLeaderID == null) {
+                    model.addRow(new Object[]{values[0], values[1], "NONE"});
+                }
             }
         }
         br.close();
@@ -329,14 +347,28 @@ public class modules extends javax.swing.JFrame {
                 String trimmed = line.trim();
                 if (!trimmed.isEmpty()) {
                     String[] parts = trimmed.split(",");
-                    if (parts.length >= 2) {
+                    if (parts.length >= 5) {
                         String id = parts[0].trim();
                         String name = parts[1].trim();
+                        String lecturerACID = parts[4].trim();  // Academic Leader ID
+                        
+                        // Filter lecturers: only add lecturers under this Academic Leader
+                        if (this.academicLeaderID != null && !lecturerACID.equals(this.academicLeaderID)) {
+                            continue;  // Skip lecturers not belonging to this AC
+                        }
+                        
                         lecturers.add(name);
                         lecturerIdToName.put(id, name);
                         lecturerNameToId.put(name, id);
-                    } else if (parts.length == 1) {
-                        lecturers.add(parts[0].trim());
+                    } else if (parts.length >= 2) {
+                        // For backward compatibility
+                        String id = parts[0].trim();
+                        String name = parts[1].trim();
+                        if (this.academicLeaderID == null) {  // Only add if no filter
+                            lecturers.add(name);
+                            lecturerIdToName.put(id, name);
+                            lecturerNameToId.put(name, id);
+                        }
                     }
                 }
             }

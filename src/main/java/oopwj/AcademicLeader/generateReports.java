@@ -15,11 +15,20 @@ import java.util.List;
 public class generateReports extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(generateReports.class.getName());
+    private String academicLeaderID;  // Store the logged-in Academic Leader ID
 
     /**
      * Creates new form generateReports
      */
     public generateReports() {
+        this(null);  // Default constructor for backward compatibility
+    }
+    
+    /**
+     * Constructor with Academic Leader ID for filtering
+     */
+    public generateReports(String academicLeaderID) {
+        this.academicLeaderID = academicLeaderID;
         initComponents();
         loadModulesFromFile();
     }
@@ -112,8 +121,15 @@ public class generateReports extends javax.swing.JFrame {
                 String trimmed = line.trim();
                 if (!trimmed.isEmpty()) {
                     String[] parts = trimmed.split(",");
-                    if (parts.length >= 2) {
+                    if (parts.length >= 3) {
                         String moduleName = parts[1].trim();
+                        String moduleACID = parts[2].trim();  // Academic Leader ID
+                        
+                        // Filter modules: only show modules under this Academic Leader
+                        if (this.academicLeaderID != null && !moduleACID.equals(this.academicLeaderID)) {
+                            continue;  // Skip modules not belonging to this AC
+                        }
+                        
                         modules.addItem(moduleName);
                     }
                 }
