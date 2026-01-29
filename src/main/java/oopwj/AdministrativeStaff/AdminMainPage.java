@@ -10,12 +10,41 @@ package oopwj.AdministrativeStaff;
  */
 public class AdminMainPage extends javax.swing.JFrame {
 
+    private String loggedInUserID;  // Store logged-in user ID
+    
     /**
      * Creates new form AdminMainPage
      */
     public AdminMainPage() {
         initComponents();
         setLocationRelativeTo(null);
+    }
+    
+    /**
+     * Constructor with user session
+     * @param userID - The logged-in user's ID
+     */
+    public AdminMainPage(String userID) {
+        this.loggedInUserID = userID;
+        initComponents();
+        setLocationRelativeTo(null);
+        System.out.println("Admin logged in: " + userID);
+    }
+    
+    /**
+     * Get the currently logged-in user ID
+     * @return userID or null if not logged in
+     */
+    public String getLoggedInUserID() {
+        return loggedInUserID;
+    }
+    
+    /**
+     * Clear user session (for logout)
+     */
+    public void clearSession() {
+        this.loggedInUserID = null;
+        System.out.println("Admin session cleared");
     }
 
     /**
@@ -112,7 +141,20 @@ public class AdminMainPage extends javax.swing.JFrame {
     }//GEN-LAST:event_btnManageActionPerformed
 
     private void btnLogoutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLogoutActionPerformed
-        this.dispose();
+        int confirm = javax.swing.JOptionPane.showConfirmDialog(
+            this,
+            "Are you sure you want to log out?",
+            "Confirm Logout",
+            javax.swing.JOptionPane.YES_NO_OPTION,
+            javax.swing.JOptionPane.QUESTION_MESSAGE
+        );
+        
+        if (confirm == javax.swing.JOptionPane.YES_OPTION) {
+            clearSession();  // Clear user session
+            this.dispose();
+            new oopwj.LoginFrame();  // Return to login page
+        }
+        // If NO_OPTION, do nothing and remain on current page
     }//GEN-LAST:event_btnLogoutActionPerformed
 
     private void btnDefineGradingActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDefineGradingActionPerformed

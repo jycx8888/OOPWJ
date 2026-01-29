@@ -4,6 +4,8 @@
  */
 package oopwj.AcademicLeader;
 
+
+
 /**
  *
  * @author Justin Yong
@@ -11,12 +13,39 @@ package oopwj.AcademicLeader;
 public class academicLeader extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(academicLeader.class.getName());
+    private String loggedInUserID;  // Store logged-in user ID
 
     /**
      * Creates new form MainPage
      */
     public academicLeader() {
         initComponents();
+    }
+    
+    /**
+     * Constructor with user session
+     * @param userID - The logged-in user's ID
+     */
+    public academicLeader(String userID) {
+        this.loggedInUserID = userID;
+        initComponents();
+        logger.info("Academic Leader logged in: " + userID);
+    }
+    
+    /**
+     * Get the currently logged-in user ID
+     * @return userID or null if not logged in
+     */
+    public String getLoggedInUserID() {
+        return loggedInUserID;
+    }
+    
+    /**
+     * Clear user session (for logout)
+     */
+    public void clearSession() {
+        this.loggedInUserID = null;
+        logger.info("Academic Leader session cleared");
     }
 
     /**
@@ -30,6 +59,8 @@ public class academicLeader extends javax.swing.JFrame {
 
         modules = new javax.swing.JToggleButton();
         generateReports = new javax.swing.JToggleButton();
+        jLabel1 = new javax.swing.JLabel();
+        logOut = new javax.swing.JToggleButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -47,25 +78,48 @@ public class academicLeader extends javax.swing.JFrame {
             }
         });
 
+        jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        jLabel1.setText("Welcome, Academic Leader");
+
+        logOut.setText("Log Out");
+        logOut.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                logOutActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(283, 283, 283)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(modules)
-                    .addComponent(generateReports))
-                .addContainerGap(296, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(283, 283, 283)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(modules)
+                            .addComponent(generateReports)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(170, 170, 170)
+                        .addComponent(jLabel1))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(logOut)
+                        .addGap(123, 123, 123)))
+                .addContainerGap(178, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(182, 182, 182)
+                .addGap(80, 80, 80)
+                .addComponent(jLabel1)
+                .addGap(44, 44, 44)
                 .addComponent(modules)
-                .addGap(34, 34, 34)
+                .addGap(30, 30, 30)
                 .addComponent(generateReports)
-                .addContainerGap(167, Short.MAX_VALUE))
+                .addGap(31, 31, 31)
+                .addComponent(logOut)
+                .addContainerGap(143, Short.MAX_VALUE))
         );
 
         pack();
@@ -84,6 +138,23 @@ public class academicLeader extends javax.swing.JFrame {
         gr.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_generateReportsActionPerformed
+
+    private void logOutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_logOutActionPerformed
+        // TODO add your handling code here:
+        int confirm = javax.swing.JOptionPane.showConfirmDialog(
+            this,
+            "Are you sure you want to log out?",
+            "Confirm Logout",
+            javax.swing.JOptionPane.YES_NO_OPTION,
+            javax.swing.JOptionPane.QUESTION_MESSAGE
+        );
+        
+        if (confirm == javax.swing.JOptionPane.YES_OPTION) {
+            clearSession();  // Clear user session
+            this.dispose();
+            new oopwj.LoginFrame();  // Return to login page
+        }
+    }//GEN-LAST:event_logOutActionPerformed
 
     /**
      * @param args the command line arguments
@@ -112,6 +183,8 @@ public class academicLeader extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JToggleButton generateReports;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JToggleButton logOut;
     private javax.swing.JToggleButton modules;
     // End of variables declaration//GEN-END:variables
 }

@@ -101,18 +101,17 @@ public class LoginFrame extends JFrame {
                     
                     switch (role) {
                         case "Student":
-                            // new StudentFrame(user);
+                            // new StudentFrame(userID);
                             System.out.println("Redirecting to Student Menu...");
                             break;
                         case "Lecturer":
                             System.out.println("Redirecting to Lecturer Menu...");
-                            
                             break;
                         case "Academic Leader":
-                            new academicLeader();
+                            new academicLeader(userID).setVisible(true);
                             break;
                         case "Admin":
-                            new AdminMainPage();
+                            new AdminMainPage(userID).setVisible(true);
                             break;
                         default:
                             JOptionPane.showMessageDialog(null, "Role not recognized: " + role);
