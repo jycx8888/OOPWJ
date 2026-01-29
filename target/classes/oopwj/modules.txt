@@ -1,0 +1,5 @@
+M01,Data Management,L01
+M02,Object Oriented Programming with Java,L02
+M03,System Development Methods,NONE
+M04,System and Network Administration,NONE
+M05,Innovation Process,NONE
