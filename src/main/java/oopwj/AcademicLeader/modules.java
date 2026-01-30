@@ -26,13 +26,19 @@ public class modules extends javax.swing.JFrame {
     private final Map<String, String> lecturerIdToName = new HashMap<>();
     private final Map<String, String> lecturerNameToId = new HashMap<>();
     private String academicLeaderID;  // Store the logged-in Academic Leader ID
+    private academicLeader parentWindow;  // Store reference to parent window
     
     public modules() {
-        this(null);  // Default constructor for backward compatibility
+        this(null, null);  // Default constructor for backward compatibility
     }
     
     public modules(String academicLeaderID) {
+        this(academicLeaderID, null);  // Constructor with user ID only
+    }
+    
+    public modules(String academicLeaderID, academicLeader parentWindow) {
         this.academicLeaderID = academicLeaderID;
+        this.parentWindow = parentWindow;
         try{
         model.setColumnIdentifiers(columnNames);
         loadLecturersFromFile();
@@ -317,8 +323,12 @@ public class modules extends javax.swing.JFrame {
 
     private void ExitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ExitActionPerformed
         // TODO add your handling code here:
-        academicLeader al = new academicLeader();
-        al.setVisible(true);
+        if (parentWindow != null) {
+            parentWindow.setVisible(true);  // Return to parent window with session preserved
+        } else {
+            academicLeader al = new academicLeader(academicLeaderID);  // Create with session ID
+            al.setVisible(true);
+        }
         this.dispose();
     }//GEN-LAST:event_ExitActionPerformed
 
@@ -528,8 +538,8 @@ public class modules extends javax.swing.JFrame {
         }
         //</editor-fold>
 
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> new modules().setVisible(true));
+        /* Create and display the form - Must login first */
+        java.awt.EventQueue.invokeLater(() -> new oopwj.LoginFrame());
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

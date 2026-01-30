@@ -16,19 +16,28 @@ public class generateReports extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(generateReports.class.getName());
     private String academicLeaderID;  // Store the logged-in Academic Leader ID
+    private academicLeader parentWindow;  // Store reference to parent window
 
     /**
      * Creates new form generateReports
      */
     public generateReports() {
-        this(null);  // Default constructor for backward compatibility
+        this(null, null);  // Default constructor for backward compatibility
     }
     
     /**
      * Constructor with Academic Leader ID for filtering
      */
     public generateReports(String academicLeaderID) {
+        this(academicLeaderID, null);  // Constructor with user ID only
+    }
+    
+    /**
+     * Constructor with Academic Leader ID and parent window reference
+     */
+    public generateReports(String academicLeaderID, academicLeader parentWindow) {
         this.academicLeaderID = academicLeaderID;
+        this.parentWindow = parentWindow;
         initComponents();
         loadModulesFromFile();
     }
@@ -101,8 +110,12 @@ public class generateReports extends javax.swing.JFrame {
 
     private void exitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitActionPerformed
         // TODO add your handling code here:
-        academicLeader al = new academicLeader();
-        al.setVisible(true);
+        if (parentWindow != null) {
+            parentWindow.setVisible(true);  // Return to parent window with session preserved
+        } else {
+            academicLeader al = new academicLeader(academicLeaderID);  // Create with session ID
+            al.setVisible(true);
+        }
         this.dispose();
     }//GEN-LAST:event_exitActionPerformed
 
@@ -161,8 +174,8 @@ public class generateReports extends javax.swing.JFrame {
         }
         //</editor-fold>
 
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> new generateReports().setVisible(true));
+        /* Create and display the form - Must login first */
+        java.awt.EventQueue.invokeLater(() -> new oopwj.LoginFrame());
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

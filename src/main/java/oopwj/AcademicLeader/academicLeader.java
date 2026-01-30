@@ -127,16 +127,16 @@ public class academicLeader extends javax.swing.JFrame {
 
     private void modulesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_modulesActionPerformed
         // TODO add your handling code here:
-        modules m = new modules(this.loggedInUserID);
+        modules m = new modules(this.loggedInUserID, this);
         m.setVisible(true);
-        this.dispose();
+        this.setVisible(false);
     }//GEN-LAST:event_modulesActionPerformed
 
     private void generateReportsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_generateReportsActionPerformed
         // TODO add your handling code here:
-        generateReports gr = new generateReports(this.loggedInUserID);
+        generateReports gr = new generateReports(this.loggedInUserID, this);
         gr.setVisible(true);
-        this.dispose();
+        this.setVisible(false);
     }//GEN-LAST:event_generateReportsActionPerformed
 
     private void logOutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_logOutActionPerformed
@@ -177,8 +177,8 @@ public class academicLeader extends javax.swing.JFrame {
         }
         //</editor-fold>
 
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> new academicLeader().setVisible(true));
+        /* Create and display the form - Must login first */
+        java.awt.EventQueue.invokeLater(() -> new oopwj.LoginFrame());
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
