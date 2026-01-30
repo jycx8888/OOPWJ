@@ -1,22 +1,23 @@
-C:\Users\User\Documents\NetBeansProjects\OOPWJ\src\main\java\oopwj\AcademicLeader\academicLeader.java
-C:\Users\User\Documents\NetBeansProjects\OOPWJ\src\main\java\oopwj\AcademicLeader\generateReports.java
-C:\Users\User\Documents\NetBeansProjects\OOPWJ\src\main\java\oopwj\AcademicLeader\modules.java
-C:\Users\User\Documents\NetBeansProjects\OOPWJ\src\main\java\oopwj\AdministrativeStaff\AdminMainPage.java
-C:\Users\User\Documents\NetBeansProjects\OOPWJ\src\main\java\oopwj\AdministrativeStaff\AssignLecturerPage.java
-C:\Users\User\Documents\NetBeansProjects\OOPWJ\src\main\java\oopwj\AdministrativeStaff\CreateClassPage.java
-C:\Users\User\Documents\NetBeansProjects\OOPWJ\src\main\java\oopwj\AdministrativeStaff\CreateUserPage.java
-C:\Users\User\Documents\NetBeansProjects\OOPWJ\src\main\java\oopwj\AdministrativeStaff\DefineGradingPage.java
-C:\Users\User\Documents\NetBeansProjects\OOPWJ\src\main\java\oopwj\AdministrativeStaff\ManageUserPage.java
-C:\Users\User\Documents\NetBeansProjects\OOPWJ\src\main\java\oopwj\AdministrativeStaff\PlaceHolder.java
-C:\Users\User\Documents\NetBeansProjects\OOPWJ\src\main\java\oopwj\AdministrativeStaff\UpdateUserPage.java
-C:\Users\User\Documents\NetBeansProjects\OOPWJ\src\main\java\oopwj\Lecturer\Assessment_Feedback.java
-C:\Users\User\Documents\NetBeansProjects\OOPWJ\src\main\java\oopwj\Lecturer\Assessment_Marks.java
-C:\Users\User\Documents\NetBeansProjects\OOPWJ\src\main\java\oopwj\Lecturer\Assessments.java
-C:\Users\User\Documents\NetBeansProjects\OOPWJ\src\main\java\oopwj\Lecturer\Assignment.java
-C:\Users\User\Documents\NetBeansProjects\OOPWJ\src\main\java\oopwj\Lecturer\Edit_Assessment.java
-C:\Users\User\Documents\NetBeansProjects\OOPWJ\src\main\java\oopwj\Lecturer\Lecturer_menu.java
-C:\Users\User\Documents\NetBeansProjects\OOPWJ\src\main\java\oopwj\Lecturer\Lecturer_Settings.java
-C:\Users\User\Documents\NetBeansProjects\OOPWJ\src\main\java\oopwj\Lecturer\Quiz.java
-C:\Users\User\Documents\NetBeansProjects\OOPWJ\src\main\java\oopwj\LoginFrame.java
-C:\Users\User\Documents\NetBeansProjects\OOPWJ\src\main\java\oopwj\Model\AuthService.java
-C:\Users\User\Documents\NetBeansProjects\OOPWJ\src\main\java\oopwj\Model\User.java
+C:\Users\Justin Yong\Documents\NetBeansProjects\OOPWJ\src\main\java\oopwj\AcademicLeader\academicLeader.java
+C:\Users\Justin Yong\Documents\NetBeansProjects\OOPWJ\src\main\java\oopwj\AcademicLeader\editProfileAC.java
+C:\Users\Justin Yong\Documents\NetBeansProjects\OOPWJ\src\main\java\oopwj\AcademicLeader\generateReports.java
+C:\Users\Justin Yong\Documents\NetBeansProjects\OOPWJ\src\main\java\oopwj\AcademicLeader\modules.java
+C:\Users\Justin Yong\Documents\NetBeansProjects\OOPWJ\src\main\java\oopwj\AdministrativeStaff\AdminMainPage.java
+C:\Users\Justin Yong\Documents\NetBeansProjects\OOPWJ\src\main\java\oopwj\AdministrativeStaff\AssignLecturerPage.java
+C:\Users\Justin Yong\Documents\NetBeansProjects\OOPWJ\src\main\java\oopwj\AdministrativeStaff\CreateClassPage.java
+C:\Users\Justin Yong\Documents\NetBeansProjects\OOPWJ\src\main\java\oopwj\AdministrativeStaff\CreateUserPage.java
+C:\Users\Justin Yong\Documents\NetBeansProjects\OOPWJ\src\main\java\oopwj\AdministrativeStaff\DefineGradingPage.java
+C:\Users\Justin Yong\Documents\NetBeansProjects\OOPWJ\src\main\java\oopwj\AdministrativeStaff\ManageUserPage.java
+C:\Users\Justin Yong\Documents\NetBeansProjects\OOPWJ\src\main\java\oopwj\AdministrativeStaff\PlaceHolder.java
+C:\Users\Justin Yong\Documents\NetBeansProjects\OOPWJ\src\main\java\oopwj\AdministrativeStaff\UpdateUserPage.java
+C:\Users\Justin Yong\Documents\NetBeansProjects\OOPWJ\src\main\java\oopwj\Lecturer\Assessment_Feedback.java
+C:\Users\Justin Yong\Documents\NetBeansProjects\OOPWJ\src\main\java\oopwj\Lecturer\Assessment_Marks.java
+C:\Users\Justin Yong\Documents\NetBeansProjects\OOPWJ\src\main\java\oopwj\Lecturer\Assessments.java
+C:\Users\Justin Yong\Documents\NetBeansProjects\OOPWJ\src\main\java\oopwj\Lecturer\Assignment.java
+C:\Users\Justin Yong\Documents\NetBeansProjects\OOPWJ\src\main\java\oopwj\Lecturer\Edit_Assessment.java
+C:\Users\Justin Yong\Documents\NetBeansProjects\OOPWJ\src\main\java\oopwj\Lecturer\Lecturer_menu.java
+C:\Users\Justin Yong\Documents\NetBeansProjects\OOPWJ\src\main\java\oopwj\Lecturer\Lecturer_Settings.java
+C:\Users\Justin Yong\Documents\NetBeansProjects\OOPWJ\src\main\java\oopwj\Lecturer\Quiz.java
+C:\Users\Justin Yong\Documents\NetBeansProjects\OOPWJ\src\main\java\oopwj\LoginFrame.java
+C:\Users\Justin Yong\Documents\NetBeansProjects\OOPWJ\src\main\java\oopwj\Model\AuthService.java
+C:\Users\Justin Yong\Documents\NetBeansProjects\OOPWJ\src\main\java\oopwj\Model\User.java

@@ -61,6 +61,7 @@ public class academicLeader extends javax.swing.JFrame {
         generateReports = new javax.swing.JToggleButton();
         jLabel1 = new javax.swing.JLabel();
         logOut = new javax.swing.JToggleButton();
+        profile = new javax.swing.JToggleButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -88,10 +89,21 @@ public class academicLeader extends javax.swing.JFrame {
             }
         });
 
+        profile.setText("Profile");
+        profile.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                profileActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(177, Short.MAX_VALUE)
+                .addComponent(jLabel1)
+                .addGap(171, 171, 171))
             .addGroup(layout.createSequentialGroup()
                 .addGap(283, 283, 283)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -100,22 +112,24 @@ public class academicLeader extends javax.swing.JFrame {
                     .addComponent(logOut))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(177, Short.MAX_VALUE)
-                .addComponent(jLabel1)
-                .addGap(171, 171, 171))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(profile)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(89, 89, 89)
                 .addComponent(jLabel1)
-                .addGap(35, 35, 35)
+                .addGap(18, 18, 18)
+                .addComponent(profile)
+                .addGap(36, 36, 36)
                 .addComponent(modules)
-                .addGap(30, 30, 30)
+                .addGap(37, 37, 37)
                 .addComponent(generateReports)
-                .addGap(34, 34, 34)
+                .addGap(40, 40, 40)
                 .addComponent(logOut)
-                .addContainerGap(140, Short.MAX_VALUE))
+                .addContainerGap(85, Short.MAX_VALUE))
         );
 
         pack();
@@ -152,6 +166,13 @@ public class academicLeader extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_logOutActionPerformed
 
+    private void profileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_profileActionPerformed
+        // TODO add your handling code here:
+        editProfileAC ed = new editProfileAC(this.loggedInUserID, this);
+        ed.setVisible(true);
+        this.setVisible(false);
+    }//GEN-LAST:event_profileActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -182,5 +203,6 @@ public class academicLeader extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JToggleButton logOut;
     private javax.swing.JToggleButton modules;
+    private javax.swing.JToggleButton profile;
     // End of variables declaration//GEN-END:variables
 }

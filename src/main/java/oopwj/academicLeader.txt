@@ -1,2 +1,2 @@
-AC010,Mervin,pawd,AC010@mail.apu.edu.my
+AC010,Mervin Ooi,pawd,AC010@mail.apu.edu.my
 AC124,Kum,123,AC124@mail.apu.edu.my
