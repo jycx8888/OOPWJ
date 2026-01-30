@@ -469,8 +469,8 @@ public class Quiz extends javax.swing.JFrame {
         // If it exists, transfer its contents to Quiz.txt
         // Then also save the current form fields if they are not empty
         String projectRoot = System.getProperty("user.dir");
-        File temp = new File(projectRoot, "src\\Lecturer\\TempQuiz.txt");
-        File quizFile = new File(projectRoot, "src\\Lecturer\\Quiz.txt");
+        File temp = new File(projectRoot, "src\\main\\java\\oopwj\\TempQuiz.txt");
+        File quizFile = new File(projectRoot, "src\\main\\java\\oopwj\\Quiz.txt");
 
         // Check if TempQuiz.txt doesn't exist and form fields are all empty
         if (!temp.exists()) {
@@ -591,7 +591,7 @@ public class Quiz extends javax.swing.JFrame {
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // Check if there's anything to discard
         String projectRoot = System.getProperty("user.dir");
-        File temp = new File(projectRoot, "src\\Lecturer\\TempQuiz.txt");
+        File temp = new File(projectRoot, "src\\main\\java\\oopwj\\TempQuiz.txt");
         
         String title = jTextField1.getText().trim();
         String question = jTextArea1.getText().trim();
@@ -680,7 +680,7 @@ public class Quiz extends javax.swing.JFrame {
 
         // Check if quiz title already exists in Quiz.txt
         String projectRoot = System.getProperty("user.dir");
-        File quizFile = new File(projectRoot, "src\\Lecturer\\Quiz.txt");
+        File quizFile = new File(projectRoot, "src\\main\\java\\oopwj\\Quiz.txt");
         
         if (quizFile.exists()) {
             try (BufferedReader br = new BufferedReader(new FileReader(quizFile))) {
@@ -700,7 +700,7 @@ public class Quiz extends javax.swing.JFrame {
             }
         }
 
-        File temp = new File(projectRoot, "src\\Lecturer\\TempQuiz.txt");
+        File temp = new File(projectRoot, "src\\main\\java\\oopwj\\TempQuiz.txt");
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(temp, true))) {
             // CSV format: Title,QuestionNumber,Timestamp,Question,Answer1,Answer2,Answer3,Answer4
             if (sessionTitle == null || !sessionTitle.equals(title)) {
