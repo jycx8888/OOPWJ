@@ -1,7 +1,6 @@
-M001, "Data Management", Q001, "what is python", 1, 2, 3, 4, D, Objective
-M001, Data Management, Q002, what is java, Subjective
-M001, "Data Management", Q003, vdsdv, badv, svsavsa, vsa, vsav, A, Objective
-M001, Data Management, Q004, vdsvdsvdsv, Subjective
-M001, Data Management, Q005, bfdbdsbdbdb, Subjective
-M001, "Data Management", Q006, 1ds, bds, bdsvdava, davdavd, vadvasv, A, Objective
-M001, "Data Management", Q007, test, 1, 2, 3, 4, A, Objective
+M001, Q001, dsvsvs, Subjective
+M001, Q002, bfdd, bsd, bdsvsv, ad, vasvas, D, Objective
+M001, Q003, bsvdsvds, Subjective
+M001, Q004, dsvdsvdvd, vdv, dsvds, vdsvd, s, D, Objective
+M002, Q001, vdsvds, vds, vdsv, dsvdv, svd, A, Objective
+M002, Q002, vdsvds, vdsvdsvdsvd, vdv, fvfb, fbsb, B, Objective

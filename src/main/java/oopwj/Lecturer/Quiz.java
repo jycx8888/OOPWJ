@@ -175,8 +175,8 @@ public class Quiz extends javax.swing.JFrame {
                 String line;
                 while ((line = br.readLine()) != null) {
                     String[] parts = line.split(",");
-                    if (parts.length > 0 && parts[0].trim().equals(moduleId)) {
-                        String questionId = parts[2].trim(); // Assuming question ID is the 3rd column
+                    if (parts.length > 2 && parts[0].trim().equals(moduleId)) {
+                        String questionId = parts[1].trim(); // Assuming question ID is the 2nd column
                         if (questionId.startsWith("Q")) {
                             try {
                                 int id = Integer.parseInt(questionId.substring(1));
@@ -681,7 +681,7 @@ public class Quiz extends javax.swing.JFrame {
 
             // Append the subjective question to TempQuiz.txt
             try (BufferedWriter tempWriter = new BufferedWriter(new FileWriter(temp, true))) {
-                tempWriter.write(moduleId + ", " + moduleName + ", " + nextQuestionId + ", " + subjectiveQuestion + ", Subjective");
+                tempWriter.write(moduleId + ", " + nextQuestionId + ", " + subjectiveQuestion + ", Subjective");
                 tempWriter.newLine();
             } catch (IOException ex) {
                 logger.log(java.util.logging.Level.SEVERE, null, ex);
@@ -753,10 +753,8 @@ public class Quiz extends javax.swing.JFrame {
             String selectedModule = (String) jComboBox1.getSelectedItem();
             String[] moduleParts = selectedModule.split(" - ", 2); // Split into ID and name
             String moduleId = moduleParts[0].trim();
-            String moduleName = moduleParts.length > 1 ? moduleParts[1].trim() : "";
 
             sb.append(csvEscape(moduleId)).append(", "); // Save the module ID first
-            sb.append(csvEscape(moduleName)).append(", "); // Save the module name next
 
             // Get the next question ID
             String nextQuestionId = getNextQuestionId(moduleId, quizFile);
