@@ -1,5 +1,3 @@
 M001, "Data Management", Q001, "what is python", 1, 2, 3, 4, D, Objective
 M001, Data Management, Q002, what is java, Subjective
-Q001, "what is class?", ree, bhdff, vdssav, bdsavad, A, Objective
-Q002, "explain OOP", Subjective
-M001, Data Management, Q003, explain oop, Subjective
+
