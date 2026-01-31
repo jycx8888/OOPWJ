@@ -11,11 +11,17 @@ package oopwj.Lecturer;
 public class Lecturer_menu extends javax.swing.JFrame {
 
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(Lecturer_menu.class.getName());
+    private String lecturerID;
 
     /**
      * Creates new form Lecturer_menu
      */
     public Lecturer_menu() {
+        this(null);
+    }
+    
+    public Lecturer_menu(String lecturerID) {
+        this.lecturerID = lecturerID;
         initComponents();
         setupListeners();
     }
@@ -118,8 +124,8 @@ public class Lecturer_menu extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void SettingsActionPerformed(java.awt.event.ActionEvent evt) {
-        new Lecturer_Settings().setVisible(true);
-        this.dispose();
+        new Lecturer_Settings(lecturerID, this).setVisible(true);
+        this.setVisible(false);
     }
 
     private void CreateAssessmentsbuttonActionPerformed(java.awt.event.ActionEvent evt) {
@@ -128,23 +134,23 @@ public class Lecturer_menu extends javax.swing.JFrame {
     }
 
     private void AssessmentsbuttonActionPerformed(java.awt.event.ActionEvent evt) {
-        new Assessments().setVisible(true);
-        this.dispose();
+        new Assessments(lecturerID, this).setVisible(true);
+        this.setVisible(false);
     }
 
     private void EditAssessmentsbuttonActionPerformed(java.awt.event.ActionEvent evt) {
-        new Edit_Assessment().setVisible(true);
-        this.dispose();
+        new Edit_Assessment(lecturerID, this).setVisible(true);
+        this.setVisible(false);
     }
 
     private void AssessmentMarkButtonActionPerformed(java.awt.event.ActionEvent evt) {
-        new Assessment_Marks().setVisible(true);
-        this.dispose();
+        new Assessment_Marks(lecturerID, this).setVisible(true);
+        this.setVisible(false);
     }
 
     private void AssessmentFeedbackButtonActionPerformed(java.awt.event.ActionEvent evt) {
-        new Assessment_Feedback().setVisible(true);
-        this.dispose();
+        new Assessment_Feedback(lecturerID, this).setVisible(true);
+        this.setVisible(false);
     }
 
     private void BackButtonActionPerformed(java.awt.event.ActionEvent evt) {

@@ -1,2 +1,2 @@
-"Q001","bfsb","bdsb","d dzv dxzvdb","dsvb","dvsavsa","B"
-"Q001","vdfsv","sdv","vsdvd","vav","sav","A"
+M001, "Data Management", Q001, "what is python", 1, 2, 3, 4, D, Objective
+M001, Data Management, Q002, what is java, Subjective

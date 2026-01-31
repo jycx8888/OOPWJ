@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 
 import javax.swing.JOptionPane;
+
 /**
  *
  * @author User
@@ -44,12 +45,22 @@ public class Quiz extends javax.swing.JFrame {
     private javax.swing.ButtonGroup answerGroup;
     // Track the correct answer (A, B, C, or D)
     private String correctAnswer = "";
+    
+    // Session tracking
+    private String lecturerID;
+    private Assessments parentWindow;
 
 
     /**
      * Creates new form Quiz
      */
     public Quiz() {
+        this(null, null);
+    }
+    
+    public Quiz(String lecturerID, Assessments parentWindow) {
+        this.lecturerID = lecturerID;
+        this.parentWindow = parentWindow;
         initComponents();
         // Create aliases for easier access
         a = jTextField2;
@@ -59,13 +70,16 @@ public class Quiz extends javax.swing.JFrame {
         // Add the missing action listener for jButton3
         jButton3.addActionListener(this::jButton3ActionPerformed);
         this.setLocationRelativeTo(null);
-        
+
         // Initialize ButtonGroup for radio buttons
         answerGroup = new javax.swing.ButtonGroup();
         answerGroup.add(jRadioButton1);
         answerGroup.add(jRadioButton3);
         answerGroup.add(jRadioButton4);
         answerGroup.add(jRadioButton5);
+
+        // Load modules for the logged-in lecturer
+        populateModulesDropdown();
     }
     
     /**
@@ -81,14 +95,14 @@ public class Quiz extends javax.swing.JFrame {
         // Add the missing action listener for jButton3
         jButton3.addActionListener(this::jButton3ActionPerformed);
         this.setLocationRelativeTo(null);
-        
+
         // Initialize ButtonGroup for radio buttons
         answerGroup = new javax.swing.ButtonGroup();
         answerGroup.add(jRadioButton1);
         answerGroup.add(jRadioButton3);
         answerGroup.add(jRadioButton4);
         answerGroup.add(jRadioButton5);
-        
+
         // Mark as edit mode and store original values
         isEditMode = true;
         originalQuestion = question;
@@ -97,14 +111,14 @@ public class Quiz extends javax.swing.JFrame {
         originalC = ansC;
         originalD = ansD;
         originalCorrectAnswer = correctAns;
-        
+
         // Pre-populate the fields
         jTextArea1.setText(question);
         a.setText(ansA);
         b.setText(ansB);
         c.setText(ansC);
         d.setText(ansD);
-        
+
         // Set the correct answer radio button
         correctAnswer = correctAns;
         switch (correctAns.toUpperCase()) {
@@ -121,6 +135,67 @@ public class Quiz extends javax.swing.JFrame {
                 jRadioButton5.setSelected(true);
                 break;
         }
+    }
+
+    private void populateModulesDropdown() {
+        String projectRoot = System.getProperty("user.dir");
+        File modulesFile = new File(projectRoot, "src\\main\\java\\oopwj\\modules.txt");
+
+        if (!modulesFile.exists()) {
+            JOptionPane.showMessageDialog(this, "Modules file not found.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        try (BufferedReader br = new BufferedReader(new FileReader(modulesFile))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] parts = line.split(",");
+                if (parts.length == 4) {
+                    String moduleID = parts[0].trim();
+                    String moduleName = parts[1].trim();
+                    String lecturerID = parts[3].trim();
+
+                    // Add module to dropdown if it matches the lecturer's ID
+                    if (lecturerID.equals(this.lecturerID)) {
+                        jComboBox1.addItem(moduleID + " - " + moduleName);
+                    }
+                }
+            }
+        } catch (IOException ex) {
+            logger.log(java.util.logging.Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(this, "Failed to load modules: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private String getNextQuestionId(String moduleId, File quizFile) {
+        int maxId = 0;
+
+        if (quizFile.exists()) {
+            try (BufferedReader br = new BufferedReader(new FileReader(quizFile))) {
+                String line;
+                while ((line = br.readLine()) != null) {
+                    String[] parts = line.split(",");
+                    if (parts.length > 0 && parts[0].trim().equals(moduleId)) {
+                        String questionId = parts[2].trim(); // Assuming question ID is the 3rd column
+                        if (questionId.startsWith("Q")) {
+                            try {
+                                int id = Integer.parseInt(questionId.substring(1));
+                                if (id > maxId) {
+                                    maxId = id;
+                                }
+                            } catch (NumberFormatException e) {
+                                logger.log(java.util.logging.Level.WARNING, "Invalid question ID format: " + questionId, e);
+                            }
+                        }
+                    }
+                }
+            } catch (IOException ex) {
+                logger.log(java.util.logging.Level.SEVERE, "Error reading Quiz.txt", ex);
+            }
+        }
+
+        // Increment the max ID and return the new question ID
+        return String.format("Q%03d", maxId + 1);
     }
 
     /**
@@ -162,6 +237,8 @@ public class Quiz extends javax.swing.JFrame {
         jLabel3 = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
         jTextArea2 = new javax.swing.JTextArea();
+        isObjectiveCheckBox = new javax.swing.JCheckBox("Objective Question");
+        isObjectiveCheckBox.setSelected(false); // Default to not objective
 
         jRadioButton2.setText("jRadioButton2");
 
@@ -228,6 +305,19 @@ public class Quiz extends javax.swing.JFrame {
         jRadioButton1.setForeground(new java.awt.Color(0, 0, 0));
         jRadioButton1.setText("A");
         jRadioButton1.addActionListener(this::jRadioButton1ActionPerformed);
+
+        isObjectiveCheckBox.setSelected(false); // Default to not objective
+        jPanel1.add(isObjectiveCheckBox); // Add to the panel
+
+        // Add a listener to jTabbedPane1 to update the isObjectiveCheckBox state
+        jTabbedPane1.addChangeListener(e -> {
+            int selectedIndex = jTabbedPane1.getSelectedIndex();
+            if (selectedIndex == 0) { // Objective tab
+                isObjectiveCheckBox.setSelected(true);
+            } else if (selectedIndex == 1) { // Subjective tab
+                isObjectiveCheckBox.setSelected(false);
+            }
+        });
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -441,7 +531,7 @@ public class Quiz extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {
         // Save: check if TempQuiz.txt exists (from Add button)
         // If it exists, transfer its contents to Quiz.txt
         // Then also save the current form fields if they are not empty
@@ -449,17 +539,72 @@ public class Quiz extends javax.swing.JFrame {
         File temp = new File(projectRoot, "src\\main\\java\\oopwj\\TempQuiz.txt");
         File quizFile = new File(projectRoot, "src\\main\\java\\oopwj\\Quiz.txt");
 
-        // Check if TempQuiz.txt doesn't exist and form fields are all empty
-        if (!temp.exists()) {
+        // Check which tab is selected
+        int selectedTabIndex = jTabbedPane1.getSelectedIndex();
+
+        if (selectedTabIndex == 0) { // Objective tab
             String question = jTextArea1.getText().trim();
             String a1 = a.getText().trim();
             String a2 = b.getText().trim();
             String a3 = c.getText().trim();
             String a4 = d.getText().trim();
 
-            if (question.isEmpty() && a1.isEmpty() && a2.isEmpty() && a3.isEmpty() && a4.isEmpty()) {
-                JOptionPane.showMessageDialog(this, "There are no values to add. Please add questions or fill in the form fields.", "Validation", JOptionPane.WARNING_MESSAGE);
+            if (question.isEmpty() || a1.isEmpty() || a2.isEmpty() || a3.isEmpty() || a4.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Please fill in all fields for the objective question before saving.", "Validation", JOptionPane.WARNING_MESSAGE);
                 return;
+            }
+
+            if (correctAnswer.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Please select the correct answer for the objective question.", "Validation", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+        } else if (selectedTabIndex == 1) { // Subjective tab
+            String subjectiveQuestion = jTextArea2.getText().trim();
+
+            if (subjectiveQuestion.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Please type your subjective question before saving.", "Validation", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+            // Validate module selection
+            String selectedModule = (String) jComboBox1.getSelectedItem();
+            if (selectedModule == null || selectedModule.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Please select a module before saving the question.", "Validation", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+            // Get module ID and name
+            String[] moduleParts = selectedModule.split(" - ", 2); // Split into ID and name
+            String moduleId = moduleParts[0].trim();
+            String moduleName = moduleParts.length > 1 ? moduleParts[1].trim() : "";
+
+            // Get the next question ID
+            String nextQuestionId = getNextQuestionId(moduleId, quizFile);
+
+            // Append the subjective question to TempQuiz.txt
+            try (BufferedWriter tempWriter = new BufferedWriter(new FileWriter(temp, true))) {
+                tempWriter.write(moduleId + ", " + moduleName + ", " + nextQuestionId + ", " + subjectiveQuestion + ", Subjective");
+                tempWriter.newLine();
+            } catch (IOException ex) {
+                logger.log(java.util.logging.Level.SEVERE, null, ex);
+                JOptionPane.showMessageDialog(this, "Error writing to TempQuiz.txt: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            } finally {
+                // Clear the subjective question field after adding or saving
+                jTextArea2.setText("");
+            }
+
+            // Check if TempQuiz.txt already contains questions
+            if (temp.exists()) {
+                try (BufferedReader br = new BufferedReader(new FileReader(temp))) {
+                    if (br.readLine() != null) {
+                        // TempQuiz.txt is not empty, skip validation
+                    }
+                } catch (IOException ex) {
+                    logger.log(java.util.logging.Level.SEVERE, null, ex);
+                    JOptionPane.showMessageDialog(this, "Error reading TempQuiz.txt: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
             }
         }
 
@@ -490,7 +635,7 @@ public class Quiz extends javax.swing.JFrame {
                 } catch (IOException ex) {
                     logger.log(java.util.logging.Level.WARNING, null, ex);
                 }
-                
+
                 // clear all fields including title
                 jTextArea1.setText("");
                 a.setText("");
@@ -505,38 +650,46 @@ public class Quiz extends javax.swing.JFrame {
                 return; // Exit without processing form fields
             }
 
-            // Then save the current form fields if they are not empty (only if TempQuiz.txt didn't exist)
-            String question = jTextArea1.getText().trim();
-            String a1 = a.getText().trim();
-            String a2 = b.getText().trim();
-            String a3 = c.getText().trim();
-            String a4 = d.getText().trim();
+            // Save the current form fields based on the selected tab
+            StringBuilder sb = new StringBuilder();
+            String selectedModule = (String) jComboBox1.getSelectedItem();
+            String[] moduleParts = selectedModule.split(" - ", 2); // Split into ID and name
+            String moduleId = moduleParts[0].trim();
+            String moduleName = moduleParts.length > 1 ? moduleParts[1].trim() : "";
 
-            if (!question.isEmpty() || !a1.isEmpty() || !a2.isEmpty() || !a3.isEmpty() || !a4.isEmpty()) {
-                // Check if all fields are filled
-                if (question.isEmpty() || a1.isEmpty() || a2.isEmpty() || a3.isEmpty() || a4.isEmpty()) {
-                    JOptionPane.showMessageDialog(this, "Please fill in all fields before saving.", "Validation", JOptionPane.WARNING_MESSAGE);
-                    return;
-                }
-                
-                // Check if correct answer is selected
-                if (correctAnswer.isEmpty()) {
-                    JOptionPane.showMessageDialog(this, "Please select the correct answer.", "Validation", JOptionPane.WARNING_MESSAGE);
-                    return;
-                }
+            sb.append(csvEscape(moduleId)).append(", "); // Save the module ID first
+            sb.append(csvEscape(moduleName)).append(", "); // Save the module name next
 
-                StringBuilder sb = new StringBuilder();
-                sb.append(csvEscape("Q001")).append(", ");
-                sb.append(csvEscape(question)).append(", ");
-                sb.append(csvEscape(a1)).append(", ");
-                sb.append(csvEscape(a2)).append(", ");
-                sb.append(csvEscape(a3)).append(", ");
-                sb.append(csvEscape(a4)).append(", ");
-                sb.append(csvEscape(correctAnswer));
+            // Get the next question ID
+            String nextQuestionId = getNextQuestionId(moduleId, quizFile);
 
-                bw.write(sb.toString());
-                bw.newLine();
+            if (selectedTabIndex == 0) { // Objective tab
+                String question = jTextArea1.getText().trim();
+                String a1 = a.getText().trim();
+                String a2 = b.getText().trim();
+                String a3 = c.getText().trim();
+                String a4 = d.getText().trim();
+
+                sb.append(csvEscape(nextQuestionId))
+                  .append(", ")
+                  .append(csvEscape(question)).append(", ")
+                  .append(csvEscape(a1)).append(", ")
+                  .append(csvEscape(a2)).append(", ")
+                  .append(csvEscape(a3)).append(", ")
+                  .append(csvEscape(a4)).append(", ")
+                  .append(csvEscape(correctAnswer)).append(", ")
+                  .append("Objective");
+            } else if (selectedTabIndex == 1) { // Subjective tab
+                String subjectiveQuestion = jTextArea2.getText().trim();
+
+                sb.append(csvEscape(nextQuestionId))
+                  .append(", ")
+                  .append(csvEscape(subjectiveQuestion)).append(", ")
+                  .append("Subjective");
             }
+
+            bw.write(sb.toString());
+            bw.newLine();
         } catch (IOException ex) {
             logger.log(java.util.logging.Level.SEVERE, null, ex);
             JOptionPane.showMessageDialog(this, "Failed to save quiz: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
@@ -545,6 +698,7 @@ public class Quiz extends javax.swing.JFrame {
 
         // clear all fields including title
         jTextArea1.setText("");
+        jTextArea2.setText("");
         a.setText("");
         b.setText("");
         c.setText("");
@@ -556,9 +710,9 @@ public class Quiz extends javax.swing.JFrame {
         sessionQuestionCount = 0;
 
         JOptionPane.showMessageDialog(this, "Quiz saved successfully", "Saved", JOptionPane.INFORMATION_MESSAGE);
-    }//GEN-LAST:event_jButton1ActionPerformed
+    }
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {
         // Check if there's anything to discard
         String projectRoot = System.getProperty("user.dir");
         File temp = new File(projectRoot, "src\\main\\java\\oopwj\\TempQuiz.txt");
@@ -620,103 +774,139 @@ public class Quiz extends javax.swing.JFrame {
 
         // open Assessments
         java.awt.EventQueue.invokeLater(() -> {
-            new Assessments().setVisible(true);
+            if (parentWindow != null) {
+                parentWindow.setVisible(true);
+            } else {
+                new Assessments(lecturerID, null).setVisible(true);
+            }
         });
         this.dispose();
-    }//GEN-LAST:event_jButton2ActionPerformed
+    }
 
-    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {
         // Add: validate fields, append current entry to TemporaryQuiz.txt, then clear fields
-        String question = jTextArea1.getText().trim();
-        String a1 = a.getText().trim();
-        String a2 = b.getText().trim();
-        String a3 = c.getText().trim();
-        String a4 = d.getText().trim();
-
-        if (question.isEmpty() || a1.isEmpty() || a2.isEmpty() || a3.isEmpty() || a4.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Please fill in all fields before adding.", "Validation", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
-        
-        // Check if correct answer is selected
-        if (correctAnswer.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Please select the correct answer.", "Validation", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
+        int selectedTabIndex = jTabbedPane1.getSelectedIndex();
 
         String projectRoot = System.getProperty("user.dir");
-
         File temp = new File(projectRoot, "src\\main\\java\\oopwj\\TempQuiz.txt");
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter(temp, true))) {
-            // CSV format: QuestionNumber,Question,Answer1,Answer2,Answer3,Answer4,CorrectAnswer
-            sessionQuestionCount++;
 
-            StringBuilder sb = new StringBuilder();
-            sb.append(csvEscape(String.format("Q%03d", sessionQuestionCount))).append(", ");
-            sb.append(csvEscape(question)).append(", ");
-            sb.append(csvEscape(a1)).append(", ");
-            sb.append(csvEscape(a2)).append(", ");
-            sb.append(csvEscape(a3)).append(", ");
-            sb.append(csvEscape(a4)).append(", ");
-            sb.append(csvEscape(correctAnswer));
+        if (selectedTabIndex == 0) { // Objective tab
+            String question = jTextArea1.getText().trim();
+            String a1 = a.getText().trim();
+            String a2 = b.getText().trim();
+            String a3 = c.getText().trim();
+            String a4 = d.getText().trim();
 
-            bw.write(sb.toString());
-            bw.newLine();
-        } catch (IOException ex) {
-            logger.log(java.util.logging.Level.SEVERE, null, ex);
-            JOptionPane.showMessageDialog(this, "Failed to append question: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-            return;
+            if (question.isEmpty() || a1.isEmpty() || a2.isEmpty() || a3.isEmpty() || a4.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Please fill in all fields before adding.", "Validation", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+            // Check if correct answer is selected
+            if (correctAnswer.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Please select the correct answer.", "Validation", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+            try (BufferedWriter bw = new BufferedWriter(new FileWriter(temp, true))) {
+                sessionQuestionCount++;
+
+                StringBuilder sb = new StringBuilder();
+                sb.append(csvEscape(String.format("Q%03d", sessionQuestionCount))).append(", ");
+                sb.append(csvEscape(question)).append(", ");
+                sb.append(csvEscape(a1)).append(", ");
+                sb.append(csvEscape(a2)).append(", ");
+                sb.append(csvEscape(a3)).append(", ");
+                sb.append(csvEscape(a4)).append(", ");
+                sb.append(csvEscape(correctAnswer)).append(", ");
+                sb.append("Objective");
+
+                bw.write(sb.toString());
+                bw.newLine();
+            } catch (IOException ex) {
+                logger.log(java.util.logging.Level.SEVERE, null, ex);
+                JOptionPane.showMessageDialog(this, "Failed to append question: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            // Clear fields except title
+            jTextArea1.setText("");
+            a.setText("");
+            b.setText("");
+            c.setText("");
+            d.setText("");
+            answerGroup.clearSelection();
+            correctAnswer = "";
+
+            JOptionPane.showMessageDialog(this, "Objective question added successfully", "Added", JOptionPane.INFORMATION_MESSAGE);
+        } else if (selectedTabIndex == 1) { // Subjective tab
+            String subjectiveQuestion = jTextArea2.getText().trim();
+
+            if (subjectiveQuestion.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Please type your subjective question before adding.", "Validation", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+            try (BufferedWriter bw = new BufferedWriter(new FileWriter(temp, true))) {
+                sessionQuestionCount++;
+
+                StringBuilder sb = new StringBuilder();
+                sb.append(csvEscape(String.format("Q%03d", sessionQuestionCount))).append(", ");
+                sb.append(csvEscape(subjectiveQuestion)).append(", ");
+                sb.append("Subjective");
+
+                bw.write(sb.toString());
+                bw.newLine();
+            } catch (IOException ex) {
+                logger.log(java.util.logging.Level.SEVERE, null, ex);
+                JOptionPane.showMessageDialog(this, "Failed to append question: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            // Clear the subjective question field after adding or saving
+            jTextArea2.setText("");
+
+            JOptionPane.showMessageDialog(this, "Subjective question added successfully", "Added", JOptionPane.INFORMATION_MESSAGE);
         }
+    }
 
-        // Clear fields except title
-        jTextArea1.setText("");
-        a.setText("");
-        b.setText("");
-        c.setText("");
-        d.setText("");
-        answerGroup.clearSelection();
-        correctAnswer = "";
-
-        JOptionPane.showMessageDialog(this, "Question added successfully", "Added", JOptionPane.INFORMATION_MESSAGE);
-    }//GEN-LAST:event_jButton3ActionPerformed
-
-    private void jTextField3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField3ActionPerformed
+    private void jTextField3ActionPerformed(java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField3ActionPerformed
+    }
 
-    private void jTextField4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField4ActionPerformed
+    private void jTextField4ActionPerformed(java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField4ActionPerformed
+    }
 
-    private void jTextField5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField5ActionPerformed
+    private void jTextField5ActionPerformed(java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField5ActionPerformed
+    }
 
-    private void jTextField6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField6ActionPerformed
+    private void jTextField6ActionPerformed(java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField6ActionPerformed
+    }
 
-    private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox1ActionPerformed
+    private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
-    }//GEN-LAST:event_jComboBox1ActionPerformed
+    }
 
-    private void jRadioButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton1ActionPerformed
+    private void jRadioButton1ActionPerformed(java.awt.event.ActionEvent evt) {
         correctAnswer = "A";
-    }//GEN-LAST:event_jRadioButton1ActionPerformed
+    }
 
-    private void jRadioButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton3ActionPerformed
+    private void jRadioButton3ActionPerformed(java.awt.event.ActionEvent evt) {
         correctAnswer = "B";
-    }//GEN-LAST:event_jRadioButton3ActionPerformed
+    }
 
-    private void jRadioButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton4ActionPerformed
+    private void jRadioButton4ActionPerformed(java.awt.event.ActionEvent evt) {
         correctAnswer = "C";
-    }//GEN-LAST:event_jRadioButton4ActionPerformed
+    }
 
-    private void jRadioButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton5ActionPerformed
+    private void jRadioButton5ActionPerformed(java.awt.event.ActionEvent evt) {
         correctAnswer = "D";
-    }//GEN-LAST:event_jRadioButton5ActionPerformed
+    }
 
-    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {
         // Clear all form fields
         jTextArea1.setText("");
         a.setText("");
@@ -725,7 +915,7 @@ public class Quiz extends javax.swing.JFrame {
         d.setText("");
         answerGroup.clearSelection();
         correctAnswer = "";
-    }//GEN-LAST:event_jButton4ActionPerformed
+    }
 
     // Helper: escape a field for simple CSV (wrap in double quotes if needed)
     private String csvEscape(String s) {
@@ -795,5 +985,6 @@ public class Quiz extends javax.swing.JFrame {
     private javax.swing.JTextField jTextField4;
     private javax.swing.JTextField jTextField5;
     private javax.swing.JTextField jTextField6;
+    private javax.swing.JCheckBox isObjectiveCheckBox;
     // End of variables declaration//GEN-END:variables
 }

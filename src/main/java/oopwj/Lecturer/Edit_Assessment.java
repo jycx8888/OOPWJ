@@ -11,11 +11,19 @@ package oopwj.Lecturer;
 public class Edit_Assessment extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(Edit_Assessment.class.getName());
+    private String lecturerID;
+    private Lecturer_menu parentWindow;
 
     /**
      * Creates new form Edit_Assessment
      */
     public Edit_Assessment() {
+        this(null, null);
+    }
+    
+    public Edit_Assessment(String lecturerID, Lecturer_menu parentWindow) {
+        this.lecturerID = lecturerID;
+        this.parentWindow = parentWindow;
         initComponents();
     }
 

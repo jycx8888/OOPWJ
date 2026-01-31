@@ -10,7 +10,9 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -25,14 +27,25 @@ public class Assessments extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(Assessments.class.getName());
     private String currentDataType = null; // Track which data is currently displayed
+    private String lecturerID;
+    private Lecturer_menu parentWindow;
+    private Map<String, String> lecturerModules = new HashMap<>(); // moduleId -> moduleName
 
     /**
      * Creates new form Assessments
      */
     public Assessments() {
+        this(null, null);
+    }
+    
+    public Assessments(String lecturerID, Lecturer_menu parentWindow) {
+        this.lecturerID = lecturerID;
+        this.parentWindow = parentWindow;
+        loadLecturerModules(); // Load modules assigned to this lecturer
         initComponents();
         setupTable();
         setupSearchField();
+        displayAssignedModules(); // Show assigned modules to the lecturer
         loadQuizData();
         currentDataType = "quiz";
         QuizButton.addActionListener(this::QuizButtonActionPerformed);
@@ -91,7 +104,6 @@ public class Assessments extends javax.swing.JFrame {
 
         jPanel1 = new javax.swing.JPanel();
         QuizButton = new javax.swing.JButton();
-        AssignmentButton = new javax.swing.JButton();
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
@@ -106,8 +118,6 @@ public class Assessments extends javax.swing.JFrame {
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
 
         QuizButton.setText("Quiz");
-
-        AssignmentButton.setText("Assignment");
 
         jButton1.setText("Back");
 
@@ -136,8 +146,6 @@ public class Assessments extends javax.swing.JFrame {
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(QuizButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(AssignmentButton)
-                        .addGap(28, 28, 28)
                         .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 297, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButton3)
@@ -158,7 +166,6 @@ public class Assessments extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(38, 38, 38)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(AssignmentButton)
                     .addComponent(QuizButton)
                     .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jButton3))
@@ -317,7 +324,11 @@ public class Assessments extends javax.swing.JFrame {
     }
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {
-        new Lecturer_menu().setVisible(true);
+        if (parentWindow != null) {
+            parentWindow.setVisible(true);
+        } else {
+            new Lecturer_menu(lecturerID).setVisible(true);
+        }
         this.dispose();
     }
 
@@ -328,7 +339,7 @@ public class Assessments extends javax.swing.JFrame {
         }
         
         if ("quiz".equals(currentDataType)) {
-            new Quiz().setVisible(true);
+            new Quiz(lecturerID, this).setVisible(true);
         }
         this.dispose();
     }
@@ -370,22 +381,105 @@ public class Assessments extends javax.swing.JFrame {
         currentDataType = "quiz";
         loadQuizData();
     }
+    
+    private void loadLecturerModules() {
+        lecturerModules.clear();
+        
+        if (lecturerID == null) {
+            return; // If no lecturer ID, don't filter
+        }
+        
+        String projectRoot = System.getProperty("user.dir");
+        File modulesFile = new File(projectRoot, "src\\main\\java\\oopwj\\modules.txt");
+        
+        if (!modulesFile.exists()) {
+            logger.log(java.util.logging.Level.WARNING, "modules.txt not found");
+            return;
+        }
+        
+        try (BufferedReader br = new BufferedReader(new FileReader(modulesFile))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                String trimmed = line.trim();
+                if (!trimmed.isEmpty()) {
+                    String[] parts = trimmed.split(",");
+                    if (parts.length >= 4) {
+                        String moduleId = parts[0].trim();
+                        String moduleName = parts[1].trim();
+                        String assignedLecturerId = parts[3].trim();
+                        
+                        // Check if this module is assigned to the current lecturer
+                        if (assignedLecturerId.equals(lecturerID)) {
+                            lecturerModules.put(moduleId, moduleName);
+                        }
+                    }
+                }
+            }
+        } catch (IOException ex) {
+            logger.log(java.util.logging.Level.SEVERE, "Error loading modules", ex);
+        }
+        
+        // Log the modules for debugging
+        if (lecturerModules.isEmpty()) {
+            logger.log(java.util.logging.Level.INFO, "No modules assigned to lecturer: " + lecturerID);
+        } else {
+            logger.log(java.util.logging.Level.INFO, "Lecturer " + lecturerID + " has " + lecturerModules.size() + " modules");
+        }
+    }
+    
+    private void displayAssignedModules() {
+        if (lecturerID == null) {
+            return;
+        }
+        
+        if (lecturerModules.isEmpty()) {
+            JOptionPane.showMessageDialog(this, 
+                "You are not assigned to any modules yet.", 
+                "Assigned Modules", 
+                JOptionPane.INFORMATION_MESSAGE);
+        } else {
+            StringBuilder message = new StringBuilder("Your Assigned Modules:\n\n");
+            for (Map.Entry<String, String> entry : lecturerModules.entrySet()) {
+                message.append(entry.getKey()).append(": ").append(entry.getValue()).append("\n");
+            }
+            JOptionPane.showMessageDialog(this, 
+                message.toString(), 
+                "Assigned Modules", 
+                JOptionPane.INFORMATION_MESSAGE);
+        }
+    }
 
     private void loadQuizData() {
         String projectRoot = System.getProperty("user.dir");
         File quizFile = new File(projectRoot, "src\\main\\java\\oopwj\\Quiz.txt");
-        
-        String[] columnNames = {"Question ID", "Question", "A", "B", "C", "D", "Answer"};
+
+        // Update column names to include the required fields
+        String[] columnNames = {"Module ID", "Module Name", "Question ID", "Question Type", "Question"};
         List<Object[]> rows = new ArrayList<>();
-        
+
         if (quizFile.exists()) {
             try (BufferedReader br = new BufferedReader(new FileReader(quizFile))) {
                 String line;
                 while ((line = br.readLine()) != null) {
                     String[] fields = parseCSV(line);
-                    String[] normalized = normalizeQuizFields(fields);
-                    if (normalized.length >= 7) {
-                        rows.add(normalized);
+                    if (fields.length >= 6) { // Ensure there are enough fields
+                        String moduleID = fields[0];
+                        String moduleName = fields[1];
+                        String questionID = fields[2];
+                        String questionType = fields[3];
+                        String question;
+
+                        // Determine question type and set question text accordingly
+                        if ("Objective".equalsIgnoreCase(questionType)) {
+                            question = fields[4]; // Use the "question" field for objective
+                        } else if ("Subjective".equalsIgnoreCase(questionType)) {
+                            question = fields[5]; // Use the "subjectiveQuestion" field for subjective
+                        } else {
+                            question = "Unknown Question Type";
+                        }
+
+                        // Add the required fields to the table
+                        rows.add(new Object[]{moduleID, moduleName, questionID, questionType, question});
                     }
                 }
             } catch (IOException ex) {
@@ -394,7 +488,8 @@ public class Assessments extends javax.swing.JFrame {
                 return;
             }
         }
-        
+
+        // Update the table model with the new data
         DefaultTableModel model = new DefaultTableModel(rows.toArray(new Object[0][]), columnNames);
         jTable2.setModel(model);
         centerAlignTable(jTable2);
@@ -455,7 +550,6 @@ public class Assessments extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton AssignmentButton;
     private javax.swing.JButton QuizButton;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;

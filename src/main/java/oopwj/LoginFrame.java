@@ -1,14 +1,28 @@
 package oopwj;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionListener;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
-import oopwj.Model.User;
-import oopwj.Model.AuthService;
+import java.awt.event.ActionListener;
+
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
+
 import oopwj.AcademicLeader.academicLeader;
 import oopwj.AdministrativeStaff.AdminMainPage;
 import oopwj.Lecturer.Lecturer_menu;
+import oopwj.Model.AuthService;
+import oopwj.Model.User;
 
 public class LoginFrame extends JFrame {
     
@@ -106,7 +120,7 @@ public class LoginFrame extends JFrame {
                             System.out.println("Redirecting to Student Menu...");
                             break;
                         case "Lecturer":
-                            new Lecturer_menu().setVisible(true);
+                            new Lecturer_menu(userID).setVisible(true);
                             break;
                         case "Academic Leader":
                             new academicLeader(userID).setVisible(true);

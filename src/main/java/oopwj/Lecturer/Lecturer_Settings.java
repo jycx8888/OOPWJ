@@ -11,11 +11,19 @@ package oopwj.Lecturer;
 public class Lecturer_Settings extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(Lecturer_Settings.class.getName());
+    private String lecturerID;
+    private Lecturer_menu parentWindow;
 
     /**
      * Creates new form Lecturer_Settings
      */
     public Lecturer_Settings() {
+        this(null, null);
+    }
+    
+    public Lecturer_Settings(String lecturerID, Lecturer_menu parentWindow) {
+        this.lecturerID = lecturerID;
+        this.parentWindow = parentWindow;
         initComponents();
     }
 
@@ -71,7 +79,11 @@ public class Lecturer_Settings extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void SettingsBackButtonActionPerformed(java.awt.event.ActionEvent evt) {
-        new Lecturer_menu().setVisible(true);
+        if (parentWindow != null) {
+            parentWindow.setVisible(true);
+        } else {
+            new Lecturer_menu(lecturerID).setVisible(true);
+        }
         this.dispose();
     }
 

@@ -11,11 +11,19 @@ package oopwj.Lecturer;
 public class Assessment_Marks extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(Assessment_Marks.class.getName());
+    private String lecturerID;
+    private Lecturer_menu parentWindow;
 
     /**
      * Creates new form Assessment_Marks
      */
     public Assessment_Marks() {
+        this(null, null);
+    }
+    
+    public Assessment_Marks(String lecturerID, Lecturer_menu parentWindow) {
+        this.lecturerID = lecturerID;
+        this.parentWindow = parentWindow;
         initComponents();
     }
 
