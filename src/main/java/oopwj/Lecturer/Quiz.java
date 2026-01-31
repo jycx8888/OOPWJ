@@ -198,6 +198,104 @@ public class Quiz extends javax.swing.JFrame {
         return String.format("Q%03d", maxId + 1);
     }
 
+    private void loadQuizQuestions() {
+        String projectRoot = System.getProperty("user.dir");
+        File quizFile = new File(projectRoot, "src\\main\\java\\oopwj\\Quiz.txt");
+
+        if (!quizFile.exists()) {
+            JOptionPane.showMessageDialog(this, "Quiz file not found.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        try (BufferedReader br = new BufferedReader(new FileReader(quizFile))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] parts = line.split(",");
+                if (parts.length == 10) {
+                    // Objective question
+                    String moduleId = parts[0].trim();
+                    String moduleName = parts[1].trim();
+                    String questionId = parts[2].trim();
+                    String question = parts[3].trim();
+                    String ansA = parts[4].trim();
+                    String ansB = parts[5].trim();
+                    String ansC = parts[6].trim();
+                    String ansD = parts[7].trim();
+                    String correctAns = parts[8].trim();
+                    String type = parts[9].trim();
+
+                    // Process the objective question (e.g., add to UI or data structure)
+                    System.out.println("Objective Question: " + question);
+                } else if (parts.length == 5) {
+                    // Subjective question
+                    String moduleId = parts[0].trim();
+                    String moduleName = parts[1].trim();
+                    String questionId = parts[2].trim();
+                    String question = parts[3].trim();
+                    String type = parts[4].trim();
+
+                    // Process the subjective question (e.g., add to UI or data structure)
+                    System.out.println("Subjective Question: " + question);
+                } else {
+                    logger.warning("Invalid question format: " + line);
+                }
+            }
+        } catch (IOException ex) {
+            logger.log(java.util.logging.Level.SEVERE, "Error reading Quiz.txt", ex);
+            JOptionPane.showMessageDialog(this, "Error reading Quiz.txt: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void loadQuizQuestionsToTable(javax.swing.JTable table) {
+        String projectRoot = System.getProperty("user.dir");
+        File quizFile = new File(projectRoot, "src\\main\\java\\oopwj\\Quiz.txt");
+
+        if (!quizFile.exists()) {
+            JOptionPane.showMessageDialog(this, "Quiz file not found.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) table.getModel();
+        model.setRowCount(0); // Clear existing rows
+
+        try (BufferedReader br = new BufferedReader(new FileReader(quizFile))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] parts = line.split(",");
+                if (parts.length == 10) {
+                    // Objective question
+                    String moduleId = parts[0].trim();
+                    String moduleName = parts[1].trim();
+                    String questionId = parts[2].trim();
+                    String question = parts[3].trim();
+                    String ansA = parts[4].trim();
+                    String ansB = parts[5].trim();
+                    String ansC = parts[6].trim();
+                    String ansD = parts[7].trim();
+                    String correctAns = parts[8].trim();
+
+                    // Add to table
+                    model.addRow(new Object[]{moduleId, moduleName, questionId, question, "Objective"});
+                } else if (parts.length == 5) {
+                    // Subjective question
+                    String moduleId = parts[0].trim();
+                    String moduleName = parts[1].trim();
+                    String questionId = parts[2].trim();
+                    String question = parts[3].trim();
+                    String type = parts[4].trim();
+
+                    // Add to table with sequence 0,1,2,4,3
+                    model.addRow(new Object[]{moduleId, moduleName, questionId, type, question});
+                } else {
+                    logger.warning("Invalid question format: " + line);
+                }
+            }
+        } catch (IOException ex) {
+            logger.log(java.util.logging.Level.SEVERE, "Error reading Quiz.txt", ex);
+            JOptionPane.showMessageDialog(this, "Error reading Quiz.txt: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always

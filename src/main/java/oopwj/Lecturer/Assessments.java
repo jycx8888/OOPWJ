@@ -262,21 +262,21 @@ public class Assessments extends javax.swing.JFrame {
     
     private void performSearch() {
         String searchTerm = jTextField1.getText().trim();
-        
+
         if (searchTerm.isEmpty() || searchTerm.equalsIgnoreCase("Search")) {
             JOptionPane.showMessageDialog(this, "Please enter a search term", "Search", JOptionPane.INFORMATION_MESSAGE);
             return;
         }
-        
+
         List<Object[]> matchingRows = new ArrayList<>();
         String[] columnNames = {};
-        
+
         // Search in Quiz.txt
         matchingRows.addAll(searchInFile("src\\main\\java\\oopwj\\Quiz.txt", searchTerm, true));
         if (!matchingRows.isEmpty()) {
-            columnNames = new String[]{"Question ID", "Question", "A", "B", "C", "D", "Answer"};
+            columnNames = new String[]{"Question ID", "Question", "Type", "A", "B", "C", "D", "Answer"};
         }
-        
+
         DefaultTableModel model = new DefaultTableModel(matchingRows.toArray(new Object[0][]), columnNames);
         jTable2.setModel(model);
         centerAlignTable(jTable2);
@@ -286,16 +286,16 @@ public class Assessments extends javax.swing.JFrame {
         List<Object[]> results = new ArrayList<>();
         String projectRoot = System.getProperty("user.dir");
         File file = new File(projectRoot, filePath);
-        
+
         if (!file.exists()) {
             return results;
         }
-        
+
         try (BufferedReader br = new BufferedReader(new FileReader(file))) {
             String line;
             while ((line = br.readLine()) != null) {
                 String[] fields = parseCSV(line);
-                
+
                 // Check if any field contains the search term
                 boolean matches = false;
                 for (String field : fields) {
@@ -304,22 +304,25 @@ public class Assessments extends javax.swing.JFrame {
                         break;
                     }
                 }
-                
+
                 if (matches) {
                     if (isQuiz) {
-                        String[] normalized = normalizeQuizFields(fields);
-                        if (normalized.length >= 7) {
-                            results.add(normalized);
+                        // Check if the question is subjective or objective
+                        if (fields.length == 6) {
+                            // Subjective question: [Module ID, Module Name, Question ID, Question, Type]
+                            results.add(new Object[]{fields[2], fields[3], fields[5], "-", "-", "-", "-"});
+                        } else if (fields.length == 10) {
+                            // Objective question: [Module ID, Module Name, Question ID, Question, A, B, C, D, Answer, Type]
+                            results.add(new Object[]{fields[2], fields[3], fields[9], fields[4], fields[5], fields[6], fields[7], fields[8]});
                         }
-                    } else if (!isQuiz && fields.length >= 4) {
-                        results.add(fields);
                     }
                 }
             }
         } catch (IOException ex) {
             logger.log(java.util.logging.Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(this, "Error reading file: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
-        
+
         return results;
     }
 
@@ -462,24 +465,10 @@ public class Assessments extends javax.swing.JFrame {
                 String line;
                 while ((line = br.readLine()) != null) {
                     String[] fields = parseCSV(line);
-                    if (fields.length >= 6) { // Ensure there are enough fields
-                        String moduleID = fields[0];
-                        String moduleName = fields[1];
-                        String questionID = fields[2];
-                        String questionType = fields[3];
-                        String question;
-
-                        // Determine question type and set question text accordingly
-                        if ("Objective".equalsIgnoreCase(questionType)) {
-                            question = fields[4]; // Use the "question" field for objective
-                        } else if ("Subjective".equalsIgnoreCase(questionType)) {
-                            question = fields[5]; // Use the "subjectiveQuestion" field for subjective
-                        } else {
-                            question = "Unknown Question Type";
-                        }
-
-                        // Add the required fields to the table
-                        rows.add(new Object[]{moduleID, moduleName, questionID, questionType, question});
+                    if (fields.length == 10) { // Row length of 10
+                        rows.add(new Object[]{fields[0], fields[1], fields[2], fields[9], fields[3]});
+                    } else if (fields.length == 5) { // Row length of 5
+                        rows.add(new Object[]{fields[0], fields[1], fields[2], fields[4], fields[3]});
                     }
                 }
             } catch (IOException ex) {
