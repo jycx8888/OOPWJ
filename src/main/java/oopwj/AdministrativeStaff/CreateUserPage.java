@@ -126,6 +126,58 @@ public class CreateUserPage extends javax.swing.JDialog {
     }
 }
 
+    /**
+     * Validate password format based on editProfileAC
+     * Requirements:
+     * - Length: 7-14 characters
+     * - At least one lowercase letter
+     * - At least one uppercase letter
+     * - At least one number
+     * - At least one symbol (!@#$%^)
+     * - Comma is not allowed
+     */
+    private boolean isValidPassword(String password) {
+        if (password == null || password.length() < 7 || password.length() > 14) {
+            return false;
+        }
+
+        boolean hasLowerCase = false;
+        boolean hasUpperCase = false;
+        boolean hasDigit = false;
+        boolean hasSymbol = false;
+        String allowedSymbols = "!@#$%^";
+
+        for (char c : password.toCharArray()) {
+            if (Character.isLowerCase(c)) {
+                hasLowerCase = true;
+            } else if (Character.isUpperCase(c)) {
+                hasUpperCase = true;
+            } else if (Character.isDigit(c)) {
+                hasDigit = true;
+            } else if (allowedSymbols.indexOf(c) != -1) {
+                hasSymbol = true;
+            } else if (c == ',') {
+                return false;
+            }
+        }
+
+        return hasLowerCase && hasUpperCase && hasDigit && hasSymbol;
+    }
+
+    private void showPasswordValidationMessage() {
+        JOptionPane.showMessageDialog(this,
+            "Invalid password format!\n\n"
+            + "Requirements:\n"
+            + "- 7 to 14 characters\n"
+            + "- At least 1 lowercase letter\n"
+            + "- At least 1 uppercase letter\n"
+            + "- At least 1 number\n"
+            + "- At least 1 symbol (!@#$%^)\n"
+            + "- Comma is not allowed",
+            "Validation Error",
+            JOptionPane.ERROR_MESSAGE);
+    }
+
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -297,6 +349,11 @@ public class CreateUserPage extends javax.swing.JDialog {
             JOptionPane.showMessageDialog(this, "Please fill in all fields and select a role.", 
                                           "Error", JOptionPane.ERROR_MESSAGE);
             return; 
+        }
+
+        if (!isValidPassword(password)) {
+            showPasswordValidationMessage();
+            return;
         }
         
         if (idExists(userId)) {
