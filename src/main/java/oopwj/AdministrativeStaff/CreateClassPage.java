@@ -15,13 +15,26 @@ import javax.swing.table.*;
  */
 public class CreateClassPage extends javax.swing.JFrame {
 
+    private final String loggedInUserID;
+
     /**
      * Creates new form CreateClassPage
      */
     public CreateClassPage() {
+        this.loggedInUserID = null;
         initComponents();
         setLocationRelativeTo(null);
         
+        loadModules();
+        loadClassrooms();
+        enableSearch();
+    }
+
+    public CreateClassPage(String userID) {
+        this.loggedInUserID = userID;
+        initComponents();
+        setLocationRelativeTo(null);
+
         loadModules();
         loadClassrooms();
         enableSearch();
@@ -313,7 +326,7 @@ public class CreateClassPage extends javax.swing.JFrame {
 
     private void btnBackActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBackActionPerformed
         this.dispose();
-        AdminMainPage adminMain = new AdminMainPage();
+        AdminMainPage adminMain = new AdminMainPage(loggedInUserID);
         adminMain.setVisible(true);
     }//GEN-LAST:event_btnBackActionPerformed
 
@@ -514,10 +527,8 @@ public class CreateClassPage extends javax.swing.JFrame {
         
         //</editor-fold>
 
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> {
-            new CreateClassPage().setVisible(true);
-        });
+        /* Create and display the form - Must login first */
+        java.awt.EventQueue.invokeLater(() -> new oopwj.LoginFrame());
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

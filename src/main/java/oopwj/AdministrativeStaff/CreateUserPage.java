@@ -459,17 +459,8 @@ public class CreateUserPage extends javax.swing.JDialog {
         
         //</editor-fold>
 
-        /* Create and display the dialog */
-        java.awt.EventQueue.invokeLater(() -> {
-            CreateUserPage dialog = new CreateUserPage(new javax.swing.JFrame(), true);
-            dialog.addWindowListener(new java.awt.event.WindowAdapter() {
-                @Override
-                public void windowClosing(java.awt.event.WindowEvent e) {
-                    System.exit(0);
-                }
-            });
-            dialog.setVisible(true);
-        });
+        /* Create and display the form - Must login first */
+        java.awt.EventQueue.invokeLater(() -> new oopwj.LoginFrame());
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

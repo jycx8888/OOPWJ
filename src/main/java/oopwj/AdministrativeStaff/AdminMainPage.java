@@ -10,6 +10,7 @@ package oopwj.AdministrativeStaff;
  */
 public class AdminMainPage extends javax.swing.JFrame {
 
+    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(AdminMainPage.class.getName());
     private String loggedInUserID;  // Store logged-in user ID
     
     /**
@@ -28,7 +29,7 @@ public class AdminMainPage extends javax.swing.JFrame {
         this.loggedInUserID = userID;
         initComponents();
         setLocationRelativeTo(null);
-        System.out.println("Admin logged in: " + userID);
+        logger.info("Admin logged in: " + userID);
     }
     
     /**
@@ -44,7 +45,7 @@ public class AdminMainPage extends javax.swing.JFrame {
      */
     public void clearSession() {
         this.loggedInUserID = null;
-        System.out.println("Admin session cleared");
+        logger.info("Admin session cleared");
     }
 
     /**
@@ -134,7 +135,7 @@ public class AdminMainPage extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnManageActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnManageActionPerformed
-        ManageUserPage userPage = new ManageUserPage();
+        ManageUserPage userPage = new ManageUserPage(loggedInUserID);
         userPage.loadUsers();
         userPage.setVisible(true);
         this.dispose();
@@ -158,20 +159,20 @@ public class AdminMainPage extends javax.swing.JFrame {
     }//GEN-LAST:event_btnLogoutActionPerformed
 
     private void btnDefineGradingActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDefineGradingActionPerformed
-        DefineGradingPage defineGrading = new DefineGradingPage();
+        DefineGradingPage defineGrading = new DefineGradingPage(loggedInUserID);
         defineGrading.loadGrade();
         defineGrading.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_btnDefineGradingActionPerformed
 
     private void btnAssignActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAssignActionPerformed
-        AssignLecturerPage assignLecturer = new AssignLecturerPage();
+        AssignLecturerPage assignLecturer = new AssignLecturerPage(loggedInUserID);
         assignLecturer.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_btnAssignActionPerformed
 
     private void btnCreateClassActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCreateClassActionPerformed
-        CreateClassPage createClass = new CreateClassPage();
+        CreateClassPage createClass = new CreateClassPage(loggedInUserID);
         createClass.setVisible(true);
         this.dispose();
         
@@ -200,10 +201,8 @@ public class AdminMainPage extends javax.swing.JFrame {
         
         //</editor-fold>
 
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> {
-            new AdminMainPage().setVisible(true);
-        });
+        /* Create and display the form - Must login first */
+        java.awt.EventQueue.invokeLater(() -> new oopwj.LoginFrame());
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

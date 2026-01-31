@@ -17,9 +17,11 @@ public class AssignLecturerPage extends javax.swing.JFrame {
 
     private final TableRowSorter<DefaultTableModel> lecturerSorter;
     private final TableRowSorter<DefaultTableModel> academicSorter;
+    private final String loggedInUserID;
 
     
     public AssignLecturerPage() {
+        this.loggedInUserID = null;
         initComponents();
         setLocationRelativeTo(null);
         
@@ -36,6 +38,25 @@ public class AssignLecturerPage extends javax.swing.JFrame {
 
         setupSearch();
         
+    }
+
+    public AssignLecturerPage(String userID) {
+        this.loggedInUserID = userID;
+        initComponents();
+        setLocationRelativeTo(null);
+
+        loadUsers(LecturerList,"src\\main\\java\\oopwj\\lecturer.txt", "Lecturer");
+        loadUsers(AcademicList,"src\\main\\java\\oopwj\\academicLeader.txt", "Academic Leader");
+
+        lecturerSorter = new TableRowSorter<>(
+            (DefaultTableModel) LecturerList.getModel());
+        LecturerList.setRowSorter(lecturerSorter);
+
+        academicSorter = new TableRowSorter<>(
+                (DefaultTableModel) AcademicList.getModel());
+        AcademicList.setRowSorter(academicSorter);
+
+        setupSearch();
     }
     
     public static void loadUsers(JTable table, String file, String role) {
@@ -289,7 +310,7 @@ public class AssignLecturerPage extends javax.swing.JFrame {
 
     private void btnBackActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBackActionPerformed
         this.dispose();
-        new AdminMainPage().setVisible(true);
+        new AdminMainPage(loggedInUserID).setVisible(true);
     }//GEN-LAST:event_btnBackActionPerformed
 
     private void btnAssignActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAssignActionPerformed
@@ -474,10 +495,8 @@ public class AssignLecturerPage extends javax.swing.JFrame {
         
         //</editor-fold>
 
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> {
-            new AssignLecturerPage().setVisible(true);
-        });
+        /* Create and display the form - Must login first */
+        java.awt.EventQueue.invokeLater(() -> new oopwj.LoginFrame());
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

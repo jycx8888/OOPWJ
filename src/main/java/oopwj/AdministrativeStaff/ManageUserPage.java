@@ -19,9 +19,11 @@ public class ManageUserPage extends javax.swing.JFrame {
 
     private TableRowSorter<DefaultTableModel> sorter;
     private final DefaultTableModel model;
+    private final String loggedInUserID;
     
 
     public ManageUserPage() {
+        this.loggedInUserID = null;
         initComponents();
         setLocationRelativeTo(null);
         
@@ -64,6 +66,51 @@ public class ManageUserPage extends javax.swing.JFrame {
         chkLecturer.addActionListener(e -> applyFilters());
         chkAcademic.addActionListener(e -> applyFilters());
 
+    }
+
+    public ManageUserPage(String userID) {
+        this.loggedInUserID = userID;
+        initComponents();
+        setLocationRelativeTo(null);
+
+        model = (DefaultTableModel) UserList.getModel();
+        sorter = new TableRowSorter<>(model);
+        UserList.setRowSorter(sorter);
+
+        txtSearch.getDocument().addDocumentListener(
+            new javax.swing.event.DocumentListener() {
+
+                @Override
+                public void insertUpdate(javax.swing.event.DocumentEvent e) {
+                    search();
+                }
+
+                @Override
+                public void removeUpdate(javax.swing.event.DocumentEvent e) {
+                    search();
+                }
+
+                @Override
+                public void changedUpdate(javax.swing.event.DocumentEvent e) {
+                    search();
+                }
+
+                private void search() {
+                    String text = txtSearch.getText().trim();
+
+                    if (text.length() == 0) {
+                        sorter.setRowFilter(null);
+                    } else {
+                        sorter.setRowFilter(RowFilter.regexFilter("(?i)" + Pattern.quote(text)));
+                    }
+                }
+            }
+        );
+
+        chkStudent.addActionListener(e -> applyFilters());
+        chkAdmin.addActionListener(e -> applyFilters());
+        chkLecturer.addActionListener(e -> applyFilters());
+        chkAcademic.addActionListener(e -> applyFilters());
     }
 
 public void loadUsers() {
@@ -327,7 +374,7 @@ private void applyFilters() {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnBackActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBackActionPerformed
-        new AdminMainPage().setVisible(true);
+        new AdminMainPage(loggedInUserID).setVisible(true);
         this.dispose();
     }//GEN-LAST:event_btnBackActionPerformed
 
@@ -451,10 +498,8 @@ private void applyFilters() {
         
         //</editor-fold>
 
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> {
-            new ManageUserPage().setVisible(true);
-        });
+        /* Create and display the form - Must login first */
+        java.awt.EventQueue.invokeLater(() -> new oopwj.LoginFrame());
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

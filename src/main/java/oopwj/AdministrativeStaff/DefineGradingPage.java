@@ -15,10 +15,13 @@ import javax.swing.table.*;
  */
 public class DefineGradingPage extends javax.swing.JFrame {
 
+    private final String loggedInUserID;
+
     /**
      * Creates new form DefineGradingPage
      */
     public DefineGradingPage() {
+        this.loggedInUserID = null;
         initComponents();
         
         setLocationRelativeTo(null);
@@ -29,6 +32,38 @@ public class DefineGradingPage extends javax.swing.JFrame {
         
         tableGrade.getSelectionModel().addListSelectionListener(e -> {
             if (!e.getValueIsAdjusting()) { 
+                int selectedRow = tableGrade.getSelectedRow();
+                if (selectedRow != -1) {
+                    int modelRow = tableGrade.convertRowIndexToModel(selectedRow);
+                    DefaultTableModel model = (DefaultTableModel) tableGrade.getModel();
+
+                    String grade = (String) model.getValueAt(modelRow, 0);
+                    String min = String.valueOf(model.getValueAt(modelRow, 1));
+                    String max = String.valueOf(model.getValueAt(modelRow, 2));
+
+                    txtGrade.setText(grade);
+                    txtGrade.setForeground(Color.BLACK);
+                    txtMin.setText(min);
+                    txtMin.setForeground(Color.BLACK);
+                    txtMax.setText(max);
+                    txtMax.setForeground(Color.BLACK);
+                }
+            }
+        });
+    }
+
+    public DefineGradingPage(String userID) {
+        this.loggedInUserID = userID;
+        initComponents();
+
+        setLocationRelativeTo(null);
+
+        PlaceHolder.apply(txtGrade, "Select or enter a grade");
+        PlaceHolder.apply(txtMin, "Select or enter a min marks");
+        PlaceHolder.apply(txtMax, "Select or enter a max marks");
+
+        tableGrade.getSelectionModel().addListSelectionListener(e -> {
+            if (!e.getValueIsAdjusting()) {
                 int selectedRow = tableGrade.getSelectedRow();
                 if (selectedRow != -1) {
                     int modelRow = tableGrade.convertRowIndexToModel(selectedRow);
@@ -499,7 +534,7 @@ public class DefineGradingPage extends javax.swing.JFrame {
 
     private void btnCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelActionPerformed
         boolean hasChanges = false;
-        AdminMainPage adminPage = new AdminMainPage();
+        AdminMainPage adminPage = new AdminMainPage(loggedInUserID);
         
         if (!txtGrade.getText().equals("Select or enter a grade") && !txtGrade.getText().isEmpty()) hasChanges = true;
         if (!txtMin.getText().equals("Select or enter a min marks") && !txtMin.getText().isEmpty()) hasChanges = true;
@@ -545,10 +580,8 @@ public class DefineGradingPage extends javax.swing.JFrame {
         
         //</editor-fold>
 
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> {
-            new DefineGradingPage().setVisible(true);
-        });
+        /* Create and display the form - Must login first */
+        java.awt.EventQueue.invokeLater(() -> new oopwj.LoginFrame());
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
