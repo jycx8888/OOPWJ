@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.swing.JLabel;
@@ -35,7 +36,6 @@ public class Assessments extends javax.swing.JFrame {
         loadQuizData();
         currentDataType = "quiz";
         QuizButton.addActionListener(this::QuizButtonActionPerformed);
-        AssignmentButton.addActionListener(this::AssignmentButtonActionPerformed);
         jButton1.addActionListener(this::jButton1ActionPerformed);
         jButton2.addActionListener(this::jButton2ActionPerformed);
         jButton4.addActionListener(this::jButton4ActionPerformed);
@@ -226,8 +226,6 @@ public class Assessments extends javax.swing.JFrame {
         // Update the file with remaining data
         if ("quiz".equals(currentDataType)) {
             updateQuizFile();
-        } else if ("assignment".equals(currentDataType)) {
-            updateAssignmentFile();
         }
         
         JOptionPane.showMessageDialog(this, "Row(s) deleted successfully", "Success", JOptionPane.INFORMATION_MESSAGE);
@@ -235,7 +233,7 @@ public class Assessments extends javax.swing.JFrame {
     
     private void updateQuizFile() {
         String projectRoot = System.getProperty("user.dir");
-        File quizFile = new File(projectRoot, "src\\main\\java\\oopwj\\Lecturer\\Quiz.txt");
+        File quizFile = new File(projectRoot, "src\\main\\java\\oopwj\\Quiz.txt");
         
         DefaultTableModel model = (DefaultTableModel) jTable2.getModel();
         
@@ -255,28 +253,6 @@ public class Assessments extends javax.swing.JFrame {
         }
     }
     
-    private void updateAssignmentFile() {
-        String projectRoot = System.getProperty("user.dir");
-        File assignmentFile = new File(projectRoot, "src\\main\\java\\oopwj\\Lecturer\\Assignment.txt");
-        
-        DefaultTableModel model = (DefaultTableModel) jTable2.getModel();
-        
-        try (java.io.FileWriter fw = new java.io.FileWriter(assignmentFile)) {
-            for (int row = 0; row < model.getRowCount(); row++) {
-                StringBuilder sb = new StringBuilder();
-                for (int col = 0; col < model.getColumnCount(); col++) {
-                    Object value = model.getValueAt(row, col);
-                    if (col > 0) sb.append(",");
-                    sb.append("\"").append(value != null ? value.toString() : "").append("\"");
-                }
-                fw.write(sb.toString() + "\n");
-            }
-        } catch (IOException ex) {
-            logger.log(java.util.logging.Level.SEVERE, null, ex);
-            JOptionPane.showMessageDialog(this, "Error updating Assignment.txt: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-        }
-    }
-    
     private void performSearch() {
         String searchTerm = jTextField1.getText().trim();
         
@@ -289,16 +265,9 @@ public class Assessments extends javax.swing.JFrame {
         String[] columnNames = {};
         
         // Search in Quiz.txt
-        matchingRows.addAll(searchInFile("src\\main\\java\\oopwj\\Lecturer\\Quiz.txt", searchTerm, true));
+        matchingRows.addAll(searchInFile("src\\main\\java\\oopwj\\Quiz.txt", searchTerm, true));
         if (!matchingRows.isEmpty()) {
-            columnNames = new String[]{"Quiz Title", "Question ID", "Question", "A", "B", "C", "D"};
-        }
-        
-        // Search in Assignment.txt
-        List<Object[]> assignmentMatches = searchInFile("src\\main\\java\\oopwj\\Lecturer\\Assignment.txt", searchTerm, false);
-        if (!assignmentMatches.isEmpty()) {
-            matchingRows.addAll(assignmentMatches);
-            columnNames = new String[]{"Assignment ID", "Title", "Due Date", "Description"};
+            columnNames = new String[]{"Question ID", "Question", "A", "B", "C", "D", "Answer"};
         }
         
         DefaultTableModel model = new DefaultTableModel(matchingRows.toArray(new Object[0][]), columnNames);
@@ -330,8 +299,11 @@ public class Assessments extends javax.swing.JFrame {
                 }
                 
                 if (matches) {
-                    if (isQuiz && fields.length >= 7) {
-                        results.add(fields);
+                    if (isQuiz) {
+                        String[] normalized = normalizeQuizFields(fields);
+                        if (normalized.length >= 7) {
+                            results.add(normalized);
+                        }
                     } else if (!isQuiz && fields.length >= 4) {
                         results.add(fields);
                     }
@@ -351,14 +323,12 @@ public class Assessments extends javax.swing.JFrame {
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {
         if (currentDataType == null) {
-            JOptionPane.showMessageDialog(this, "Please click a button above (Quiz or Assignment) before clicking Add", "Validation Error", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Please click a button above (Quiz) before clicking Add", "Validation Error", JOptionPane.WARNING_MESSAGE);
             return;
         }
         
         if ("quiz".equals(currentDataType)) {
             new Quiz().setVisible(true);
-        } else if ("assignment".equals(currentDataType)) {
-            new Assignment().setVisible(true);
         }
         this.dispose();
     }
@@ -372,57 +342,40 @@ public class Assessments extends javax.swing.JFrame {
         }
         
         if (currentDataType == null) {
-            JOptionPane.showMessageDialog(this, "Please click a button above (Quiz or Assignment) to view data", "Validation Error", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Please click a button above (Quiz) to view data", "Validation Error", JOptionPane.WARNING_MESSAGE);
             return;
         }
         
         if ("quiz".equals(currentDataType)) {
             editQuizRow(selectedRow);
-        } else if ("assignment".equals(currentDataType)) {
-            editAssignmentRow(selectedRow);
         }
     }
     
     private void editQuizRow(int selectedRow) {
         DefaultTableModel model = (DefaultTableModel) jTable2.getModel();
         
-        String quizTitle = model.getValueAt(selectedRow, 0).toString();
-        String questionID = model.getValueAt(selectedRow, 1).toString();
-        String question = model.getValueAt(selectedRow, 2).toString();
-        String answerA = model.getValueAt(selectedRow, 3).toString();
-        String answerB = model.getValueAt(selectedRow, 4).toString();
-        String answerC = model.getValueAt(selectedRow, 5).toString();
-        String answerD = model.getValueAt(selectedRow, 6).toString();
-        String correctAnswer = model.getValueAt(selectedRow, 7).toString();
+        String question = model.getValueAt(selectedRow, 1).toString();
+        String answerA = model.getValueAt(selectedRow, 2).toString();
+        String answerB = model.getValueAt(selectedRow, 3).toString();
+        String answerC = model.getValueAt(selectedRow, 4).toString();
+        String answerD = model.getValueAt(selectedRow, 5).toString();
+        String correctAnswer = model.getValueAt(selectedRow, 6).toString();
         
-        Quiz quizForm = new Quiz(quizTitle, questionID, question, answerA, answerB, answerC, answerD, correctAnswer);
+        Quiz quizForm = new Quiz(question, answerA, answerB, answerC, answerD, correctAnswer);
         quizForm.setVisible(true);
         this.dispose();
     }
     
-    private void editAssignmentRow(int selectedRow) {
-        DefaultTableModel model = (DefaultTableModel) jTable2.getModel();
-        
-        Assignment assignmentForm = new Assignment();
-        assignmentForm.setVisible(true);
-        this.dispose();
-    }
-
     private void QuizButtonActionPerformed(java.awt.event.ActionEvent evt) {
         currentDataType = "quiz";
         loadQuizData();
     }
 
-    private void AssignmentButtonActionPerformed(java.awt.event.ActionEvent evt) {
-        currentDataType = "assignment";
-        loadAssignmentData();
-    }
-    
     private void loadQuizData() {
         String projectRoot = System.getProperty("user.dir");
-        File quizFile = new File(projectRoot, "src\\main\\java\\oopwj\\Lecturer\\Quiz.txt");
+        File quizFile = new File(projectRoot, "src\\main\\java\\oopwj\\Quiz.txt");
         
-        String[] columnNames = {"Quiz Title", "Question ID", "Question", "A", "B", "C", "D", "Answer"};
+        String[] columnNames = {"Question ID", "Question", "A", "B", "C", "D", "Answer"};
         List<Object[]> rows = new ArrayList<>();
         
         if (quizFile.exists()) {
@@ -430,41 +383,14 @@ public class Assessments extends javax.swing.JFrame {
                 String line;
                 while ((line = br.readLine()) != null) {
                     String[] fields = parseCSV(line);
-                    if (fields.length >= 8) {
-                        rows.add(fields);
+                    String[] normalized = normalizeQuizFields(fields);
+                    if (normalized.length >= 7) {
+                        rows.add(normalized);
                     }
                 }
             } catch (IOException ex) {
                 logger.log(java.util.logging.Level.SEVERE, null, ex);
                 JOptionPane.showMessageDialog(this, "Error reading Quiz.txt: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-        }
-        
-        DefaultTableModel model = new DefaultTableModel(rows.toArray(new Object[0][]), columnNames);
-        jTable2.setModel(model);
-        centerAlignTable(jTable2);
-    }
-    
-    private void loadAssignmentData() {
-        String projectRoot = System.getProperty("user.dir");
-        File assignmentFile = new File(projectRoot, "src\\main\\java\\oopwj\\Lecturer\\Assignment.txt");
-        
-        String[] columnNames = {"Assignment ID", "Title", "Due Date", "Description"};
-        List<Object[]> rows = new ArrayList<>();
-        
-        if (assignmentFile.exists()) {
-            try (BufferedReader br = new BufferedReader(new FileReader(assignmentFile))) {
-                String line;
-                while ((line = br.readLine()) != null) {
-                    String[] fields = parseCSV(line);
-                    if (fields.length >= 4) {
-                        rows.add(fields);
-                    }
-                }
-            } catch (IOException ex) {
-                logger.log(java.util.logging.Level.SEVERE, null, ex);
-                JOptionPane.showMessageDialog(this, "Error reading Assignment.txt: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
         }
@@ -494,6 +420,13 @@ public class Assessments extends javax.swing.JFrame {
         
         fields.add(current.toString().trim().replaceAll("^\"|\"$", ""));
         return fields.toArray(new String[0]);
+    }
+
+    private String[] normalizeQuizFields(String[] fields) {
+        if (fields.length == 8) {
+            return Arrays.copyOfRange(fields, 1, 8);
+        }
+        return fields;
     }
 
     /**

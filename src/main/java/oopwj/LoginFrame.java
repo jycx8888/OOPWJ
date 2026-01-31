@@ -8,6 +8,7 @@ import oopwj.Model.User;
 import oopwj.Model.AuthService;
 import oopwj.AcademicLeader.academicLeader;
 import oopwj.AdministrativeStaff.AdminMainPage;
+import oopwj.Lecturer.Lecturer_menu;
 
 public class LoginFrame extends JFrame {
     
@@ -105,7 +106,7 @@ public class LoginFrame extends JFrame {
                             System.out.println("Redirecting to Student Menu...");
                             break;
                         case "Lecturer":
-                            System.out.println("Redirecting to Lecturer Menu...");
+                            new Lecturer_menu().setVisible(true);
                             break;
                         case "Academic Leader":
                             new academicLeader(userID).setVisible(true);

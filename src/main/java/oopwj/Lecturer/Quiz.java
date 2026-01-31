@@ -21,15 +21,12 @@ public class Quiz extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(Quiz.class.getName());
     
-    // Tracks the title written for this session so subsequent adds don't repeat it
-    private String sessionTitle = null;
-    // Counts questions written for the current session title
+    // Counts questions written for the current session
     private int sessionQuestionCount = 0;
     
     // Track if this is an edit mode (loaded from Quiz.txt)
     private boolean isEditMode = false;
     // Store original values to detect changes
-    private String originalTitle = "";
     private String originalQuestion = "";
     private String originalA = "";
     private String originalB = "";
@@ -47,6 +44,7 @@ public class Quiz extends javax.swing.JFrame {
     private javax.swing.ButtonGroup answerGroup;
     // Track the correct answer (A, B, C, or D)
     private String correctAnswer = "";
+
 
     /**
      * Creates new form Quiz
@@ -73,7 +71,7 @@ public class Quiz extends javax.swing.JFrame {
     /**
      * Constructor for editing an existing quiz question
      */
-    public Quiz(String title, String questionID, String question, String ansA, String ansB, String ansC, String ansD, String correctAns) {
+    public Quiz(String question, String ansA, String ansB, String ansC, String ansD, String correctAns) {
         initComponents();
         // Create aliases for easier access
         a = jTextField2;
@@ -93,7 +91,6 @@ public class Quiz extends javax.swing.JFrame {
         
         // Mark as edit mode and store original values
         isEditMode = true;
-        originalTitle = title;
         originalQuestion = question;
         originalA = ansA;
         originalB = ansB;
@@ -102,7 +99,6 @@ public class Quiz extends javax.swing.JFrame {
         originalCorrectAnswer = correctAns;
         
         // Pre-populate the fields
-        jTextField1.setText(title);
         jTextArea1.setText(question);
         a.setText(ansA);
         b.setText(ansB);
@@ -149,8 +145,6 @@ public class Quiz extends javax.swing.JFrame {
         jTabbedPane1 = new javax.swing.JTabbedPane();
         jPanel2 = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
-        jTextField1 = new javax.swing.JTextField();
-        jLabel2 = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTextArea1 = new javax.swing.JTextArea();
@@ -205,12 +199,6 @@ public class Quiz extends javax.swing.JFrame {
 
         jPanel3.setBackground(new java.awt.Color(255, 255, 204));
 
-        jTextField1.addActionListener(this::jTextField1ActionPerformed);
-
-        jLabel2.setFont(new java.awt.Font("Segoe UI", 0, 17)); // NOI18N
-        jLabel2.setForeground(new java.awt.Color(0, 0, 0));
-        jLabel2.setText("Quiz Title:");
-
         jLabel1.setFont(new java.awt.Font("Segoe UI", 0, 17)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(0, 0, 0));
         jLabel1.setText("Question:");
@@ -245,54 +233,42 @@ public class Quiz extends javax.swing.JFrame {
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addGap(19, 19, 19)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addGroup(jPanel3Layout.createSequentialGroup()
+                                        .addGap(0, 0, Short.MAX_VALUE)
+                                        .addComponent(jRadioButton4))
+                                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel3Layout.createSequentialGroup()
+                                        .addComponent(jRadioButton3)
+                                        .addGap(0, 0, Short.MAX_VALUE)))
+                                .addGap(1, 1, 1))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                                .addGap(0, 0, Short.MAX_VALUE)
+                                .addComponent(jRadioButton1))
+                            .addComponent(jRadioButton5, javax.swing.GroupLayout.Alignment.TRAILING))
+                        .addGap(4, 4, 4)
+                        .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 284, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jLabel1)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 322, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(0, 12, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
-                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
-                                .addComponent(jRadioButton5)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jTextField6, javax.swing.GroupLayout.PREFERRED_SIZE, 284, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(jPanel3Layout.createSequentialGroup()
-                                .addGap(1, 1, 1)
-                                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addGroup(jPanel3Layout.createSequentialGroup()
-                                        .addComponent(jRadioButton4)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                        .addComponent(jTextField4))
-                                    .addGroup(jPanel3Layout.createSequentialGroup()
-                                        .addComponent(jRadioButton3)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                        .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, 285, javax.swing.GroupLayout.PREFERRED_SIZE)))))
-                        .addGap(17, 17, 17))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
-                        .addComponent(jRadioButton1)
-                        .addGap(313, 313, 313))))
-            .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 284, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel3Layout.createSequentialGroup()
-                        .addGap(19, 19, 19)
-                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel3Layout.createSequentialGroup()
-                                .addComponent(jLabel2)
-                                .addGap(18, 18, 18)
-                                .addComponent(jTextField1))
-                            .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 322, Short.MAX_VALUE))))
-                .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(jTextField6, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 284, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addComponent(jTextField4)
+                        .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, 285, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(11, 11, 11))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGap(17, 17, 17)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(8, 8, 8)
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -300,19 +276,20 @@ public class Quiz extends javax.swing.JFrame {
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jRadioButton1))
+                .addGap(10, 10, 10)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jRadioButton4)
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jRadioButton3))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jRadioButton3))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jRadioButton4))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jTextField6, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jRadioButton5))
-                .addContainerGap(26, Short.MAX_VALUE))
+                .addContainerGap(18, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
@@ -329,7 +306,7 @@ public class Quiz extends javax.swing.JFrame {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(10, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Objective", jPanel2);
@@ -411,50 +388,50 @@ public class Quiz extends javax.swing.JFrame {
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addGap(0, 58, Short.MAX_VALUE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(73, 73, 73)
-                        .addComponent(jLabel8)
-                        .addGap(31, 31, 31)
-                        .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(39, 39, 39)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(jButton2)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jButton4)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jButton3)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jButton1))
-                            .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 370, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addContainerGap(39, Short.MAX_VALUE))
+                        .addComponent(jButton2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton4)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton3)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jButton1))
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addGroup(jPanel1Layout.createSequentialGroup()
+                            .addComponent(jLabel8)
+                            .addGap(31, 31, 31)
+                            .addComponent(jComboBox1, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 370, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(60, 60, 60))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(25, 25, 25)
+                .addContainerGap(24, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel8))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(18, 18, 18)
                 .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 460, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 25, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton2)
                     .addComponent(jButton4)
                     .addComponent(jButton1)
                     .addComponent(jButton3))
-                .addGap(37, 37, 37))
+                .addGap(25, 25, 25))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -474,14 +451,13 @@ public class Quiz extends javax.swing.JFrame {
 
         // Check if TempQuiz.txt doesn't exist and form fields are all empty
         if (!temp.exists()) {
-            String title = jTextField1.getText().trim();
             String question = jTextArea1.getText().trim();
             String a1 = a.getText().trim();
             String a2 = b.getText().trim();
             String a3 = c.getText().trim();
             String a4 = d.getText().trim();
 
-            if (title.isEmpty() && question.isEmpty() && a1.isEmpty() && a2.isEmpty() && a3.isEmpty() && a4.isEmpty()) {
+            if (question.isEmpty() && a1.isEmpty() && a2.isEmpty() && a3.isEmpty() && a4.isEmpty()) {
                 JOptionPane.showMessageDialog(this, "There are no values to add. Please add questions or fill in the form fields.", "Validation", JOptionPane.WARNING_MESSAGE);
                 return;
             }
@@ -516,15 +492,13 @@ public class Quiz extends javax.swing.JFrame {
                 }
                 
                 // clear all fields including title
-                jTextField1.setText("");
                 jTextArea1.setText("");
                 a.setText("");
                 b.setText("");
                 c.setText("");
                 d.setText("");
 
-                // reset session title after saving
-                sessionTitle = null;
+                // reset session count after saving
                 sessionQuestionCount = 0;
 
                 JOptionPane.showMessageDialog(this, "Quiz saved successfully", "Saved", JOptionPane.INFORMATION_MESSAGE);
@@ -532,16 +506,15 @@ public class Quiz extends javax.swing.JFrame {
             }
 
             // Then save the current form fields if they are not empty (only if TempQuiz.txt didn't exist)
-            String title = jTextField1.getText().trim();
             String question = jTextArea1.getText().trim();
             String a1 = a.getText().trim();
             String a2 = b.getText().trim();
             String a3 = c.getText().trim();
             String a4 = d.getText().trim();
 
-            if (!title.isEmpty() || !question.isEmpty() || !a1.isEmpty() || !a2.isEmpty() || !a3.isEmpty() || !a4.isEmpty()) {
+            if (!question.isEmpty() || !a1.isEmpty() || !a2.isEmpty() || !a3.isEmpty() || !a4.isEmpty()) {
                 // Check if all fields are filled
-                if (title.isEmpty() || question.isEmpty() || a1.isEmpty() || a2.isEmpty() || a3.isEmpty() || a4.isEmpty()) {
+                if (question.isEmpty() || a1.isEmpty() || a2.isEmpty() || a3.isEmpty() || a4.isEmpty()) {
                     JOptionPane.showMessageDialog(this, "Please fill in all fields before saving.", "Validation", JOptionPane.WARNING_MESSAGE);
                     return;
                 }
@@ -553,7 +526,6 @@ public class Quiz extends javax.swing.JFrame {
                 }
 
                 StringBuilder sb = new StringBuilder();
-                sb.append(csvEscape(title)).append(", ");
                 sb.append(csvEscape("Q001")).append(", ");
                 sb.append(csvEscape(question)).append(", ");
                 sb.append(csvEscape(a1)).append(", ");
@@ -572,7 +544,6 @@ public class Quiz extends javax.swing.JFrame {
         }
 
         // clear all fields including title
-        jTextField1.setText("");
         jTextArea1.setText("");
         a.setText("");
         b.setText("");
@@ -581,8 +552,7 @@ public class Quiz extends javax.swing.JFrame {
         answerGroup.clearSelection();
         correctAnswer = "";
 
-        // reset session title after saving
-        sessionTitle = null;
+        // reset session count after saving
         sessionQuestionCount = 0;
 
         JOptionPane.showMessageDialog(this, "Quiz saved successfully", "Saved", JOptionPane.INFORMATION_MESSAGE);
@@ -593,7 +563,6 @@ public class Quiz extends javax.swing.JFrame {
         String projectRoot = System.getProperty("user.dir");
         File temp = new File(projectRoot, "src\\main\\java\\oopwj\\TempQuiz.txt");
         
-        String title = jTextField1.getText().trim();
         String question = jTextArea1.getText().trim();
         String a1 = a.getText().trim();
         String a2 = b.getText().trim();
@@ -608,8 +577,7 @@ public class Quiz extends javax.swing.JFrame {
         }
         // Check if in edit mode and values have changed
         else if (isEditMode) {
-            boolean valuesChanged = !title.equals(originalTitle) ||
-                                    !question.equals(originalQuestion) ||
+            boolean valuesChanged = !question.equals(originalQuestion) ||
                                     !a1.equals(originalA) ||
                                     !a2.equals(originalB) ||
                                     !a3.equals(originalC) ||
@@ -621,7 +589,7 @@ public class Quiz extends javax.swing.JFrame {
         }
         // Check if not in edit mode but has form data
         else {
-            boolean hasFormData = !title.isEmpty() || !question.isEmpty() || !a1.isEmpty() || !a2.isEmpty() || !a3.isEmpty() || !a4.isEmpty();
+            boolean hasFormData = !question.isEmpty() || !a1.isEmpty() || !a2.isEmpty() || !a3.isEmpty() || !a4.isEmpty();
             if (hasFormData) {
                 needsConfirmation = true;
             }
@@ -647,8 +615,7 @@ public class Quiz extends javax.swing.JFrame {
             }
         }
 
-        // reset session title after discarding
-        sessionTitle = null;
+        // reset session count after discarding
         sessionQuestionCount = 0;
 
         // open Assessments
@@ -659,15 +626,14 @@ public class Quiz extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-        // Add: validate fields, append current entry to TemporaryQuiz.txt, then clear fields except title
-        String title = jTextField1.getText().trim();
+        // Add: validate fields, append current entry to TemporaryQuiz.txt, then clear fields
         String question = jTextArea1.getText().trim();
         String a1 = a.getText().trim();
         String a2 = b.getText().trim();
         String a3 = c.getText().trim();
         String a4 = d.getText().trim();
 
-        if (title.isEmpty() || question.isEmpty() || a1.isEmpty() || a2.isEmpty() || a3.isEmpty() || a4.isEmpty()) {
+        if (question.isEmpty() || a1.isEmpty() || a2.isEmpty() || a3.isEmpty() || a4.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Please fill in all fields before adding.", "Validation", JOptionPane.WARNING_MESSAGE);
             return;
         }
@@ -678,40 +644,14 @@ public class Quiz extends javax.swing.JFrame {
             return;
         }
 
-        // Check if quiz title already exists in Quiz.txt
         String projectRoot = System.getProperty("user.dir");
-        File quizFile = new File(projectRoot, "src\\main\\java\\oopwj\\Quiz.txt");
-        
-        if (quizFile.exists()) {
-            try (BufferedReader br = new BufferedReader(new FileReader(quizFile))) {
-                String line;
-                while ((line = br.readLine()) != null) {
-                    // Parse the title from CSV format (first field)
-                    String[] parts = parseCSVLine(line);
-                    if (parts.length > 0 && parts[0].equalsIgnoreCase(title)) {
-                        JOptionPane.showMessageDialog(this, "Quiz title '" + title + "' already exists in Quiz.txt. Please use a different title.", "Validation Error", JOptionPane.ERROR_MESSAGE);
-                        return;
-                    }
-                }
-            } catch (IOException ex) {
-                logger.log(java.util.logging.Level.SEVERE, null, ex);
-                JOptionPane.showMessageDialog(this, "Failed to check existing quiz titles: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-        }
 
         File temp = new File(projectRoot, "src\\main\\java\\oopwj\\TempQuiz.txt");
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(temp, true))) {
-            // CSV format: Title,QuestionNumber,Timestamp,Question,Answer1,Answer2,Answer3,Answer4
-            if (sessionTitle == null || !sessionTitle.equals(title)) {
-                sessionTitle = title;
-                sessionQuestionCount = 1;
-            } else {
-                sessionQuestionCount++;
-            }
+            // CSV format: QuestionNumber,Question,Answer1,Answer2,Answer3,Answer4,CorrectAnswer
+            sessionQuestionCount++;
 
             StringBuilder sb = new StringBuilder();
-            sb.append(csvEscape(sessionTitle)).append(", ");
             sb.append(csvEscape(String.format("Q%03d", sessionQuestionCount))).append(", ");
             sb.append(csvEscape(question)).append(", ");
             sb.append(csvEscape(a1)).append(", ");
@@ -739,10 +679,6 @@ public class Quiz extends javax.swing.JFrame {
 
         JOptionPane.showMessageDialog(this, "Question added successfully", "Added", JOptionPane.INFORMATION_MESSAGE);
     }//GEN-LAST:event_jButton3ActionPerformed
-
-    private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField1ActionPerformed
 
     private void jTextField3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField3ActionPerformed
         // TODO add your handling code here:
@@ -782,7 +718,6 @@ public class Quiz extends javax.swing.JFrame {
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         // Clear all form fields
-        jTextField1.setText("");
         jTextArea1.setText("");
         a.setText("");
         b.setText("");
@@ -802,37 +737,6 @@ public class Quiz extends javax.swing.JFrame {
             return "\"" + value + "\"";
         }
         return value;
-    }
-
-    // Helper: parse a CSV line and extract fields, handling quoted values
-    private String[] parseCSVLine(String line) {
-        java.util.List<String> fields = new java.util.ArrayList<>();
-        StringBuilder current = new StringBuilder();
-        boolean inQuotes = false;
-        
-        for (int i = 0; i < line.length(); i++) {
-            char c = line.charAt(i);
-            
-            if (c == '"') {
-                if (inQuotes && i + 1 < line.length() && line.charAt(i + 1) == '"') {
-                    // Escaped quote
-                    current.append('"');
-                    i++; // Skip next quote
-                } else {
-                    // Toggle quote state
-                    inQuotes = !inQuotes;
-                }
-            } else if (c == ',' && !inQuotes) {
-                // Field separator
-                fields.add(current.toString().trim());
-                current = new StringBuilder();
-            } else {
-                current.append(c);
-            }
-        }
-        fields.add(current.toString().trim());
-        
-        return fields.toArray(new String[0]);
     }
 
     /**
@@ -867,7 +771,6 @@ public class Quiz extends javax.swing.JFrame {
     private javax.swing.JButton jButton4;
     private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel8;
@@ -887,7 +790,6 @@ public class Quiz extends javax.swing.JFrame {
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JTextArea jTextArea1;
     private javax.swing.JTextArea jTextArea2;
-    private javax.swing.JTextField jTextField1;
     private javax.swing.JTextField jTextField2;
     private javax.swing.JTextField jTextField3;
     private javax.swing.JTextField jTextField4;
