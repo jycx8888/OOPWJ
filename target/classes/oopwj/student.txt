@@ -1,2 +1,0 @@
-S111,stup,sup,S111@mail.apu.edu.my
-S123,student,stu,S123@mail.apu.edu.my
