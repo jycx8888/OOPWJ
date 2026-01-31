@@ -457,7 +457,7 @@ public class Assessments extends javax.swing.JFrame {
         File quizFile = new File(projectRoot, "src\\main\\java\\oopwj\\Quiz.txt");
 
         // Update column names to include the required fields
-        String[] columnNames = {"Module ID", "Module Name", "Question ID", "Question Type", "Question"};
+        String[] columnNames = {"Question ID", "Module ID", "Question Type", "Question"};
         List<Object[]> rows = new ArrayList<>();
 
         if (quizFile.exists()) {
@@ -465,10 +465,10 @@ public class Assessments extends javax.swing.JFrame {
                 String line;
                 while ((line = br.readLine()) != null) {
                     String[] fields = parseCSV(line);
-                    if (fields.length == 10) { // Row length of 10
-                        rows.add(new Object[]{fields[0], fields[1], fields[2], fields[9], fields[3]});
-                    } else if (fields.length == 5) { // Row length of 5
-                        rows.add(new Object[]{fields[0], fields[1], fields[2], fields[4], fields[3]});
+                    if (fields.length == 9) { // Row length of 9
+                        rows.add(new Object[]{fields[0], fields[1], fields[8], fields[2]});
+                    } else if (fields.length == 4) { // Row length of 4
+                        rows.add(new Object[]{fields[0], fields[1], fields[3], fields[2]});
                     }
                 }
             } catch (IOException ex) {
