@@ -23,14 +23,7 @@ public class Lecturer_menu extends javax.swing.JFrame {
     public Lecturer_menu(String lecturerID) {
         this.lecturerID = lecturerID;
         initComponents();
-        setupListeners();
-    }
-
-    private void setupListeners() {
-        Settings.addActionListener(this::SettingsActionPerformed);
-        Assessmentsbutton.addActionListener(this::AssessmentsbuttonActionPerformed);
-        GradeAssessmentButton.addActionListener(this::AssessmentMarkButtonActionPerformed);
-        AssessmentFeedbackButton.addActionListener(this::AssessmentFeedbackButtonActionPerformed);
+        // Removed setupListeners() - listeners are already set in initComponents()
     }
 
     /**

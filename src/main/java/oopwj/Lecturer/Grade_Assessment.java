@@ -71,7 +71,7 @@ public class Grade_Assessment extends javax.swing.JFrame {
 
     private void clearTable() {
         jTable1.setModel(new DefaultTableModel(
-            new Object[]{"ModuleID", "StudentID", "QuestionID", "Type", "Answer"}, 0
+            new Object[]{"ModuleID", "StudentID"}, 0
         ));
     }
 
@@ -118,6 +118,7 @@ public class Grade_Assessment extends javax.swing.JFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
         jButton1 = new javax.swing.JButton();
+        jButton2 = new javax.swing.JButton();
 
         javax.swing.GroupLayout jDialog1Layout = new javax.swing.GroupLayout(jDialog1.getContentPane());
         jDialog1.getContentPane().setLayout(jDialog1Layout);
@@ -141,14 +142,19 @@ public class Grade_Assessment extends javax.swing.JFrame {
         jButton1.setText("Back");
         jButton1.addActionListener(this::jButton1ActionPerformed);
 
+        jButton2.setText("Grade");
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addContainerGap(38, Short.MAX_VALUE)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jButton1)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jButton2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jButton1))
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 353, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(32, 32, 32))
         );
@@ -158,7 +164,9 @@ public class Grade_Assessment extends javax.swing.JFrame {
                 .addContainerGap(64, Short.MAX_VALUE)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 376, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(jButton1)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jButton1)
+                    .addComponent(jButton2))
                 .addGap(33, 33, 33))
         );
 
@@ -278,7 +286,8 @@ public class Grade_Assessment extends javax.swing.JFrame {
             return;
         }
 
-        // Show all answers for allowed moduleIDs
+        // Show unique moduleID and studentID pairs only
+        Set<String> uniqueStudentModulePairs = new HashSet<>();
         List<String[]> tableData = new ArrayList<>();
         try (BufferedReader br = new BufferedReader(new FileReader(answersFile))) {
             String line;
@@ -292,20 +301,21 @@ public class Grade_Assessment extends javax.swing.JFrame {
                 if (parts.length >= 5) {
                     String studentID = parts[0].trim();
                     String moduleID = parts[1].trim();
-                    String questionID = parts[2].trim();
-                    String questionType = parts[3].trim();
-                    String answer = parts[4].trim();
                     
                     if (allowedModuleIDs.contains(moduleID)) {
-                        tableData.add(new String[]{moduleID, studentID, questionID, questionType, answer});
-                        System.out.println("✓ Added answer - Module: " + moduleID + ", Student: " + studentID);
+                        String pairKey = moduleID + "|" + studentID;
+                        if (!uniqueStudentModulePairs.contains(pairKey)) {
+                            uniqueStudentModulePairs.add(pairKey);
+                            tableData.add(new String[]{moduleID, studentID});
+                            System.out.println("✓ Added unique student - Module: " + moduleID + ", Student: " + studentID);
+                        }
                     }
                 } else {
                     logger.log(java.util.logging.Level.WARNING, "Malformed line in answers.txt (line " + lineCount + "): " + line);
                 }
             }
-            System.out.println("Total answers read: " + lineCount + ", Loaded: " + tableData.size());
-            logger.log(java.util.logging.Level.INFO, "Total answers loaded: " + tableData.size());
+            System.out.println("Total answers read: " + lineCount + ", Unique students: " + tableData.size());
+            logger.log(java.util.logging.Level.INFO, "Total unique students loaded: " + tableData.size());
         } catch (IOException e) {
             logger.log(java.util.logging.Level.SEVERE, "Error reading answers.txt: " + e.getMessage(), e);
             javax.swing.JOptionPane.showMessageDialog(this, 
@@ -316,7 +326,7 @@ public class Grade_Assessment extends javax.swing.JFrame {
         }
 
         DefaultTableModel model = new DefaultTableModel(
-            new Object[]{"ModuleID", "StudentID", "QuestionID", "Type", "Answer"}, 0
+            new Object[]{"ModuleID", "StudentID"}, 0
         );
         for (String[] row : tableData) {
             model.addRow(row);
@@ -326,11 +336,6 @@ public class Grade_Assessment extends javax.swing.JFrame {
         jTable1.setModel(model);
         
         System.out.println("DEBUG: loadAssessmentAnswers() END");
-        
-        javax.swing.JOptionPane.showMessageDialog(this, 
-            "Loaded " + tableData.size() + " answers for lecturer " + lecturerID, 
-            "Load Complete", 
-            javax.swing.JOptionPane.INFORMATION_MESSAGE);
     }   
 
     /**
@@ -362,6 +367,7 @@ public class Grade_Assessment extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
     private javax.swing.JDialog jDialog1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
