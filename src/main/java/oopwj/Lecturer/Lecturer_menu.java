@@ -117,7 +117,7 @@ public class Lecturer_menu extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void GradeAssessmentButtonActionPerformed(java.awt.event.ActionEvent evt) {
-        new Grade_Assessment().setVisible(true); // Adjusted to match the existing constructor
+        new Grade_Assessment(lecturerID).setVisible(true);
         this.setVisible(false);
     }//GEN-LAST:event_GradeAssessmentButtonActionPerformed
 

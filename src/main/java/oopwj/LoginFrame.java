@@ -120,7 +120,8 @@ public class LoginFrame extends JFrame {
                             System.out.println("Redirecting to Student Menu...");
                             break;
                         case "Lecturer":
-                            new Lecturer_menu(userID).setVisible(true);
+                            Lecturer_menu menu = new Lecturer_menu(userID);
+                            menu.setVisible(true);
                             break;
                         case "Academic Leader":
                             new academicLeader(userID).setVisible(true);

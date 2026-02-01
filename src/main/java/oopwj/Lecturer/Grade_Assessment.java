@@ -4,6 +4,8 @@
  */
 package oopwj.Lecturer;
 
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -29,11 +31,71 @@ public class Grade_Assessment extends javax.swing.JFrame {
      * Creates new form Grade_Assessment
      */
     public Grade_Assessment() {
-        // Remove incorrect assignments
-        // this.lecturerID = lecturerID;
-        // this.lecturerMenu = lecturerMenu;
         initComponents();
-        // Optionally, do not loadAssessmentAnswers() here, as lecturerID is not set
+        clearTable();
+        // No need for initLoadOnShow() here
+    }
+
+    public Grade_Assessment(String lecturerID) {
+        this.lecturerID = lecturerID;
+        this.lecturerMenu = null;
+        
+        System.out.println("Grade_Assessment constructor - lecturerID: " + lecturerID);
+        logger.log(java.util.logging.Level.INFO, "Grade_Assessment created with lecturerID: " + lecturerID);
+        
+        initComponents();
+        clearTable();
+        initLoadOnShow();
+        // REMOVED: loadAssessmentAnswers() - will be called after window is shown
+    }
+
+    public void setLecturerID(String lecturerID) {
+        this.lecturerID = lecturerID;
+        if (isVisible()) {
+            reloadAssessmentAnswers();
+        }
+    }
+
+    private void reloadAssessmentAnswers() {
+        clearTable();
+        if (lecturerID != null && !lecturerID.isEmpty()) {
+            loadAssessmentAnswers();
+        }
+    }
+
+    private void clearTable() {
+        jTable1.setModel(new DefaultTableModel(
+            new Object[]{"ModuleID", "StudentID", "QuestionID", "Type", "Answer"}, 0
+        ));
+    }
+
+    private void initLoadOnShow() {
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowOpened(WindowEvent e) {
+                System.out.println("DEBUG: windowOpened called");
+                System.out.println("DEBUG: lecturerID = " + lecturerID);
+                System.out.println("DEBUG: isVisible = " + isVisible());
+                
+                if (lecturerID != null && !lecturerID.isEmpty()) {
+                    System.out.println("DEBUG: About to load data in background thread");
+                    // Load data in background to avoid blocking UI
+                    new Thread(() -> {
+                        try {
+                            Thread.sleep(500); // Wait for window to fully render
+                        } catch (InterruptedException ex) {
+                            ex.printStackTrace();
+                        }
+                        javax.swing.SwingUtilities.invokeLater(() -> {
+                            System.out.println("DEBUG: Calling loadAssessmentAnswers");
+                            loadAssessmentAnswers();
+                        });
+                    }).start();
+                } else {
+                    System.out.println("DEBUG: lecturerID is null or empty, skipping load");
+                }
+            }
+        });
     }
 
     /**
@@ -100,21 +162,13 @@ public class Grade_Assessment extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
     
-    public Grade_Assessment(String lecturerID) {
-        this.lecturerID = lecturerID;
-        this.lecturerMenu = null;
-        
-        // Debug: Log the lecturerID being passed
-        System.out.println("Grade_Assessment constructor - lecturerID: " + lecturerID);
-        logger.log(java.util.logging.Level.INFO, "Grade_Assessment created with lecturerID: " + lecturerID);
-        
-        initComponents();
-        loadAssessmentAnswers();
-    }
-
     private void loadAssessmentAnswers() {
-        String modulesFilePath = "src/main/java/oopwj/modules.txt";
-        String answersFilePath = "src/main/java/oopwj/answers.txt";
+        System.out.println("DEBUG: loadAssessmentAnswers() START");
+        
+        // Use absolute paths based on project root
+        String projectRoot = System.getProperty("user.dir");
+        String modulesFilePath = projectRoot + "/src/main/java/oopwj/modules.txt";
+        String answersFilePath = projectRoot + "/src/main/java/oopwj/answers.txt";
         Set<String> allowedModuleIDs = new HashSet<>();
 
         // Debug: Check if lecturerID is set
@@ -127,47 +181,68 @@ public class Grade_Assessment extends javax.swing.JFrame {
             return;
         }
 
-        logger.log(java.util.logging.Level.INFO, "Starting load for lecturer: " + lecturerID);
-        System.out.println("Current directory: " + System.getProperty("user.dir"));
-        System.out.println("LecturerID: " + lecturerID);
-        logger.log(java.util.logging.Level.INFO, "Current directory: " + System.getProperty("user.dir"));
-        logger.log(java.util.logging.Level.INFO, "Modules file path: " + new java.io.File(modulesFilePath).getAbsolutePath());
-        logger.log(java.util.logging.Level.INFO, "Answers file path: " + new java.io.File(answersFilePath).getAbsolutePath());
-
-        // Build set of moduleIDs for this lecturer
-        try (BufferedReader br = new BufferedReader(new FileReader(modulesFilePath))) {
-            String line;
-            int lineCount = 0;
-            while ((line = br.readLine()) != null) {
-                lineCount++;
-                System.out.println("Module line " + lineCount + ": " + line);
-                logger.log(java.util.logging.Level.INFO, "Module line " + lineCount + ": " + line);
-                String[] parts = line.split(",");
-                if (parts.length > 3) {
-                    String moduleID = parts[0].trim();
-                    String fileLecturerID = parts[3].trim();
-                    System.out.println("Comparing: '" + fileLecturerID + "' == '" + lecturerID + "'");
-                    logger.log(java.util.logging.Level.INFO, "Comparing: " + fileLecturerID + " == " + lecturerID);
-                    if (fileLecturerID.equals(lecturerID)) {
-                        allowedModuleIDs.add(moduleID);
-                        System.out.println("Found matching module: " + moduleID);
-                        logger.log(java.util.logging.Level.INFO, "Found module: " + moduleID);
-                    }
-                }
-            }
-            System.out.println("Total modules read: " + lineCount);
-            logger.log(java.util.logging.Level.INFO, "Total modules read: " + lineCount);
-        } catch (IOException e) {
-            logger.log(java.util.logging.Level.SEVERE, "Error reading modules.txt: " + e.getMessage(), e);
+        // Validate file existence
+        java.io.File modulesFile = new java.io.File(modulesFilePath);
+        java.io.File answersFile = new java.io.File(answersFilePath);
+        
+        if (!modulesFile.exists()) {
+            logger.log(java.util.logging.Level.SEVERE, "modules.txt not found at: " + modulesFile.getAbsolutePath());
             javax.swing.JOptionPane.showMessageDialog(this, 
-                "Error reading modules.txt: " + e.getMessage() + "\nPath: " + new java.io.File(modulesFilePath).getAbsolutePath(), 
-                "File Error", 
+                "modules.txt not found at: " + modulesFile.getAbsolutePath(), 
+                "File Not Found", 
+                javax.swing.JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        
+        if (!answersFile.exists()) {
+            logger.log(java.util.logging.Level.SEVERE, "answers.txt not found at: " + answersFile.getAbsolutePath());
+            javax.swing.JOptionPane.showMessageDialog(this, 
+                "answers.txt not found at: " + answersFile.getAbsolutePath(), 
+                "File Not Found", 
                 javax.swing.JOptionPane.ERROR_MESSAGE);
             return;
         }
 
-        System.out.println("Allowed modules: " + allowedModuleIDs);
-        logger.log(java.util.logging.Level.INFO, "Allowed modules: " + allowedModuleIDs);
+        logger.log(java.util.logging.Level.INFO, "Starting load for lecturer: " + lecturerID);
+        System.out.println("Project root: " + projectRoot);
+        System.out.println("Modules file path: " + modulesFilePath);
+        System.out.println("Answers file path: " + answersFilePath);
+        System.out.println("LecturerID: '" + lecturerID + "'");
+        
+        // Build set of moduleIDs for this lecturer
+        try (BufferedReader br = new BufferedReader(new FileReader(modulesFile))) {
+            String line;
+            int lineCount = 0;
+            while ((line = br.readLine()) != null) {
+                lineCount++;
+                line = line.trim();
+                if (line.isEmpty() || line.startsWith("#")) continue;
+                
+                String[] parts = line.split(",");
+                if (parts.length > 3) {
+                    String moduleID = parts[0].trim();
+                    String fileLecturerID = parts[3].trim();
+                    
+                    System.out.println("Comparing: '" + fileLecturerID + "' == '" + lecturerID + "'");
+                    if (fileLecturerID.equals(lecturerID)) {
+                        allowedModuleIDs.add(moduleID);
+                        System.out.println("✓ Found matching module: " + moduleID);
+                        logger.log(java.util.logging.Level.INFO, "Found module: " + moduleID);
+                    }
+                } else {
+                    logger.log(java.util.logging.Level.WARNING, "Malformed line in modules.txt (line " + lineCount + "): " + line);
+                }
+            }
+            System.out.println("Total modules read: " + lineCount + ", Allowed: " + allowedModuleIDs.size());
+            logger.log(java.util.logging.Level.INFO, "Allowed modules: " + allowedModuleIDs);
+        } catch (IOException e) {
+            logger.log(java.util.logging.Level.SEVERE, "Error reading modules.txt: " + e.getMessage(), e);
+            javax.swing.JOptionPane.showMessageDialog(this, 
+                "Error reading modules.txt: " + e.getMessage(), 
+                "File Error", 
+                javax.swing.JOptionPane.ERROR_MESSAGE);
+            return;
+        }
         
         if (allowedModuleIDs.isEmpty()) {
             logger.log(java.util.logging.Level.WARNING, "No modules found for lecturer: " + lecturerID);
@@ -175,17 +250,19 @@ public class Grade_Assessment extends javax.swing.JFrame {
                 "No modules assigned to lecturer: " + lecturerID, 
                 "No Data", 
                 javax.swing.JOptionPane.INFORMATION_MESSAGE);
+            return;
         }
 
         // Show all answers for allowed moduleIDs
         List<String[]> tableData = new ArrayList<>();
-        try (BufferedReader br = new BufferedReader(new FileReader(answersFilePath))) {
+        try (BufferedReader br = new BufferedReader(new FileReader(answersFile))) {
             String line;
             int lineCount = 0;
             while ((line = br.readLine()) != null) {
                 lineCount++;
-                System.out.println("Answer line " + lineCount + ": " + line);
-                logger.log(java.util.logging.Level.INFO, "Answer line " + lineCount + ": " + line);
+                line = line.trim();
+                if (line.isEmpty() || line.startsWith("#")) continue;
+                
                 String[] parts = line.split(",");
                 if (parts.length >= 5) {
                     String studentID = parts[0].trim();
@@ -196,17 +273,18 @@ public class Grade_Assessment extends javax.swing.JFrame {
                     
                     if (allowedModuleIDs.contains(moduleID)) {
                         tableData.add(new String[]{moduleID, studentID, questionID, questionType, answer});
-                        System.out.println("Added answer for module: " + moduleID);
-                        logger.log(java.util.logging.Level.INFO, "Added answer for module: " + moduleID);
+                        System.out.println("✓ Added answer - Module: " + moduleID + ", Student: " + studentID);
                     }
+                } else {
+                    logger.log(java.util.logging.Level.WARNING, "Malformed line in answers.txt (line " + lineCount + "): " + line);
                 }
             }
-            System.out.println("Total answers read: " + lineCount);
-            logger.log(java.util.logging.Level.INFO, "Total answers read: " + lineCount);
+            System.out.println("Total answers read: " + lineCount + ", Loaded: " + tableData.size());
+            logger.log(java.util.logging.Level.INFO, "Total answers loaded: " + tableData.size());
         } catch (IOException e) {
             logger.log(java.util.logging.Level.SEVERE, "Error reading answers.txt: " + e.getMessage(), e);
             javax.swing.JOptionPane.showMessageDialog(this, 
-                "Error reading answers.txt: " + e.getMessage() + "\nPath: " + new java.io.File(answersFilePath).getAbsolutePath(), 
+                "Error reading answers.txt: " + e.getMessage(), 
                 "File Error", 
                 javax.swing.JOptionPane.ERROR_MESSAGE);
             return;
@@ -217,11 +295,13 @@ public class Grade_Assessment extends javax.swing.JFrame {
         );
         for (String[] row : tableData) {
             model.addRow(row);
+            System.out.println("DEBUG: Added row - " + java.util.Arrays.toString(row));
         }
+        System.out.println("DEBUG: Setting model with " + model.getRowCount() + " rows");
         jTable1.setModel(model);
         
-        System.out.println("Loaded " + tableData.size() + " answers");
-        logger.log(java.util.logging.Level.INFO, "Loaded " + tableData.size() + " answers");
+        System.out.println("DEBUG: loadAssessmentAnswers() END");
+        
         javax.swing.JOptionPane.showMessageDialog(this, 
             "Loaded " + tableData.size() + " answers for lecturer " + lecturerID, 
             "Load Complete", 
