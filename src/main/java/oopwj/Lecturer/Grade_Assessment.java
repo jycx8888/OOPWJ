@@ -4,6 +4,16 @@
  */
 package oopwj.Lecturer;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author User
@@ -19,9 +29,11 @@ public class Grade_Assessment extends javax.swing.JFrame {
      * Creates new form Grade_Assessment
      */
     public Grade_Assessment() {
-        this.lecturerID = lecturerID;
-        this.lecturerMenu = lecturerMenu;
+        // Remove incorrect assignments
+        // this.lecturerID = lecturerID;
+        // this.lecturerMenu = lecturerMenu;
         initComponents();
+        // Optionally, do not loadAssessmentAnswers() here, as lecturerID is not set
     }
 
     /**
@@ -33,48 +45,118 @@ public class Grade_Assessment extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jDialog1 = new javax.swing.JDialog();
         jPanel1 = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jTable1 = new javax.swing.JTable();
+
+        javax.swing.GroupLayout jDialog1Layout = new javax.swing.GroupLayout(jDialog1.getContentPane());
+        jDialog1.getContentPane().setLayout(jDialog1Layout);
+        jDialog1Layout.setHorizontalGroup(
+            jDialog1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 400, Short.MAX_VALUE)
+        );
+        jDialog1Layout.setVerticalGroup(
+            jDialog1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 300, Short.MAX_VALUE)
+        );
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
 
-        jLabel1.setForeground(new java.awt.Color(0, 0, 0));
-        jLabel1.setText("Grade assessment");
+        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        ));
+        jScrollPane1.setViewportView(jTable1);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(153, 153, 153)
-                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(142, Short.MAX_VALUE))
+                .addGap(35, 35, 35)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 353, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(35, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(78, 78, 78)
-                .addComponent(jLabel1)
-                .addContainerGap(234, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addContainerGap(42, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 448, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(28, 28, 28))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+    
+    public Grade_Assessment(String lecturerID) {
+        this.lecturerID = lecturerID;
+        this.lecturerMenu = null; // Or pass as parameter if needed
+        initComponents();
+        loadAssessmentAnswers();
+    }
+
+    private void loadAssessmentAnswers() {
+        String modulesFilePath = "src/main/java/oopwj/modules.txt";
+        String answersFilePath = "src/main/java/oopwj/answers.txt";
+        Set<String> allowedModuleIDs = new HashSet<>();
+
+        // Build set of moduleIDs for this lecturer
+        try (BufferedReader br = new BufferedReader(new FileReader(modulesFilePath))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] parts = line.split(",");
+                // modules.txt: [0]=moduleID, [3]=lecturerID (your file has 4 columns)
+                if (parts.length > 3) {
+                    String moduleID = parts[0].trim();
+                    String fileLecturerID = parts[3].trim();
+                    if (fileLecturerID.equals(lecturerID)) {
+                        allowedModuleIDs.add(moduleID);
+                    }
+                }
+            }
+        } catch (IOException e) {
+            logger.log(java.util.logging.Level.SEVERE, "Error reading modules.txt", e);
+        }
+
+        // Show only answers for allowed moduleIDs
+        Set<String> uniqueEntries = new HashSet<>();
+        List<String[]> tableData = new ArrayList<>();
+        try (BufferedReader br = new BufferedReader(new FileReader(answersFilePath))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] parts = line.split(",");
+                // answers.txt: [1]=moduleID
+                if (parts.length > 1) {
+                    String studentID = parts[0].trim();
+                    String moduleID = parts[1].trim();
+                    String key = studentID + "|" + moduleID;
+                    if (allowedModuleIDs.contains(moduleID) && uniqueEntries.add(key)) {
+                        tableData.add(new String[]{moduleID, studentID});
+                    }
+                }
+            }
+        } catch (IOException e) {
+            logger.log(java.util.logging.Level.SEVERE, "Error reading answers.txt", e);
+        }
+
+        DefaultTableModel model = new DefaultTableModel(new Object[]{"ModuleID", "StudentID"}, 0);
+        for (String[] row : tableData) {
+            model.addRow(row);
+        }
+        jTable1.setModel(model);
+    }
 
     /**
      * @param args the command line arguments
@@ -98,11 +180,15 @@ public class Grade_Assessment extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> new Grade_Assessment().setVisible(true));
+        java.awt.EventQueue.invokeLater(() -> 
+            new Grade_Assessment("L101").setVisible(true) // Use a valid lecturerID for testing
+        );
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JLabel jLabel1;
+    private javax.swing.JDialog jDialog1;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTable jTable1;
     // End of variables declaration//GEN-END:variables
 }
