@@ -29,9 +29,8 @@ public class Lecturer_menu extends javax.swing.JFrame {
     private void setupListeners() {
         Settings.addActionListener(this::SettingsActionPerformed);
         Assessmentsbutton.addActionListener(this::AssessmentsbuttonActionPerformed);
-        AssessmentMarkButton.addActionListener(this::AssessmentMarkButtonActionPerformed);
+        GradeAssessmentButton.addActionListener(this::AssessmentMarkButtonActionPerformed);
         AssessmentFeedbackButton.addActionListener(this::AssessmentFeedbackButtonActionPerformed);
-        EditAssessmentsbutton.addActionListener(this::EditAssessmentsbuttonActionPerformed);
     }
 
     /**
@@ -46,9 +45,8 @@ public class Lecturer_menu extends javax.swing.JFrame {
         jPanel1 = new javax.swing.JPanel();
         Settings = new javax.swing.JButton();
         Assessmentsbutton = new javax.swing.JButton();
-        AssessmentMarkButton = new javax.swing.JButton();
+        GradeAssessmentButton = new javax.swing.JButton();
         AssessmentFeedbackButton = new javax.swing.JButton();
-        EditAssessmentsbutton = new javax.swing.JButton();
         BackButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -62,14 +60,12 @@ public class Lecturer_menu extends javax.swing.JFrame {
         Assessmentsbutton.setText("Assessments");
         Assessmentsbutton.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
-        AssessmentMarkButton.setText("Assessment Marks");
-        AssessmentMarkButton.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        GradeAssessmentButton.setText("Grade Assessment");
+        GradeAssessmentButton.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        GradeAssessmentButton.addActionListener(this::GradeAssessmentButtonActionPerformed);
 
         AssessmentFeedbackButton.setText("Assessment Feedback");
         AssessmentFeedbackButton.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-
-        EditAssessmentsbutton.setText("Edit Assessments");
-        EditAssessmentsbutton.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
         BackButton.setText("Back");
         BackButton.setBorder(javax.swing.BorderFactory.createEtchedBorder());
@@ -85,28 +81,25 @@ public class Lecturer_menu extends javax.swing.JFrame {
                     .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                         .addComponent(Settings, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(Assessmentsbutton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(AssessmentMarkButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(EditAssessmentsbutton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(GradeAssessmentButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(BackButton, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(AssessmentFeedbackButton, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(AssessmentFeedbackButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(134, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(61, 61, 61)
+                .addGap(96, 96, 96)
                 .addComponent(Settings)
                 .addGap(18, 18, 18)
                 .addComponent(Assessmentsbutton)
                 .addGap(18, 18, 18)
-                .addComponent(EditAssessmentsbutton)
-                .addGap(18, 18, 18)
-                .addComponent(AssessmentMarkButton)
+                .addComponent(GradeAssessmentButton)
                 .addGap(18, 18, 18)
                 .addComponent(AssessmentFeedbackButton)
                 .addGap(18, 18, 18)
                 .addComponent(BackButton)
-                .addContainerGap(108, Short.MAX_VALUE))
+                .addContainerGap(111, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -123,6 +116,11 @@ public class Lecturer_menu extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void GradeAssessmentButtonActionPerformed(java.awt.event.ActionEvent evt) {
+        new Grade_Assessment().setVisible(true); // Adjusted to match the existing constructor
+        this.setVisible(false);
+    }//GEN-LAST:event_GradeAssessmentButtonActionPerformed
+
     private void SettingsActionPerformed(java.awt.event.ActionEvent evt) {
         new Lecturer_Settings(lecturerID, this).setVisible(true);
         this.setVisible(false);
@@ -135,11 +133,6 @@ public class Lecturer_menu extends javax.swing.JFrame {
 
     private void AssessmentsbuttonActionPerformed(java.awt.event.ActionEvent evt) {
         new Assessments(lecturerID, this).setVisible(true);
-        this.setVisible(false);
-    }
-
-    private void EditAssessmentsbuttonActionPerformed(java.awt.event.ActionEvent evt) {
-        new Edit_Assessment(lecturerID, this).setVisible(true);
         this.setVisible(false);
     }
 
@@ -184,10 +177,9 @@ public class Lecturer_menu extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton AssessmentFeedbackButton;
-    private javax.swing.JButton AssessmentMarkButton;
     private javax.swing.JButton Assessmentsbutton;
     private javax.swing.JButton BackButton;
-    private javax.swing.JButton EditAssessmentsbutton;
+    private javax.swing.JButton GradeAssessmentButton;
     private javax.swing.JButton Settings;
     private javax.swing.JPanel jPanel1;
     // End of variables declaration//GEN-END:variables
