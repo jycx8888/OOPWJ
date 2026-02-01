@@ -32,18 +32,24 @@ public class Grade_Assessment extends javax.swing.JFrame {
      */
     public Grade_Assessment() {
         initComponents();
+        setLocationRelativeTo(null);
         clearTable();
         // No need for initLoadOnShow() here
     }
 
     public Grade_Assessment(String lecturerID) {
+        this(lecturerID, null);
+    }
+    
+    public Grade_Assessment(String lecturerID, Lecturer_menu lecturerMenu) {
         this.lecturerID = lecturerID;
-        this.lecturerMenu = null;
+        this.lecturerMenu = lecturerMenu;
         
         System.out.println("Grade_Assessment constructor - lecturerID: " + lecturerID);
         logger.log(java.util.logging.Level.INFO, "Grade_Assessment created with lecturerID: " + lecturerID);
         
         initComponents();
+        setLocationRelativeTo(null);
         clearTable();
         initLoadOnShow();
         // REMOVED: loadAssessmentAnswers() - will be called after window is shown
@@ -111,6 +117,7 @@ public class Grade_Assessment extends javax.swing.JFrame {
         jPanel1 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
+        jButton1 = new javax.swing.JButton();
 
         javax.swing.GroupLayout jDialog1Layout = new javax.swing.GroupLayout(jDialog1.getContentPane());
         jDialog1.getContentPane().setLayout(jDialog1Layout);
@@ -131,21 +138,28 @@ public class Grade_Assessment extends javax.swing.JFrame {
         ));
         jScrollPane1.setViewportView(jTable1);
 
+        jButton1.setText("Back");
+        jButton1.addActionListener(this::jButton1ActionPerformed);
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(35, 35, 35)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 353, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(35, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addContainerGap(38, Short.MAX_VALUE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jButton1)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 353, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(32, 32, 32))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap(42, Short.MAX_VALUE)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 448, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(28, 28, 28))
+                .addContainerGap(64, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 376, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jButton1)
+                .addGap(33, 33, 33))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -161,6 +175,17 @@ public class Grade_Assessment extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // Navigate back to lecturer menu
+        if (lecturerMenu != null) {
+            lecturerMenu.setVisible(true);
+        } else {
+            Lecturer_menu menu = new Lecturer_menu(lecturerID);
+            menu.setVisible(true);
+        }
+        this.dispose();
+    }//GEN-LAST:event_jButton1ActionPerformed
     
     private void loadAssessmentAnswers() {
         System.out.println("DEBUG: loadAssessmentAnswers() START");
@@ -336,6 +361,7 @@ public class Grade_Assessment extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton jButton1;
     private javax.swing.JDialog jDialog1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
