@@ -144,12 +144,14 @@ public class View_Grade extends javax.swing.JFrame {
         Subjective.setBackground(new java.awt.Color(255, 255, 255));
         Subjective.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
+        jTextArea2.setEditable(false);
         jTextArea2.setColumns(20);
         jTextArea2.setRows(5);
 
         jLabel4.setForeground(new java.awt.Color(0, 0, 0));
         jLabel4.setText("Question:");
 
+        jTextArea3.setEditable(false);
         jTextArea3.setColumns(20);
         jTextArea3.setRows(5);
 
@@ -200,6 +202,7 @@ public class View_Grade extends javax.swing.JFrame {
         Objective.setBackground(new java.awt.Color(255, 255, 255));
         Objective.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
+        jTextField1.setEditable(false);
         jTextField1.addActionListener(this::jTextField1ActionPerformed);
 
         jLabel2.setForeground(new java.awt.Color(0, 0, 0));
@@ -208,6 +211,9 @@ public class View_Grade extends javax.swing.JFrame {
         jLabel3.setForeground(new java.awt.Color(0, 0, 0));
         jLabel3.setText("Correct Answer:");
 
+        jTextField2.setEditable(false);
+
+        jTextArea1.setEditable(false);
         jTextArea1.setColumns(20);
         jTextArea1.setRows(5);
 
@@ -274,6 +280,7 @@ public class View_Grade extends javax.swing.JFrame {
         jPanel4.add(jLayeredPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 140, 420, 420));
 
         jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        jComboBox1.addActionListener(this::jComboBox1ActionPerformed);
         jPanel4.add(jComboBox1, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 90, 210, 30));
 
         jButton1.setText("Exit");
@@ -310,6 +317,10 @@ public class View_Grade extends javax.swing.JFrame {
     private void jRadioButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton1ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jRadioButton1ActionPerformed
+
+    private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jComboBox1ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {
         // Navigate back to Grade_Assessment
