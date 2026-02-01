@@ -296,6 +296,24 @@ public class Quiz extends javax.swing.JFrame {
         }
     }
 
+    private void saveQuestionMarks(String questionId, String moduleId, String marks) {
+        String projectRoot = System.getProperty("user.dir");
+        File marksFile = new File(projectRoot, "src\\main\\java\\oopwj\\TotalQuizMark.txt");
+
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(marksFile, true))) {
+            StringBuilder sb = new StringBuilder();
+            sb.append(csvEscape(moduleId)).append(", ")
+              .append(csvEscape(questionId)).append(", ")
+              .append(csvEscape(marks));
+
+            bw.write(sb.toString());
+            bw.newLine();
+        } catch (IOException ex) {
+            logger.log(java.util.logging.Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(this, "Error saving marks: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -329,14 +347,16 @@ public class Quiz extends javax.swing.JFrame {
         jRadioButton4 = new javax.swing.JRadioButton();
         jRadioButton3 = new javax.swing.JRadioButton();
         jRadioButton1 = new javax.swing.JRadioButton();
+        jTextField1 = new javax.swing.JTextField();
+        jLabel2 = new javax.swing.JLabel();
         jPanel4 = new javax.swing.JPanel();
         jPanel5 = new javax.swing.JPanel();
         jPanel6 = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
         jTextArea2 = new javax.swing.JTextArea();
-        isObjectiveCheckBox = new javax.swing.JCheckBox("Objective Question");
-        isObjectiveCheckBox.setSelected(false); // Default to not objective
+        jTextField7 = new javax.swing.JTextField();
+        jLabel4 = new javax.swing.JLabel();
 
         jRadioButton2.setText("jRadioButton2");
 
@@ -404,19 +424,6 @@ public class Quiz extends javax.swing.JFrame {
         jRadioButton1.setText("A");
         jRadioButton1.addActionListener(this::jRadioButton1ActionPerformed);
 
-        isObjectiveCheckBox.setSelected(false); // Default to not objective
-        jPanel1.add(isObjectiveCheckBox); // Add to the panel
-
-        // Add a listener to jTabbedPane1 to update the isObjectiveCheckBox state
-        jTabbedPane1.addChangeListener(e -> {
-            int selectedIndex = jTabbedPane1.getSelectedIndex();
-            if (selectedIndex == 0) { // Objective tab
-                isObjectiveCheckBox.setSelected(true);
-            } else if (selectedIndex == 1) { // Subjective tab
-                isObjectiveCheckBox.setSelected(false);
-            }
-        });
-
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
@@ -437,8 +444,9 @@ public class Quiz extends javax.swing.JFrame {
                                 .addGap(1, 1, 1))
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
                                 .addGap(0, 0, Short.MAX_VALUE)
-                                .addComponent(jRadioButton1))
-                            .addComponent(jRadioButton5, javax.swing.GroupLayout.Alignment.TRAILING))
+                                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jRadioButton1, javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(jRadioButton5, javax.swing.GroupLayout.Alignment.TRAILING))))
                         .addGap(4, 4, 4)
                         .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 284, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jLabel1)
@@ -480,6 +488,11 @@ public class Quiz extends javax.swing.JFrame {
                 .addContainerGap(18, Short.MAX_VALUE))
         );
 
+        jTextField1.setBackground(new java.awt.Color(255, 255, 255));
+        jTextField1.addActionListener(this::jTextField1ActionPerformed);
+
+        jLabel2.setText("Marks:");
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -488,13 +501,23 @@ public class Quiz extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(9, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(24, 24, 24))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 28, Short.MAX_VALUE)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel2))
+                .addGap(14, 14, 14))
         );
 
         jTabbedPane1.addTab("Objective", jPanel2);
@@ -547,13 +570,23 @@ public class Quiz extends javax.swing.JFrame {
                 .addContainerGap(17, Short.MAX_VALUE))
         );
 
+        jTextField7.setBackground(new java.awt.Color(255, 255, 255));
+        jTextField7.addActionListener(this::jTextField7ActionPerformed);
+
+        jLabel4.setText("Marks:");
+
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
         jPanel4Layout.setHorizontalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, 355, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, 355, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanel4Layout.createSequentialGroup()
+                        .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jTextField7, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
@@ -565,6 +598,10 @@ public class Quiz extends javax.swing.JFrame {
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel4Layout.createSequentialGroup()
                         .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, 370, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jTextField7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel4))
                         .addGap(0, 0, Short.MAX_VALUE))
                     .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
@@ -629,6 +666,14 @@ public class Quiz extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jTextField1ActionPerformed
+
+    private void jTextField7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField7ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jTextField7ActionPerformed
+
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {
         // Save: check if TempQuiz.txt exists (from Add button)
         // If it exists, transfer its contents to Quiz.txt
@@ -646,6 +691,7 @@ public class Quiz extends javax.swing.JFrame {
             String a2 = b.getText().trim();
             String a3 = c.getText().trim();
             String a4 = d.getText().trim();
+            String marks = jTextField1.getText().trim();
 
             if (question.isEmpty() || a1.isEmpty() || a2.isEmpty() || a3.isEmpty() || a4.isEmpty()) {
                 JOptionPane.showMessageDialog(this, "Please fill in all fields for the objective question before saving.", "Validation", JOptionPane.WARNING_MESSAGE);
@@ -656,11 +702,22 @@ public class Quiz extends javax.swing.JFrame {
                 JOptionPane.showMessageDialog(this, "Please select the correct answer for the objective question.", "Validation", JOptionPane.WARNING_MESSAGE);
                 return;
             }
+
+            if (marks.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Please enter the marks for this question.", "Validation", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
         } else if (selectedTabIndex == 1) { // Subjective tab
             String subjectiveQuestion = jTextArea2.getText().trim();
+            String marks = jTextField7.getText().trim();
 
             if (subjectiveQuestion.isEmpty()) {
                 JOptionPane.showMessageDialog(this, "Please type your subjective question before saving.", "Validation", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+            if (marks.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Please enter the marks for this question.", "Validation", JOptionPane.WARNING_MESSAGE);
                 return;
             }
 
@@ -669,40 +726,6 @@ public class Quiz extends javax.swing.JFrame {
             if (selectedModule == null || selectedModule.isEmpty()) {
                 JOptionPane.showMessageDialog(this, "Please select a module before saving the question.", "Validation", JOptionPane.WARNING_MESSAGE);
                 return;
-            }
-
-            // Get module ID and name
-            String[] moduleParts = selectedModule.split(" - ", 2); // Split into ID and name
-            String moduleId = moduleParts[0].trim();
-            String moduleName = moduleParts.length > 1 ? moduleParts[1].trim() : "";
-
-            // Get the next question ID
-            String nextQuestionId = getNextQuestionId(moduleId, quizFile);
-
-            // Append the subjective question to TempQuiz.txt
-            try (BufferedWriter tempWriter = new BufferedWriter(new FileWriter(temp, true))) {
-                tempWriter.write(nextQuestionId + ", " + moduleId + ", " + subjectiveQuestion + ", Subjective");
-                tempWriter.newLine();
-            } catch (IOException ex) {
-                logger.log(java.util.logging.Level.SEVERE, null, ex);
-                JOptionPane.showMessageDialog(this, "Error writing to TempQuiz.txt: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-                return;
-            } finally {
-                // Clear the subjective question field after adding or saving
-                jTextArea2.setText("");
-            }
-
-            // Check if TempQuiz.txt already contains questions
-            if (temp.exists()) {
-                try (BufferedReader br = new BufferedReader(new FileReader(temp))) {
-                    if (br.readLine() != null) {
-                        // TempQuiz.txt is not empty, skip validation
-                    }
-                } catch (IOException ex) {
-                    logger.log(java.util.logging.Level.SEVERE, null, ex);
-                    JOptionPane.showMessageDialog(this, "Error reading TempQuiz.txt: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-                    return;
-                }
             }
         }
 
@@ -740,6 +763,9 @@ public class Quiz extends javax.swing.JFrame {
                 b.setText("");
                 c.setText("");
                 d.setText("");
+                jTextField1.setText("");
+                jTextArea2.setText("");
+                jTextField7.setText("");
 
                 // reset session count after saving
                 sessionQuestionCount = 0;
@@ -763,6 +789,7 @@ public class Quiz extends javax.swing.JFrame {
                 String a2 = b.getText().trim();
                 String a3 = c.getText().trim();
                 String a4 = d.getText().trim();
+                String marks = jTextField1.getText().trim();
 
                 sb.append(csvEscape(nextQuestionId)) // Append QuestionID first
                   .append(", ")
@@ -774,14 +801,21 @@ public class Quiz extends javax.swing.JFrame {
                   .append(csvEscape(a4)).append(", ")
                   .append(csvEscape(correctAnswer)).append(", ")
                   .append("Objective");
+
+                // Save marks
+                saveQuestionMarks(nextQuestionId, moduleId, marks);
             } else if (selectedTabIndex == 1) { // Subjective tab
                 String subjectiveQuestion = jTextArea2.getText().trim();
+                String marks = jTextField7.getText().trim();
 
                 sb.append(csvEscape(nextQuestionId))
                   .append(", ")
                   .append(csvEscape(moduleId)).append(", ")
                   .append(csvEscape(subjectiveQuestion)).append(", ")
                   .append("Subjective");
+
+                // Save marks
+                saveQuestionMarks(nextQuestionId, moduleId, marks);
             }
 
             bw.write(sb.toString());
@@ -799,6 +833,8 @@ public class Quiz extends javax.swing.JFrame {
         b.setText("");
         c.setText("");
         d.setText("");
+        jTextField1.setText("");
+        jTextField7.setText("");
         answerGroup.clearSelection();
         correctAnswer = "";
 
@@ -892,6 +928,7 @@ public class Quiz extends javax.swing.JFrame {
             String a2 = b.getText().trim();
             String a3 = c.getText().trim();
             String a4 = d.getText().trim();
+            String marks = jTextField1.getText().trim();
 
             if (question.isEmpty() || a1.isEmpty() || a2.isEmpty() || a3.isEmpty() || a4.isEmpty()) {
                 JOptionPane.showMessageDialog(this, "Please fill in all fields before adding.", "Validation", JOptionPane.WARNING_MESSAGE);
@@ -904,11 +941,17 @@ public class Quiz extends javax.swing.JFrame {
                 return;
             }
 
+            if (marks.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Please enter the marks for this question.", "Validation", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
             try (BufferedWriter bw = new BufferedWriter(new FileWriter(temp, true))) {
                 sessionQuestionCount++;
+                String questionId = String.format("Q%03d", sessionQuestionCount);
 
                 StringBuilder sb = new StringBuilder();
-                sb.append(csvEscape(String.format("Q%03d", sessionQuestionCount))).append(", ");
+                sb.append(csvEscape(questionId)).append(", ");
                 sb.append(csvEscape(question)).append(", ");
                 sb.append(csvEscape(a1)).append(", ");
                 sb.append(csvEscape(a2)).append(", ");
@@ -919,6 +962,12 @@ public class Quiz extends javax.swing.JFrame {
 
                 bw.write(sb.toString());
                 bw.newLine();
+
+                // Get module ID and save marks
+                String selectedModule = (String) jComboBox1.getSelectedItem();
+                String[] moduleParts = selectedModule.split(" - ", 2);
+                String moduleId = moduleParts[0].trim();
+                saveQuestionMarks(questionId, moduleId, marks);
             } catch (IOException ex) {
                 logger.log(java.util.logging.Level.SEVERE, null, ex);
                 JOptionPane.showMessageDialog(this, "Failed to append question: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
@@ -931,28 +980,42 @@ public class Quiz extends javax.swing.JFrame {
             b.setText("");
             c.setText("");
             d.setText("");
+            jTextField1.setText("");
             answerGroup.clearSelection();
             correctAnswer = "";
 
             JOptionPane.showMessageDialog(this, "Objective question added successfully", "Added", JOptionPane.INFORMATION_MESSAGE);
         } else if (selectedTabIndex == 1) { // Subjective tab
             String subjectiveQuestion = jTextArea2.getText().trim();
+            String marks = jTextField7.getText().trim();
 
             if (subjectiveQuestion.isEmpty()) {
                 JOptionPane.showMessageDialog(this, "Please type your subjective question before adding.", "Validation", JOptionPane.WARNING_MESSAGE);
                 return;
             }
 
+            if (marks.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Please enter the marks for this question.", "Validation", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
             try (BufferedWriter bw = new BufferedWriter(new FileWriter(temp, true))) {
                 sessionQuestionCount++;
+                String questionId = String.format("Q%03d", sessionQuestionCount);
 
                 StringBuilder sb = new StringBuilder();
-                sb.append(csvEscape(String.format("Q%03d", sessionQuestionCount))).append(", ");
+                sb.append(csvEscape(questionId)).append(", ");
                 sb.append(csvEscape(subjectiveQuestion)).append(", ");
                 sb.append("Subjective");
 
                 bw.write(sb.toString());
                 bw.newLine();
+
+                // Get module ID and save marks
+                String selectedModule = (String) jComboBox1.getSelectedItem();
+                String[] moduleParts = selectedModule.split(" - ", 2);
+                String moduleId = moduleParts[0].trim();
+                saveQuestionMarks(questionId, moduleId, marks);
             } catch (IOException ex) {
                 logger.log(java.util.logging.Level.SEVERE, null, ex);
                 JOptionPane.showMessageDialog(this, "Failed to append question: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
@@ -961,6 +1024,7 @@ public class Quiz extends javax.swing.JFrame {
 
             // Clear the subjective question field after adding or saving
             jTextArea2.setText("");
+            jTextField7.setText("");
 
             JOptionPane.showMessageDialog(this, "Subjective question added successfully", "Added", JOptionPane.INFORMATION_MESSAGE);
         }
@@ -1005,10 +1069,13 @@ public class Quiz extends javax.swing.JFrame {
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {
         // Clear all form fields
         jTextArea1.setText("");
+        jTextArea2.setText("");
         a.setText("");
         b.setText("");
         c.setText("");
         d.setText("");
+        jTextField1.setText("");
+        jTextField7.setText("");
         answerGroup.clearSelection();
         correctAnswer = "";
     }
@@ -1057,7 +1124,9 @@ public class Quiz extends javax.swing.JFrame {
     private javax.swing.JButton jButton4;
     private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JPanel jPanel1;
@@ -1076,11 +1145,12 @@ public class Quiz extends javax.swing.JFrame {
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JTextArea jTextArea1;
     private javax.swing.JTextArea jTextArea2;
+    private javax.swing.JTextField jTextField1;
     private javax.swing.JTextField jTextField2;
     private javax.swing.JTextField jTextField3;
     private javax.swing.JTextField jTextField4;
     private javax.swing.JTextField jTextField5;
     private javax.swing.JTextField jTextField6;
-    private javax.swing.JCheckBox isObjectiveCheckBox;
+    private javax.swing.JTextField jTextField7;
     // End of variables declaration//GEN-END:variables
 }
