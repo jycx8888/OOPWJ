@@ -20,6 +20,7 @@ public class View_Grade extends javax.swing.JFrame {
     public View_Grade() {
         initComponents();
         setLocationRelativeTo(null);
+        jButton1.addActionListener(this::jButton1ActionPerformed);
     }
     
     /**
@@ -30,6 +31,7 @@ public class View_Grade extends javax.swing.JFrame {
         this.moduleID = moduleID;
         initComponents();
         setLocationRelativeTo(null);
+        jButton1.addActionListener(this::jButton1ActionPerformed);
         setModuleAndStudentInfo(moduleID, studentID);
         loadQuestionIDs(moduleID);
     }
@@ -109,13 +111,6 @@ public class View_Grade extends javax.swing.JFrame {
         jSpinner1 = new javax.swing.JSpinner();
         jPanel4 = new javax.swing.JPanel();
         jLayeredPane2 = new javax.swing.JLayeredPane();
-        Subjective = new javax.swing.JPanel();
-        jTextArea2 = new javax.swing.JTextArea();
-        jLabel4 = new javax.swing.JLabel();
-        jTextArea3 = new javax.swing.JTextArea();
-        jLabel5 = new javax.swing.JLabel();
-        jSpinner2 = new javax.swing.JSpinner();
-        jLabel6 = new javax.swing.JLabel();
         Objective = new javax.swing.JPanel();
         jTextField1 = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
@@ -125,6 +120,13 @@ public class View_Grade extends javax.swing.JFrame {
         jRadioButton1 = new javax.swing.JRadioButton();
         jRadioButton2 = new javax.swing.JRadioButton();
         jLabel1 = new javax.swing.JLabel();
+        Subjective = new javax.swing.JPanel();
+        jTextArea2 = new javax.swing.JTextArea();
+        jLabel4 = new javax.swing.JLabel();
+        jTextArea3 = new javax.swing.JTextArea();
+        jLabel5 = new javax.swing.JLabel();
+        jSpinner2 = new javax.swing.JSpinner();
+        jLabel6 = new javax.swing.JLabel();
         jComboBox1 = new javax.swing.JComboBox<>();
         jButton1 = new javax.swing.JButton();
         jLabel7 = new javax.swing.JLabel();
@@ -141,68 +143,11 @@ public class View_Grade extends javax.swing.JFrame {
 
         jLayeredPane2.setLayout(new java.awt.CardLayout());
 
-        Subjective.setBackground(new java.awt.Color(255, 255, 255));
-        Subjective.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
-
-        jTextArea2.setEditable(false);
-        jTextArea2.setColumns(20);
-        jTextArea2.setRows(5);
-
-        jLabel4.setForeground(new java.awt.Color(0, 0, 0));
-        jLabel4.setText("Question:");
-
-        jTextArea3.setEditable(false);
-        jTextArea3.setColumns(20);
-        jTextArea3.setRows(5);
-
-        jLabel5.setForeground(new java.awt.Color(0, 0, 0));
-        jLabel5.setText("Answer:");
-
-        jLabel6.setForeground(new java.awt.Color(0, 0, 0));
-        jLabel6.setText("Marks Given:");
-
-        javax.swing.GroupLayout SubjectiveLayout = new javax.swing.GroupLayout(Subjective);
-        Subjective.setLayout(SubjectiveLayout);
-        SubjectiveLayout.setHorizontalGroup(
-            SubjectiveLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(SubjectiveLayout.createSequentialGroup()
-                .addGap(43, 43, 43)
-                .addGroup(SubjectiveLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(SubjectiveLayout.createSequentialGroup()
-                        .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jSpinner2, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(SubjectiveLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(jTextArea3, javax.swing.GroupLayout.PREFERRED_SIZE, 322, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jTextArea2, javax.swing.GroupLayout.PREFERRED_SIZE, 322, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(51, Short.MAX_VALUE))
-        );
-        SubjectiveLayout.setVerticalGroup(
-            SubjectiveLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(SubjectiveLayout.createSequentialGroup()
-                .addGap(20, 20, 20)
-                .addComponent(jLabel4)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jTextArea2, javax.swing.GroupLayout.PREFERRED_SIZE, 113, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jLabel5)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jTextArea3, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 48, Short.MAX_VALUE)
-                .addGroup(SubjectiveLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jSpinner2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel6))
-                .addGap(41, 41, 41))
-        );
-
-        jLayeredPane2.add(Subjective, "card2");
-
         Objective.setBackground(new java.awt.Color(255, 255, 255));
         Objective.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
         jTextField1.setEditable(false);
+        jTextField1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         jTextField1.addActionListener(this::jTextField1ActionPerformed);
 
         jLabel2.setForeground(new java.awt.Color(0, 0, 0));
@@ -212,10 +157,12 @@ public class View_Grade extends javax.swing.JFrame {
         jLabel3.setText("Correct Answer:");
 
         jTextField2.setEditable(false);
+        jTextField2.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
         jTextArea1.setEditable(false);
         jTextArea1.setColumns(20);
         jTextArea1.setRows(5);
+        jTextArea1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
         jRadioButton1.setForeground(new java.awt.Color(0, 0, 0));
         jRadioButton1.setText("Incorrect");
@@ -268,7 +215,7 @@ public class View_Grade extends javax.swing.JFrame {
                 .addComponent(jLabel3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 28, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 44, Short.MAX_VALUE)
                 .addGroup(ObjectiveLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jRadioButton1)
                     .addComponent(jRadioButton2))
@@ -276,6 +223,66 @@ public class View_Grade extends javax.swing.JFrame {
         );
 
         jLayeredPane2.add(Objective, "card3");
+
+        Subjective.setBackground(new java.awt.Color(255, 255, 255));
+        Subjective.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+
+        jTextArea2.setEditable(false);
+        jTextArea2.setColumns(20);
+        jTextArea2.setRows(5);
+        jTextArea2.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+
+        jLabel4.setForeground(new java.awt.Color(0, 0, 0));
+        jLabel4.setText("Question:");
+
+        jTextArea3.setEditable(false);
+        jTextArea3.setColumns(20);
+        jTextArea3.setRows(5);
+        jTextArea3.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+
+        jLabel5.setForeground(new java.awt.Color(0, 0, 0));
+        jLabel5.setText("Answer:");
+
+        jLabel6.setForeground(new java.awt.Color(0, 0, 0));
+        jLabel6.setText("Marks Given:");
+
+        javax.swing.GroupLayout SubjectiveLayout = new javax.swing.GroupLayout(Subjective);
+        Subjective.setLayout(SubjectiveLayout);
+        SubjectiveLayout.setHorizontalGroup(
+            SubjectiveLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(SubjectiveLayout.createSequentialGroup()
+                .addGap(43, 43, 43)
+                .addGroup(SubjectiveLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(SubjectiveLayout.createSequentialGroup()
+                        .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jSpinner2, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(SubjectiveLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(jTextArea3, javax.swing.GroupLayout.PREFERRED_SIZE, 322, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jTextArea2, javax.swing.GroupLayout.PREFERRED_SIZE, 322, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(51, Short.MAX_VALUE))
+        );
+        SubjectiveLayout.setVerticalGroup(
+            SubjectiveLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(SubjectiveLayout.createSequentialGroup()
+                .addGap(20, 20, 20)
+                .addComponent(jLabel4)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jTextArea2, javax.swing.GroupLayout.PREFERRED_SIZE, 113, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jLabel5)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jTextArea3, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 48, Short.MAX_VALUE)
+                .addGroup(SubjectiveLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jSpinner2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel6))
+                .addGap(41, 41, 41))
+        );
+
+        jLayeredPane2.add(Subjective, "card2");
 
         jPanel4.add(jLayeredPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 140, 420, 420));
 
@@ -319,8 +326,82 @@ public class View_Grade extends javax.swing.JFrame {
     }//GEN-LAST:event_jRadioButton1ActionPerformed
 
     private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox1ActionPerformed
-        // TODO add your handling code here:
+        // Get the selected question ID from the combo box
+        String selectedQuestionID = (String) jComboBox1.getSelectedItem();
+        if (selectedQuestionID == null || selectedQuestionID.isEmpty()) {
+            return;
+        }
+        
+        // Get the question type from answers.txt based on moduleID and questionID
+        String questionType = getQuestionType(moduleID, selectedQuestionID);
+        
+        // Swap panels based on question type
+        if (questionType != null) {
+            swapPanels(questionType);
+        }
     }//GEN-LAST:event_jComboBox1ActionPerformed
+    
+    /**
+     * Retrieves the question type from answers.txt based on moduleID and questionID
+     * @param moduleID the module ID to search for
+     * @param questionID the question ID to search for
+     * @return the question type (Subjective or Objective) or null if not found
+     */
+    private String getQuestionType(String moduleID, String questionID) {
+        String projectRoot = System.getProperty("user.dir");
+        String answersFilePath = projectRoot + "/src/main/java/oopwj/answers.txt";
+        
+        java.io.File answersFile = new java.io.File(answersFilePath);
+        if (!answersFile.exists()) {
+            logger.log(java.util.logging.Level.SEVERE, "answers.txt not found at: " + answersFile.getAbsolutePath());
+            return null;
+        }
+        
+        try (java.io.BufferedReader br = new java.io.BufferedReader(new java.io.FileReader(answersFile))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                line = line.trim();
+                if (line.isEmpty() || line.startsWith("#")) continue;
+                
+                String[] parts = line.split(",");
+                if (parts.length >= 4) {
+                    String fileModuleID = parts[1].trim();
+                    String fileQuestionID = parts[2].trim();
+                    String questionType = parts[3].trim();
+                    
+                    if (fileModuleID.equals(moduleID) && fileQuestionID.equals(questionID)) {
+                        logger.log(java.util.logging.Level.INFO, "Found question type: " + questionType + " for module: " + moduleID + ", question: " + questionID);
+                        return questionType;
+                    }
+                }
+            }
+            
+            logger.log(java.util.logging.Level.WARNING, "Question not found in answers.txt for module: " + moduleID + ", question: " + questionID);
+            
+        } catch (java.io.IOException e) {
+            logger.log(java.util.logging.Level.SEVERE, "Error reading answers.txt: " + e.getMessage(), e);
+        }
+        
+        return null;
+    }
+    
+    /**
+     * Swaps the visible panel between Objective and Subjective based on question type
+     * @param questionType the type of question (Subjective or Objective)
+     */
+    private void swapPanels(String questionType) {
+        java.awt.CardLayout cl = (java.awt.CardLayout) jLayeredPane2.getLayout();
+        
+        if ("Subjective".equalsIgnoreCase(questionType)) {
+            cl.show(jLayeredPane2, "card2");
+            logger.log(java.util.logging.Level.INFO, "Showing Subjective panel");
+        } else if ("Objective".equalsIgnoreCase(questionType)) {
+            cl.show(jLayeredPane2, "card3");
+            logger.log(java.util.logging.Level.INFO, "Showing Objective panel");
+        } else {
+            logger.log(java.util.logging.Level.WARNING, "Unknown question type: " + questionType);
+        }
+    }
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {
         // Navigate back to Grade_Assessment
