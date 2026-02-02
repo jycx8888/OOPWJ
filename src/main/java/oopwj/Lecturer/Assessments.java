@@ -240,7 +240,7 @@ public class Assessments extends javax.swing.JFrame {
     
     private void updateQuizFile() {
         String projectRoot = System.getProperty("user.dir");
-        File quizFile = new File(projectRoot, "src\\main\\java\\oopwj\\Quiz.txt");
+        File quizFile = new File(projectRoot, "src\\main\\java\\oopwj\\question.txt");
         
         DefaultTableModel model = (DefaultTableModel) jTable2.getModel();
         
@@ -256,7 +256,7 @@ public class Assessments extends javax.swing.JFrame {
             }
         } catch (IOException ex) {
             logger.log(java.util.logging.Level.SEVERE, null, ex);
-            JOptionPane.showMessageDialog(this, "Error updating Quiz.txt: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Error updating question.txt: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
     
@@ -271,8 +271,8 @@ public class Assessments extends javax.swing.JFrame {
         List<Object[]> matchingRows = new ArrayList<>();
         String[] columnNames = {};
 
-        // Search in Quiz.txt
-        matchingRows.addAll(searchInFile("src\\main\\java\\oopwj\\Quiz.txt", searchTerm, true));
+        // Search in question.txt
+        matchingRows.addAll(searchInFile("src\\main\\java\\oopwj\\question.txt", searchTerm, true));
         if (!matchingRows.isEmpty()) {
             columnNames = new String[]{"Question ID", "Question", "Type", "A", "B", "C", "D", "Answer"};
         }
@@ -454,10 +454,10 @@ public class Assessments extends javax.swing.JFrame {
 
     private void loadQuizData() {
         String projectRoot = System.getProperty("user.dir");
-        File quizFile = new File(projectRoot, "src\\main\\java\\oopwj\\Quiz.txt");
+        File quizFile = new File(projectRoot, "src\\main\\java\\oopwj\\question.txt");
 
-        // Update column names to include the required fields
-        String[] columnNames = {"Question ID", "Module ID", "Question Type", "Question"};
+        // Update column names to include QuizID
+        String[] columnNames = {"Question ID", "Quiz ID", "Module ID", "Question Type", "Question"};
         List<Object[]> rows = new ArrayList<>();
 
         if (quizFile.exists()) {
@@ -465,15 +465,16 @@ public class Assessments extends javax.swing.JFrame {
                 String line;
                 while ((line = br.readLine()) != null) {
                     String[] fields = parseCSV(line);
-                    if (fields.length == 9) { // Row length of 9
-                        rows.add(new Object[]{fields[0], fields[1], fields[8], fields[2]});
-                    } else if (fields.length == 4) { // Row length of 4
-                        rows.add(new Object[]{fields[0], fields[1], fields[3], fields[2]});
+                    // New format: QuestionID[0], QuizID[1], ModuleID[2], Question[3], Options[4-7], CorrectAnswer[8], Type[9]
+                    if (fields.length == 10) { // Objective question with QuizID
+                        rows.add(new Object[]{fields[0], fields[1], fields[2], fields[9], fields[3]});
+                    } else if (fields.length == 5) { // Subjective question with QuizID
+                        rows.add(new Object[]{fields[0], fields[1], fields[2], fields[4], fields[3]});
                     }
                 }
             } catch (IOException ex) {
                 logger.log(java.util.logging.Level.SEVERE, null, ex);
-                JOptionPane.showMessageDialog(this, "Error reading Quiz.txt: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Error reading question.txt: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
         }
