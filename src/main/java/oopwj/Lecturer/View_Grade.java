@@ -36,6 +36,8 @@ public class View_Grade extends javax.swing.JFrame {
         initComponents();
         setLocationRelativeTo(null);
         jButton1.addActionListener(this::jButton1ActionPerformed);
+        jButton2.addActionListener(this::jButton2ActionPerformed);
+        jButton3.addActionListener(this::jButton3ActionPerformed);
         setModuleAndStudentInfo(moduleID, studentID);
         loadQuestionIDs(moduleID, quizID);
     }
@@ -502,6 +504,33 @@ public class View_Grade extends javax.swing.JFrame {
         Grade_Assessment gradeAssessment = new Grade_Assessment(lecturerID);
         gradeAssessment.setVisible(true);
         this.dispose();
+    }
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {
+        // Previous button - navigate to previous question
+        int currentIndex = jComboBox1.getSelectedIndex();
+        if (currentIndex > 0) {
+            jComboBox1.setSelectedIndex(currentIndex - 1);
+        } else {
+            javax.swing.JOptionPane.showMessageDialog(this, 
+                "This is the first question.", 
+                "Information", 
+                javax.swing.JOptionPane.INFORMATION_MESSAGE);
+        }
+    }
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {
+        // Next button - navigate to next question
+        int currentIndex = jComboBox1.getSelectedIndex();
+        int totalQuestions = jComboBox1.getItemCount();
+        if (currentIndex < totalQuestions - 1) {
+            jComboBox1.setSelectedIndex(currentIndex + 1);
+        } else {
+            javax.swing.JOptionPane.showMessageDialog(this, 
+                "This is the last question.", 
+                "Information", 
+                javax.swing.JOptionPane.INFORMATION_MESSAGE);
+        }
     }
 
     /**
