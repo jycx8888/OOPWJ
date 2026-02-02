@@ -2,3 +2,5 @@ QZ001,M001,data management quiz set
 QZ002,M001,Java quiz
 QZ003,M001,hi
 QZ004,M001,new
+QZ005,M001,.
+QZ006,M001,new

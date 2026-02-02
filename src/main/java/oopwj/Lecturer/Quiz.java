@@ -744,6 +744,9 @@ public class Quiz extends javax.swing.JFrame {
                 jTextField9.setText(quizTitle);
                 currentQuizTitle = quizTitle;
             }
+            
+            // Make the title field read-only when an existing quiz is selected
+            jTextField9.setEditable(false);
         }
     }//GEN-LAST:event_jComboBox2ActionPerformed
 
@@ -758,6 +761,8 @@ public class Quiz extends javax.swing.JFrame {
         
         // Clear the title field and reset current quiz tracking for entering a new title
         jTextField9.setText("");
+        // Make the title field editable for new quiz entry
+        jTextField9.setEditable(true);
         currentQuizID = "";
         currentQuizTitle = "";
         jComboBox2.removeAllItems();
