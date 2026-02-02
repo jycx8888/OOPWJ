@@ -50,7 +50,7 @@ public class Quiz extends javax.swing.JFrame {
     private String lecturerID;
     private Assessments parentWindow;
     private String currentQuizID = ""; // Track the current quiz ID
-
+    private String currentQuizTitle = ""; // Track the current quiz title
 
     /**
      * Creates new form Quiz
@@ -70,6 +70,10 @@ public class Quiz extends javax.swing.JFrame {
         d = jTextField6;
         // Add the missing action listener for jButton3
         jButton3.addActionListener(this::jButton3ActionPerformed);
+        // Add action listener for jButton6 (Enter button)
+        jButton6.addActionListener(this::jButton6ActionPerformed);
+        // Add action listener for jButton5 (Add Quiz Set button)
+        jButton5.addActionListener(this::jButton5ActionPerformed);
         this.setLocationRelativeTo(null);
 
         // Initialize ButtonGroup for radio buttons
@@ -327,6 +331,7 @@ public class Quiz extends javax.swing.JFrame {
         jRadioButton2 = new javax.swing.JRadioButton();
         jTextField5 = new javax.swing.JTextField();
         jLabel6 = new javax.swing.JLabel();
+        jTextField8 = new javax.swing.JTextField();
         jPanel1 = new javax.swing.JPanel();
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
@@ -360,7 +365,10 @@ public class Quiz extends javax.swing.JFrame {
         jLabel4 = new javax.swing.JLabel();
         jComboBox2 = new javax.swing.JComboBox<>();
         jLabel9 = new javax.swing.JLabel();
+        jLabel5 = new javax.swing.JLabel();
+        jTextField9 = new javax.swing.JTextField();
         jButton5 = new javax.swing.JButton();
+        jButton6 = new javax.swing.JButton();
 
         jRadioButton2.setText("jRadioButton2");
 
@@ -370,6 +378,8 @@ public class Quiz extends javax.swing.JFrame {
         jLabel6.setFont(new java.awt.Font("Segoe UI", 0, 17)); // NOI18N
         jLabel6.setForeground(new java.awt.Color(0, 0, 0));
         jLabel6.setText("Answer 1:");
+
+        jTextField8.setText("jTextField8");
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -620,17 +630,27 @@ public class Quiz extends javax.swing.JFrame {
         jLabel9.setForeground(new java.awt.Color(0, 0, 0));
         jLabel9.setText("Quiz set");
 
-        jButton5.setText("New Quiz");
-        jButton5.addActionListener(this::jButton5ActionPerformed);
+        jLabel5.setFont(new java.awt.Font("Segoe UI", 0, 17)); // NOI18N
+        jLabel5.setForeground(new java.awt.Color(0, 0, 0));
+        jLabel5.setText("Quiz Title:");
+
+        jTextField9.addActionListener(this::jTextField9ActionPerformed);
+
+        jButton5.setText("Add Quiz Set");
+
+        jButton6.setText("Enter");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addGap(0, 58, Short.MAX_VALUE)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(0, 64, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jButton5)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jButton5)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jButton6))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jButton2)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -643,12 +663,19 @@ public class Quiz extends javax.swing.JFrame {
                         .addGroup(jPanel1Layout.createSequentialGroup()
                             .addComponent(jLabel8)
                             .addGap(31, 31, 31)
-                            .addComponent(jComboBox1, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 370, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jComboBox1, 0, 291, Short.MAX_VALUE))
                         .addGroup(jPanel1Layout.createSequentialGroup()
-                            .addComponent(jLabel9)
-                            .addGap(31, 31, 31)
-                            .addComponent(jComboBox2, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jLabel9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addGroup(jPanel1Layout.createSequentialGroup()
+                                    .addGap(18, 18, 18)
+                                    .addComponent(jComboBox2, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addGroup(jPanel1Layout.createSequentialGroup()
+                                    .addGap(18, 18, 18)
+                                    .addComponent(jTextField9))))
+                        .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 370, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(60, 60, 60))
         );
         jPanel1Layout.setVerticalGroup(
@@ -662,9 +689,15 @@ public class Quiz extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel9))
-                .addGap(18, 18, 18)
-                .addComponent(jButton5)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(27, 27, 27)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel5)
+                    .addComponent(jTextField9, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 12, Short.MAX_VALUE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jButton5)
+                    .addComponent(jButton6))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 460, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -672,22 +705,20 @@ public class Quiz extends javax.swing.JFrame {
                     .addComponent(jButton4)
                     .addComponent(jButton1)
                     .addComponent(jButton3))
-                .addGap(25, 25, 25))
+                .addContainerGap())
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         pack();
@@ -706,15 +737,44 @@ public class Quiz extends javax.swing.JFrame {
         String selectedQuiz = (String) jComboBox2.getSelectedItem();
         if (selectedQuiz != null && !selectedQuiz.isEmpty()) {
             currentQuizID = selectedQuiz;
+            
+            // Fetch and display the quiz title
+            String quizTitle = getQuizTitle(selectedQuiz);
+            if (quizTitle != null && !quizTitle.isEmpty()) {
+                jTextField9.setText(quizTitle);
+                currentQuizTitle = quizTitle;
+            }
         }
     }//GEN-LAST:event_jComboBox2ActionPerformed
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
-        // New Quiz: Generate a new QuizID and save to Quiz.txt
+        // New Quiz: Clear title field for new quiz entry
         String selectedModule = (String) jComboBox1.getSelectedItem();
         
         if (selectedModule == null || selectedModule.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Please select a module before creating a new quiz.", "Validation", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        // Clear the title field and reset current quiz tracking for entering a new title
+        jTextField9.setText("");
+        currentQuizID = "";
+        currentQuizTitle = "";
+        jComboBox2.removeAllItems();
+    }//GEN-LAST:event_jButton5ActionPerformed
+
+    private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {
+        // Enter button: Save the quiz title and generate QuizID
+        String quizTitle = jTextField9.getText().trim();
+        
+        if (quizTitle.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Please enter a quiz title.", "Validation", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        String selectedModule = (String) jComboBox1.getSelectedItem();
+        if (selectedModule == null || selectedModule.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Please select a module.", "Validation", JOptionPane.WARNING_MESSAGE);
             return;
         }
         
@@ -724,20 +784,28 @@ public class Quiz extends javax.swing.JFrame {
         // Generate new QuizID
         String newQuizId = generateNextQuizId();
         
-        // Save to Quiz.txt
-        if (saveQuizToFile(newQuizId, moduleId)) {
+        // Save to Quiz.txt with title
+        if (saveQuizToFile(newQuizId, moduleId, quizTitle)) {
             // Set as current quiz
             currentQuizID = newQuizId;
+            currentQuizTitle = quizTitle;
             
-            JOptionPane.showMessageDialog(this, "New Quiz created successfully!\nQuiz ID: " + newQuizId, "Success", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Quiz created successfully!\nQuiz ID: " + newQuizId + "\nTitle: " + quizTitle, "Success", JOptionPane.INFORMATION_MESSAGE);
+            
+            // Clear the title field to allow users to add more questions
+            jTextField9.setText("");
             
             // Refresh the quiz dropdown and select the new quiz
             populateQuizDropdown(moduleId);
             jComboBox2.setSelectedItem(newQuizId);
         } else {
-            JOptionPane.showMessageDialog(this, "Failed to create new quiz.", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Failed to create quiz.", "Error", JOptionPane.ERROR_MESSAGE);
         }
-    }//GEN-LAST:event_jButton5ActionPerformed
+    }
+
+    private void jTextField9ActionPerformed(java.awt.event.ActionEvent evt) {
+        // TODO add your handling code here:
+    }
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {
         // Save: check if TempQues.txt exists (from Add button)
@@ -1297,15 +1365,15 @@ public class Quiz extends javax.swing.JFrame {
     }
     
     /**
-     * Saves QuizID and ModuleID to Quiz.txt
-     * Format: QuizID, ModuleID
+     * Saves QuizID, ModuleID, and Title to Quiz.txt
+     * Format: QuizID, ModuleID, Title
      */
-    private boolean saveQuizToFile(String quizId, String moduleId) {
+    private boolean saveQuizToFile(String quizId, String moduleId, String title) {
         String projectRoot = System.getProperty("user.dir");
         File quizFile = new File(projectRoot, "src\\main\\java\\oopwj\\Quiz.txt");
         
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(quizFile, true))) {
-            bw.write(quizId + "," + moduleId);
+            bw.write(quizId + "," + moduleId + "," + csvEscape(title));
             bw.newLine();
             return true;
         } catch (IOException ex) {
@@ -1348,6 +1416,38 @@ public class Quiz extends javax.swing.JFrame {
     }
 
     /**
+     * Retrieves the quiz title from Quiz.txt based on QuizID
+     */
+    private String getQuizTitle(String quizId) {
+        String projectRoot = System.getProperty("user.dir");
+        File quizFile = new File(projectRoot, "src\\main\\java\\oopwj\\Quiz.txt");
+        
+        if (!quizFile.exists()) {
+            return null;
+        }
+        
+        try (BufferedReader br = new BufferedReader(new FileReader(quizFile))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] parts = line.split(",", 3); // Split into max 3 parts: QuizID, ModuleID, Title
+                if (parts.length >= 3) {
+                    String id = parts[0].trim();
+                    
+                    // If QuizID matches, return the title
+                    if (id.equals(quizId)) {
+                        String title = parts[2].trim();
+                        return title;
+                    }
+                }
+            }
+        } catch (IOException ex) {
+            logger.log(java.util.logging.Level.SEVERE, "Error reading Quiz.txt", ex);
+        }
+        
+        return null;
+    }
+
+    /**
      * @param args the command line arguments
      */
     public static void main(String args[]) {
@@ -1378,12 +1478,14 @@ public class Quiz extends javax.swing.JFrame {
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
     private javax.swing.JButton jButton5;
+    private javax.swing.JButton jButton6;
     private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JComboBox<String> jComboBox2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
@@ -1410,5 +1512,7 @@ public class Quiz extends javax.swing.JFrame {
     private javax.swing.JTextField jTextField5;
     private javax.swing.JTextField jTextField6;
     private javax.swing.JTextField jTextField7;
+    private javax.swing.JTextField jTextField8;
+    private javax.swing.JTextField jTextField9;
     // End of variables declaration//GEN-END:variables
 }
