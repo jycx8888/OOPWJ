@@ -73,7 +73,7 @@ public class Grade_Assessment extends javax.swing.JFrame {
 
     private void clearTable() {
         jTable1.setModel(new DefaultTableModel(
-            new Object[]{"ModuleID", "QuizID", "StudentID"}, 0
+            new Object[]{"ModuleID", "QuizID", "StudentID", "Grade", "Feedback"}, 0
         ));
     }
 
@@ -356,8 +356,8 @@ public class Grade_Assessment extends javax.swing.JFrame {
             return;
         }
 
-        // Show unique moduleID and studentID pairs only
-        Set<String> uniqueStudentModulePairs = new HashSet<>();
+        // Show unique moduleID, quizID, and studentID pairs from answers.txt
+        Set<String> uniqueTriples = new HashSet<>();
         List<String[]> tableData = new ArrayList<>();
         try (BufferedReader br = new BufferedReader(new FileReader(answersFile))) {
             String line;
@@ -368,32 +368,25 @@ public class Grade_Assessment extends javax.swing.JFrame {
                 if (line.isEmpty() || line.startsWith("#")) continue;
                 
                 String[] parts = line.split(",");
-                if (parts.length >= 5) {
+                if (parts.length >= 3) {
                     String studentID = parts[0].trim();
                     String moduleID = parts[1].trim();
+                    String quizID = parts[2].trim();
                     
                     if (allowedModuleIDs.contains(moduleID)) {
-                        String pairKey = moduleID + "|" + studentID;
-                        if (!uniqueStudentModulePairs.contains(pairKey)) {
-                            uniqueStudentModulePairs.add(pairKey);
-                            List<String> quizIDs = quizByModule.get(moduleID);
-                            if (quizIDs == null || quizIDs.isEmpty()) {
-                                tableData.add(new String[]{moduleID, "N/A", studentID});
-                                System.out.println("✓ Added unique student - Module: " + moduleID + ", Quiz: N/A, Student: " + studentID);
-                            } else {
-                                for (String quizID : quizIDs) {
-                                    tableData.add(new String[]{moduleID, quizID, studentID});
-                                    System.out.println("✓ Added unique student - Module: " + moduleID + ", Quiz: " + quizID + ", Student: " + studentID);
-                                }
-                            }
+                        String tripleKey = moduleID + "|" + quizID + "|" + studentID;
+                        if (!uniqueTriples.contains(tripleKey)) {
+                            uniqueTriples.add(tripleKey);
+                            tableData.add(new String[]{moduleID, quizID, studentID});
+                            System.out.println("✓ Added unique entry - Module: " + moduleID + ", Quiz: " + quizID + ", Student: " + studentID);
                         }
                     }
                 } else {
                     logger.log(java.util.logging.Level.WARNING, "Malformed line in answers.txt (line " + lineCount + "): " + line);
                 }
             }
-            System.out.println("Total answers read: " + lineCount + ", Unique students: " + tableData.size());
-            logger.log(java.util.logging.Level.INFO, "Total unique students loaded: " + tableData.size());
+            System.out.println("Total answers read: " + lineCount + ", Unique entries: " + tableData.size());
+            logger.log(java.util.logging.Level.INFO, "Total unique entries loaded: " + tableData.size());
         } catch (IOException e) {
             logger.log(java.util.logging.Level.SEVERE, "Error reading answers.txt: " + e.getMessage(), e);
             javax.swing.JOptionPane.showMessageDialog(this, 
@@ -404,11 +397,15 @@ public class Grade_Assessment extends javax.swing.JFrame {
         }
 
         DefaultTableModel model = new DefaultTableModel(
-            new Object[]{"ModuleID", "QuizID", "StudentID"}, 0
+            new Object[]{"ModuleID", "QuizID", "StudentID", "Grade", "Feedback"}, 0
         );
         for (String[] row : tableData) {
-            model.addRow(row);
-            System.out.println("DEBUG: Added row - " + java.util.Arrays.toString(row));
+            String[] expandedRow = new String[5];
+            System.arraycopy(row, 0, expandedRow, 0, 3);
+            expandedRow[3] = "Pending";  // Grade column
+            expandedRow[4] = "Pending";  // Feedback column
+            model.addRow(expandedRow);
+            System.out.println("DEBUG: Added row - " + java.util.Arrays.toString(expandedRow));
         }
         System.out.println("DEBUG: Setting model with " + model.getRowCount() + " rows");
         jTable1.setModel(model);
