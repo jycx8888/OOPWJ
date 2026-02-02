@@ -223,6 +223,19 @@ public class Assessments extends javax.swing.JFrame {
     
     private void deleteSelectedRows(int[] selectedRows) {
         DefaultTableModel model = (DefaultTableModel) jTable2.getModel();
+
+        // Capture affected quiz/module sets before deletion
+        java.util.Set<String> affectedSets = new java.util.HashSet<>();
+        if ("quiz".equals(currentDataType)) {
+            for (int rowIndex : selectedRows) {
+                if (rowIndex >= 0 && rowIndex < model.getRowCount()) {
+                    Object quizId = model.getValueAt(rowIndex, 1);
+                    Object moduleId = model.getValueAt(rowIndex, 2);
+                    String key = (quizId != null ? quizId.toString() : "") + "|" + (moduleId != null ? moduleId.toString() : "");
+                    affectedSets.add(key);
+                }
+            }
+        }
         
         // Sort indices in descending order to delete from bottom to top
         java.util.Arrays.sort(selectedRows);
@@ -232,20 +245,33 @@ public class Assessments extends javax.swing.JFrame {
         
         // Update the file with remaining data
         if ("quiz".equals(currentDataType)) {
-            updateQuizFile();
+            updateQuizFile(affectedSets);
         }
         
         JOptionPane.showMessageDialog(this, "Row(s) deleted successfully", "Success", JOptionPane.INFORMATION_MESSAGE);
     }
     
-    private void updateQuizFile() {
+    private void updateQuizFile(java.util.Set<String> affectedSets) {
         String projectRoot = System.getProperty("user.dir");
         File quizFile = new File(projectRoot, "src\\main\\java\\oopwj\\question.txt");
         
         DefaultTableModel model = (DefaultTableModel) jTable2.getModel();
+
+        Map<String, Integer> counters = new HashMap<>();
         
         try (java.io.FileWriter fw = new java.io.FileWriter(quizFile)) {
             for (int row = 0; row < model.getRowCount(); row++) {
+                Object quizIdObj = model.getValueAt(row, 1);
+                Object moduleIdObj = model.getValueAt(row, 2);
+                String key = (quizIdObj != null ? quizIdObj.toString() : "") + "|" + (moduleIdObj != null ? moduleIdObj.toString() : "");
+
+                if (affectedSets != null && affectedSets.contains(key)) {
+                    int next = counters.getOrDefault(key, 0) + 1;
+                    counters.put(key, next);
+                    String newQuestionId = String.format("Q%03d", next);
+                    model.setValueAt(newQuestionId, row, 0);
+                }
+
                 StringBuilder sb = new StringBuilder();
                 for (int col = 0; col < model.getColumnCount(); col++) {
                     Object value = model.getValueAt(row, col);

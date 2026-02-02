@@ -1175,16 +1175,11 @@ public class Quiz extends javax.swing.JFrame {
         correctAnswer = "";
     }
 
-    // Helper: escape a field for simple CSV (wrap in double quotes if needed)
+    // Helper: normalize a field without adding quotes
     private String csvEscape(String s) {
         if (s == null) return "";
         String value = s.replace("\r", "").replace("\n", " ").trim();
-        boolean needsQuotes = value.contains(",") || value.contains("\"") || value.contains(" ");
-        if (needsQuotes) {
-            value = value.replace("\"", "\"\"");
-            return "\"" + value + "\"";
-        }
-        return value;
+        return value.replace("\"", "");
     }
     
     /**
