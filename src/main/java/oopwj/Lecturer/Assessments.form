@@ -98,7 +98,7 @@
       <SubComponents>
         <Component class="javax.swing.JButton" name="QuizButton">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Quiz"/>
+            <Property name="text" type="java.lang.String" value="Load All"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JButton" name="jButton1">

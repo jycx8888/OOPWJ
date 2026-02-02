@@ -46,6 +46,7 @@ public class Assessments extends javax.swing.JFrame {
         initComponents();
         setupTable();
         setupSearchField();
+        loadModuleIDsToComboBox(); // Populate jComboBox1 with ModuleIDs from Quiz.txt
         displayAssignedModules(); // Show assigned modules to the lecturer
         loadQuizData();
         currentDataType = "quiz";
@@ -53,6 +54,7 @@ public class Assessments extends javax.swing.JFrame {
         jButton1.addActionListener(this::jButton1ActionPerformed);
         jButton2.addActionListener(this::jButton2ActionPerformed);
         jButton4.addActionListener(this::jButton4ActionPerformed);
+        jComboBox1.addActionListener(this::jComboBox1ActionPerformed);
     }
     
     private void setupSearchField() {
@@ -119,7 +121,7 @@ public class Assessments extends javax.swing.JFrame {
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
 
-        QuizButton.setText("Quiz");
+        QuizButton.setText("Load All");
 
         jButton1.setText("Back");
 
@@ -391,7 +393,12 @@ public class Assessments extends javax.swing.JFrame {
         }
         
         if ("quiz".equals(currentDataType)) {
-            new Quiz(lecturerID, this).setVisible(true);
+            String selectedModuleId = (String) jComboBox1.getSelectedItem();
+            if (selectedModuleId != null && !selectedModuleId.trim().isEmpty()) {
+                new Quiz(lecturerID, this, selectedModuleId.trim()).setVisible(true);
+            } else {
+                new Quiz(lecturerID, this).setVisible(true);
+            }
         }
         this.dispose();
     }
@@ -417,16 +424,108 @@ public class Assessments extends javax.swing.JFrame {
     private void editQuizRow(int selectedRow) {
         DefaultTableModel model = (DefaultTableModel) jTable2.getModel();
         
-        String question = model.getValueAt(selectedRow, 1).toString();
-        String answerA = model.getValueAt(selectedRow, 2).toString();
-        String answerB = model.getValueAt(selectedRow, 3).toString();
-        String answerC = model.getValueAt(selectedRow, 4).toString();
-        String answerD = model.getValueAt(selectedRow, 5).toString();
-        String correctAnswer = model.getValueAt(selectedRow, 6).toString();
-        
-        Quiz quizForm = new Quiz(question, answerA, answerB, answerC, answerD, correctAnswer);
+        if (!"quiz".equals(currentDataType)) {
+            JOptionPane.showMessageDialog(this, "Please load quiz questions before editing.", "Edit", JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+
+        String moduleId = model.getValueAt(selectedRow, 0).toString().trim();
+        String quizId = model.getValueAt(selectedRow, 1).toString().trim();
+        String questionId = model.getValueAt(selectedRow, 2).toString().trim();
+
+        QuizQuestionData questionData = loadQuestionData(moduleId, quizId, questionId);
+        if (questionData == null) {
+            JOptionPane.showMessageDialog(this, "Unable to find the selected question in question.txt.", "Edit", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        String projectRoot = System.getProperty("user.dir");
+        Map<String, String> quizMarks = loadQuizMarks(projectRoot);
+        String marksKey = moduleId + "|" + quizId + "|" + questionId;
+        String marks = quizMarks.getOrDefault(marksKey, "");
+
+        Quiz quizForm = new Quiz(
+            lecturerID,
+            this,
+            moduleId,
+            quizId,
+            questionId,
+            questionData.questionType,
+            questionData.question,
+            questionData.answerA,
+            questionData.answerB,
+            questionData.answerC,
+            questionData.answerD,
+            questionData.correctAnswer,
+            marks
+        );
         quizForm.setVisible(true);
         this.dispose();
+    }
+
+    private QuizQuestionData loadQuestionData(String moduleId, String quizId, String questionId) {
+        String projectRoot = System.getProperty("user.dir");
+        File quizFile = new File(projectRoot, "src\\main\\java\\oopwj\\question.txt");
+
+        if (!quizFile.exists()) {
+            return null;
+        }
+
+        try (BufferedReader br = new BufferedReader(new FileReader(quizFile))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] fields = parseCSV(line);
+                if (fields.length >= 5) {
+                    String qId = fields[0].trim();
+                    String qQuizId = fields[1].trim();
+                    String qModuleId = fields[2].trim();
+
+                    if (qId.equals(questionId) && qQuizId.equals(quizId) && qModuleId.equals(moduleId)) {
+                        if (fields.length == 10) {
+                            return new QuizQuestionData(
+                                fields[9].trim(),
+                                fields[3].trim(),
+                                fields[4].trim(),
+                                fields[5].trim(),
+                                fields[6].trim(),
+                                fields[7].trim(),
+                                fields[8].trim()
+                            );
+                        } else if (fields.length == 5) {
+                            return new QuizQuestionData(
+                                fields[4].trim(),
+                                fields[3].trim(),
+                                "", "", "", "", ""
+                            );
+                        }
+                    }
+                }
+            }
+        } catch (IOException ex) {
+            logger.log(java.util.logging.Level.SEVERE, "Error reading question.txt", ex);
+        }
+
+        return null;
+    }
+
+    private static class QuizQuestionData {
+        private final String questionType;
+        private final String question;
+        private final String answerA;
+        private final String answerB;
+        private final String answerC;
+        private final String answerD;
+        private final String correctAnswer;
+
+        private QuizQuestionData(String questionType, String question, String answerA, String answerB, String answerC, String answerD, String correctAnswer) {
+            this.questionType = questionType;
+            this.question = question;
+            this.answerA = answerA;
+            this.answerB = answerB;
+            this.answerC = answerC;
+            this.answerD = answerD;
+            this.correctAnswer = correctAnswer;
+        }
     }
     
     private void QuizButtonActionPerformed(java.awt.event.ActionEvent evt) {
@@ -505,7 +604,7 @@ public class Assessments extends javax.swing.JFrame {
         String projectRoot = System.getProperty("user.dir");
         File quizFile = new File(projectRoot, "src\\main\\java\\oopwj\\question.txt");
 
-        // Load total marks per quiz
+        // Load total marks per question (ModuleID|QuizID|QuestionID)
         Map<String, String> quizMarks = loadQuizMarks(projectRoot);
 
         // Update column names to ModuleID, QuizID, QuestionID, Question Type, Total Marks
@@ -524,12 +623,18 @@ public class Assessments extends javax.swing.JFrame {
                     // New format: QuestionID[0], QuizID[1], ModuleID[2], Question[3], Options[4-7], CorrectAnswer[8], Type[9]
                     if (fields.length == 10) { // Objective question with QuizID
                         String quizID = fields[1];
-                        String totalMarks = quizMarks.getOrDefault(quizID, "1");
-                        rows.add(new Object[]{fields[2], quizID, fields[0], fields[9], totalMarks});
+                        String moduleID = fields[2];
+                        String questionID = fields[0];
+                        String key = moduleID + "|" + quizID + "|" + questionID;
+                        String totalMarks = quizMarks.getOrDefault(key, "0");
+                        rows.add(new Object[]{moduleID, quizID, questionID, fields[9], totalMarks});
                     } else if (fields.length == 5) { // Subjective question with QuizID
                         String quizID = fields[1];
-                        String totalMarks = quizMarks.getOrDefault(quizID, "1");
-                        rows.add(new Object[]{fields[2], quizID, fields[0], fields[4], totalMarks});
+                        String moduleID = fields[2];
+                        String questionID = fields[0];
+                        String key = moduleID + "|" + quizID + "|" + questionID;
+                        String totalMarks = quizMarks.getOrDefault(key, "0");
+                        rows.add(new Object[]{moduleID, quizID, questionID, fields[4], totalMarks});
                     }
                 }
             } catch (IOException ex) {
@@ -554,9 +659,14 @@ public class Assessments extends javax.swing.JFrame {
                 String line;
                 while ((line = br.readLine()) != null) {
                     String[] fields = parseCSV(line);
-                    if (fields.length >= 3) {
-                        // Format: ModuleID[0], QuizID[1], TotalMarks[2]
-                        quizMarks.put(fields[1], fields[2]);
+                    if (fields.length >= 4) {
+                        // Format: ModuleID[0], QuizID[1], QuestionID[2], TotalMarks[3]
+                        String moduleID = fields[0].trim();
+                        String quizID = fields[1].trim();
+                        String questionID = fields[2].trim();
+                        String totalMarks = fields[3].trim();
+                        String key = moduleID + "|" + quizID + "|" + questionID;
+                        quizMarks.put(key, totalMarks);
                     }
                 }
             } catch (IOException ex) {
@@ -594,6 +704,111 @@ public class Assessments extends javax.swing.JFrame {
             return Arrays.copyOfRange(fields, 1, 8);
         }
         return fields;
+    }
+    
+    private void loadModuleIDsToComboBox() {
+        String projectRoot = System.getProperty("user.dir");
+        File quizFile = new File(projectRoot, "src\\main\\java\\oopwj\\Quiz.txt");
+        
+        // Use a set to store unique module IDs
+        java.util.Set<String> moduleIDs = new java.util.LinkedHashSet<>();
+        
+        if (quizFile.exists()) {
+            try (BufferedReader br = new BufferedReader(new FileReader(quizFile))) {
+                String line;
+                while ((line = br.readLine()) != null) {
+                    String[] fields = line.split(",");
+                    // Quiz.txt format: QuizID[0], ModuleID[1], QuizName[2]
+                    if (fields.length >= 2) {
+                        String moduleID = fields[1].trim();
+                        if (!moduleID.isEmpty()) {
+                            moduleIDs.add(moduleID);
+                        }
+                    }
+                }
+            } catch (IOException ex) {
+                logger.log(java.util.logging.Level.SEVERE, null, ex);
+                JOptionPane.showMessageDialog(this, "Error reading Quiz.txt: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+        }
+        
+        // Clear existing items and populate the combo box
+        jComboBox1.removeAllItems();
+        for (String moduleID : moduleIDs) {
+            jComboBox1.addItem(moduleID);
+        }
+    }
+    
+    private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {
+        String selectedModuleID = (String) jComboBox1.getSelectedItem();
+        if (selectedModuleID != null && !selectedModuleID.isEmpty()) {
+            loadQuizzesByModuleID(selectedModuleID);
+        }
+    }
+    
+    private void loadQuizzesByModuleID(String moduleID) {
+        String projectRoot = System.getProperty("user.dir");
+        File quizFile = new File(projectRoot, "src\\main\\java\\oopwj\\Quiz.txt");
+        File questionFile = new File(projectRoot, "src\\main\\java\\oopwj\\question.txt");
+        
+        // Count questions per QuizID and ModuleID combination
+        Map<String, Integer> questionCounts = new HashMap<>();
+        
+        if (questionFile.exists()) {
+            try (BufferedReader br = new BufferedReader(new FileReader(questionFile))) {
+                String line;
+                while ((line = br.readLine()) != null) {
+                    String[] fields = parseCSV(line);
+                    // question.txt format: QuestionID[0], QuizID[1], ModuleID[2], ...
+                    if (fields.length >= 3) {
+                        String quizID = fields[1].trim();
+                        String modID = fields[2].trim();
+                        String key = quizID + "|" + modID;
+                        questionCounts.put(key, questionCounts.getOrDefault(key, 0) + 1);
+                    }
+                }
+            } catch (IOException ex) {
+                logger.log(java.util.logging.Level.SEVERE, null, ex);
+                JOptionPane.showMessageDialog(this, "Error reading question.txt: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+        }
+        
+        // Load quizzes for the selected module
+        String[] columnNames = {"ModuleID", "QuizID", "Quiz Title", "Total Questions"};
+        List<Object[]> rows = new ArrayList<>();
+        
+        if (quizFile.exists()) {
+            try (BufferedReader br = new BufferedReader(new FileReader(quizFile))) {
+                String line;
+                while ((line = br.readLine()) != null) {
+                    String[] fields = line.split(",", 3); // Split into 3 parts max to preserve quiz title
+                    // Quiz.txt format: QuizID[0], ModuleID[1], QuizName[2]
+                    if (fields.length >= 3) {
+                        String quizModuleID = fields[1].trim();
+                        if (quizModuleID.equals(moduleID)) {
+                            String quizID = fields[0].trim();
+                            String quizTitle = fields[2].trim();
+                            String key = quizID + "|" + quizModuleID;
+                            int totalQuestions = questionCounts.getOrDefault(key, 0);
+                            
+                            rows.add(new Object[]{quizModuleID, quizID, quizTitle, totalQuestions});
+                        }
+                    }
+                }
+            } catch (IOException ex) {
+                logger.log(java.util.logging.Level.SEVERE, null, ex);
+                JOptionPane.showMessageDialog(this, "Error reading Quiz.txt: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+        }
+        
+        // Update the table model with the new data
+        DefaultTableModel model = new DefaultTableModel(rows.toArray(new Object[0][]), columnNames);
+        jTable2.setModel(model);
+        centerAlignTable(jTable2);
+        currentDataType = "quizByModule";
     }
 
     /**

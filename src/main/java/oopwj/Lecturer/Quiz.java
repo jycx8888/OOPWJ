@@ -84,6 +84,38 @@ public class Quiz extends javax.swing.JFrame {
         // Load modules for the logged-in lecturer
         populateModulesDropdown();
     }
+
+    /**
+     * Constructor for adding a quiz with a preselected module
+     */
+    public Quiz(String lecturerID, Assessments parentWindow, String moduleId) {
+        this.lecturerID = lecturerID;
+        this.parentWindow = parentWindow;
+        initComponents();
+        // Create aliases for easier access
+        a = jTextField2;
+        b = jTextField3;
+        c = jTextField4;
+        d = jTextField6;
+        // Add action listener for jButton6 (Enter button)
+        jButton6.addActionListener(this::jButton6ActionPerformed);
+        // Add action listener for jButton5 (Add Quiz Set button)
+        jButton5.addActionListener(this::jButton5ActionPerformed);
+        this.setLocationRelativeTo(null);
+
+        // Initialize ButtonGroup for radio buttons
+        answerGroup = new javax.swing.ButtonGroup();
+        answerGroup.add(jRadioButton1);
+        answerGroup.add(jRadioButton3);
+        answerGroup.add(jRadioButton4);
+        answerGroup.add(jRadioButton5);
+
+        // Load modules for the logged-in lecturer
+        populateModulesDropdown();
+
+        // Select the module passed from Assessments
+        selectModuleById(moduleId);
+    }
     
     /**
      * Constructor for editing an existing quiz question
@@ -138,6 +170,93 @@ public class Quiz extends javax.swing.JFrame {
         }
     }
 
+    /**
+     * Constructor for editing a quiz question from Assessments
+     */
+    public Quiz(String lecturerID, Assessments parentWindow, String moduleId, String quizId, String questionId,
+                String questionType, String question, String ansA, String ansB, String ansC, String ansD,
+                String correctAns, String marks) {
+        this.lecturerID = lecturerID;
+        this.parentWindow = parentWindow;
+        initComponents();
+        // Create aliases for easier access
+        a = jTextField2;
+        b = jTextField3;
+        c = jTextField4;
+        d = jTextField6;
+        this.setLocationRelativeTo(null);
+
+        // Initialize ButtonGroup for radio buttons
+        answerGroup = new javax.swing.ButtonGroup();
+        answerGroup.add(jRadioButton1);
+        answerGroup.add(jRadioButton3);
+        answerGroup.add(jRadioButton4);
+        answerGroup.add(jRadioButton5);
+
+        // Load modules for the logged-in lecturer
+        populateModulesDropdown();
+
+        // Select module and quiz
+        selectModuleById(moduleId);
+        populateQuizDropdown(moduleId);
+        if (quizId != null && !quizId.isEmpty()) {
+            jComboBox2.setSelectedItem(quizId);
+            currentQuizID = quizId;
+            String quizTitle = getQuizTitle(quizId);
+            if (quizTitle != null && !quizTitle.isEmpty()) {
+                jTextField9.setText(quizTitle);
+                currentQuizTitle = quizTitle;
+                jTextField9.setEditable(false);
+            }
+        }
+
+        // Mark as edit mode and store original values
+        isEditMode = true;
+        originalQuestion = question != null ? question : "";
+        originalA = ansA != null ? ansA : "";
+        originalB = ansB != null ? ansB : "";
+        originalC = ansC != null ? ansC : "";
+        originalD = ansD != null ? ansD : "";
+        originalCorrectAnswer = correctAns != null ? correctAns : "";
+
+        // Display the current QuestionID on jLabel1 and jLabel7 (for editing)
+        if (questionId != null && !questionId.isEmpty()) {
+            String questionNumber = String.valueOf(Integer.parseInt(questionId.substring(1))); // Remove "Q" and leading zeros
+            jLabel1.setText("Question: " + questionNumber);
+            jLabel7.setText("Question: " + questionNumber);
+        }
+
+        if (questionType != null && questionType.equalsIgnoreCase("Subjective")) {
+            jTabbedPane1.setSelectedIndex(1);
+            jTextArea2.setText(originalQuestion);
+            jTextField7.setText(marks != null ? marks : "");
+        } else {
+            jTabbedPane1.setSelectedIndex(0);
+            jTextArea1.setText(originalQuestion);
+            a.setText(originalA);
+            b.setText(originalB);
+            c.setText(originalC);
+            d.setText(originalD);
+            jTextField1.setText(marks != null ? marks : "");
+
+            correctAnswer = originalCorrectAnswer;
+            switch (originalCorrectAnswer.toUpperCase()) {
+                case "A":
+                    jRadioButton1.setSelected(true);
+                    break;
+                case "B":
+                    jRadioButton3.setSelected(true);
+                    break;
+                case "C":
+                    jRadioButton4.setSelected(true);
+                    break;
+                case "D":
+                    jRadioButton5.setSelected(true);
+                    break;
+            }
+        }
+    }
+
     private void populateModulesDropdown() {
         String projectRoot = System.getProperty("user.dir");
         File modulesFile = new File(projectRoot, "src\\main\\java\\oopwj\\modules.txt");
@@ -166,6 +285,55 @@ public class Quiz extends javax.swing.JFrame {
             logger.log(java.util.logging.Level.SEVERE, null, ex);
             JOptionPane.showMessageDialog(this, "Failed to load modules: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
+    }
+
+    private void selectModuleById(String moduleId) {
+        if (moduleId == null || moduleId.isEmpty()) {
+            return;
+        }
+
+        for (int i = 0; i < jComboBox1.getItemCount(); i++) {
+            String item = jComboBox1.getItemAt(i);
+            if (item != null && item.startsWith(moduleId + " - ")) {
+                jComboBox1.setSelectedIndex(i);
+                return;
+            }
+        }
+
+        // If not found, try to add the module using its name
+        String moduleName = getModuleNameById(moduleId);
+        if (moduleName != null && !moduleName.isEmpty()) {
+            String display = moduleId + " - " + moduleName;
+            jComboBox1.addItem(display);
+            jComboBox1.setSelectedItem(display);
+        }
+    }
+
+    private String getModuleNameById(String moduleId) {
+        String projectRoot = System.getProperty("user.dir");
+        File modulesFile = new File(projectRoot, "src\\main\\java\\oopwj\\modules.txt");
+
+        if (!modulesFile.exists()) {
+            return null;
+        }
+
+        try (BufferedReader br = new BufferedReader(new FileReader(modulesFile))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] parts = line.split(",");
+                if (parts.length >= 2) {
+                    String id = parts[0].trim();
+                    String name = parts[1].trim();
+                    if (id.equals(moduleId)) {
+                        return name;
+                    }
+                }
+            }
+        } catch (IOException ex) {
+            logger.log(java.util.logging.Level.WARNING, "Error reading modules.txt", ex);
+        }
+
+        return null;
     }
 
     private String getNextQuestionId(String moduleId, File quizFile) {
@@ -297,13 +465,14 @@ public class Quiz extends javax.swing.JFrame {
         }
     }
 
-    private void saveQuestionMarks(String questionId, String moduleId, String marks) {
+    private void saveQuestionMarks(String moduleId, String quizId, String questionId, String marks) {
         String projectRoot = System.getProperty("user.dir");
         File marksFile = new File(projectRoot, "src\\main\\java\\oopwj\\TotalQuizMark.txt");
 
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(marksFile, true))) {
             StringBuilder sb = new StringBuilder();
             sb.append(csvEscape(moduleId)).append(",")
+              .append(csvEscape(quizId)).append(",")
               .append(csvEscape(questionId)).append(",")
               .append(csvEscape(marks));
 
@@ -386,9 +555,9 @@ public class Quiz extends javax.swing.JFrame {
         jPanel4 = new javax.swing.JPanel();
         jPanel5 = new javax.swing.JPanel();
         jPanel6 = new javax.swing.JPanel();
-        jLabel3 = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
         jTextArea2 = new javax.swing.JTextArea();
+        jLabel7 = new javax.swing.JLabel();
         jTextField7 = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
         jComboBox2 = new javax.swing.JComboBox<>();
@@ -504,9 +673,9 @@ public class Quiz extends javax.swing.JFrame {
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGap(8, 8, 8)
+                .addGap(14, 14, 14)
                 .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -579,13 +748,13 @@ public class Quiz extends javax.swing.JFrame {
         jPanel6.setBackground(new java.awt.Color(255, 255, 204));
         jPanel6.setPreferredSize(new java.awt.Dimension(370, 425));
 
-        jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        jLabel3.setForeground(new java.awt.Color(0, 0, 0));
-        jLabel3.setText("Type your question:");
-
         jTextArea2.setColumns(20);
         jTextArea2.setRows(5);
         jScrollPane2.setViewportView(jTextArea2);
+
+        jLabel7.setFont(new java.awt.Font("Segoe UI", 0, 17)); // NOI18N
+        jLabel7.setForeground(new java.awt.Color(0, 0, 0));
+        jLabel7.setText("Question:");
 
         javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
         jPanel6.setLayout(jPanel6Layout);
@@ -596,16 +765,17 @@ public class Quiz extends javax.swing.JFrame {
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 343, Short.MAX_VALUE)
                     .addGroup(jPanel6Layout.createSequentialGroup()
-                        .addComponent(jLabel3)
+                        .addGap(9, 9, 9)
+                        .addComponent(jLabel7)
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         jPanel6Layout.setVerticalGroup(
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel6Layout.createSequentialGroup()
-                .addGap(18, 18, 18)
-                .addComponent(jLabel3)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(20, 20, 20)
+                .addComponent(jLabel7)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 303, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(17, Short.MAX_VALUE))
         );
@@ -767,6 +937,17 @@ public class Quiz extends javax.swing.JFrame {
             
             // Make the title field read-only when an existing quiz is selected
             jTextField9.setEditable(false);
+            
+            // Display the next QuestionID on jLabel1 and jLabel7
+            String selectedModule = (String) jComboBox1.getSelectedItem();
+            if (selectedModule != null && !selectedModule.isEmpty()) {
+                String[] moduleParts = selectedModule.split(" - ", 2);
+                String moduleId = moduleParts[0].trim();
+                String nextQuestionID = getNextQuestionID(moduleId, selectedQuiz);
+                String questionNumber = String.valueOf(Integer.parseInt(nextQuestionID.substring(1))); // Remove "Q" and leading zeros
+                jLabel1.setText("Question: " + questionNumber);
+                jLabel7.setText("Question: " + questionNumber);
+            }
         }
     }//GEN-LAST:event_jComboBox2ActionPerformed
 
@@ -807,7 +988,7 @@ public class Quiz extends javax.swing.JFrame {
         String moduleId = moduleParts[0].trim();
         
         // Generate new QuizID
-        String newQuizId = generateNextQuizId();
+        String newQuizId = generateNextQuizId(moduleId);
         
         // Save to Quiz.txt with title
         if (saveQuizToFile(newQuizId, moduleId, quizTitle)) {
@@ -823,6 +1004,12 @@ public class Quiz extends javax.swing.JFrame {
             // Refresh the quiz dropdown and select the new quiz
             populateQuizDropdown(moduleId);
             jComboBox2.setSelectedItem(newQuizId);
+            
+            // Display the next QuestionID on jLabel1 and jLabel7
+            String nextQuestionID = getNextQuestionID(moduleId, newQuizId);
+            String questionNumber = String.valueOf(Integer.parseInt(nextQuestionID.substring(1))); // Remove "Q" and leading zeros
+            jLabel1.setText("Question: " + questionNumber);
+            jLabel7.setText("Question: " + questionNumber);
         } else {
             JOptionPane.showMessageDialog(this, "Failed to create quiz.", "Error", JOptionPane.ERROR_MESSAGE);
         }
@@ -927,7 +1114,7 @@ public class Quiz extends javax.swing.JFrame {
                         String[] entry = marksEntries.get(i);
                         String moduleId = entry[0];
                         String marks = entry[1];
-                        saveQuestionMarks(assignedIds.get(i), moduleId, marks);
+                        saveQuestionMarks(moduleId, currentQuizID, assignedIds.get(i), marks);
                     }
                 }
 
@@ -1006,10 +1193,10 @@ public class Quiz extends javax.swing.JFrame {
             if (!assignedIds.isEmpty()) {
                 if (selectedTabIndex == 0) {
                     String marks = jTextField1.getText().trim();
-                    saveQuestionMarks(assignedIds.get(0), moduleId, marks);
+                    saveQuestionMarks(moduleId, currentQuizID, assignedIds.get(0), marks);
                 } else if (selectedTabIndex == 1) {
                     String marks = jTextField7.getText().trim();
-                    saveQuestionMarks(assignedIds.get(0), moduleId, marks);
+                    saveQuestionMarks(moduleId, currentQuizID, assignedIds.get(0), marks);
                 }
             }
 
@@ -1275,7 +1462,7 @@ public class Quiz extends javax.swing.JFrame {
      * Generates the next QuizID in format QZ00X
      * Reads existing Quiz.txt and increments the highest ID found
      */
-    private String generateNextQuizId() {
+    private String generateNextQuizId(String moduleId) {
         String projectRoot = System.getProperty("user.dir");
         File quizFile = new File(projectRoot, "src\\main\\java\\oopwj\\Quiz.txt");
         int maxId = 0;
@@ -1285,9 +1472,12 @@ public class Quiz extends javax.swing.JFrame {
                 String line;
                 while ((line = br.readLine()) != null) {
                     String[] parts = line.split(",");
-                    if (parts.length >= 1) {
+                    if (parts.length >= 2) {
                         String quizId = parts[0].trim();
-                        if (quizId.startsWith("QZ")) {
+                        String quizModuleId = parts[1].trim();
+                        
+                        // Only count quiz IDs for the current module
+                        if (quizModuleId.equals(moduleId) && quizId.startsWith("QZ")) {
                             try {
                                 int id = Integer.parseInt(quizId.substring(2));
                                 if (id > maxId) {
@@ -1304,7 +1494,7 @@ public class Quiz extends javax.swing.JFrame {
             }
         }
         
-        // Increment and return new QuizID in format QZ00X
+        // Increment and return new QuizID in format QZ00X, starting from 1 for each module
         return String.format("QZ%03d", maxId + 1);
     }
     
@@ -1390,6 +1580,52 @@ public class Quiz extends javax.swing.JFrame {
         
         return null;
     }
+    
+    /**
+     * Gets the next QuestionID for the given ModuleID and QuizID
+     * Reads from question.txt and finds the highest QuestionID for this combination,
+     * then increments it by 1 in format Q001, Q002, etc.
+     */
+    private String getNextQuestionID(String moduleId, String quizId) {
+        String projectRoot = System.getProperty("user.dir");
+        File questionFile = new File(projectRoot, "src\\main\\java\\oopwj\\question.txt");
+        
+        int maxId = 0;
+        
+        if (questionFile.exists()) {
+            try (BufferedReader br = new BufferedReader(new FileReader(questionFile))) {
+                String line;
+                while ((line = br.readLine()) != null) {
+                    String[] fields = line.split(",", -1);
+                    if (fields.length >= 3) {
+                        String questionId = fields[0].trim();
+                        String qQuizId = fields[1].trim();
+                        String qModuleId = fields[2].trim();
+                        
+                        // Check if this question belongs to the current module and quiz
+                        if (qModuleId.equals(moduleId) && qQuizId.equals(quizId)) {
+                            // Extract the numeric part from QuestionID (e.g., "Q001" -> 1)
+                            if (questionId.startsWith("Q")) {
+                                try {
+                                    int id = Integer.parseInt(questionId.substring(1));
+                                    if (id > maxId) {
+                                        maxId = id;
+                                    }
+                                } catch (NumberFormatException e) {
+                                    logger.log(java.util.logging.Level.WARNING, "Invalid QuestionID format: " + questionId);
+                                }
+                            }
+                        }
+                    }
+                }
+            } catch (IOException ex) {
+                logger.log(java.util.logging.Level.SEVERE, "Error reading question.txt", ex);
+            }
+        }
+        
+        // Increment the max ID and return the new question ID
+        return String.format("Q%03d", maxId + 1);
+    }
 
     /**
      * @param args the command line arguments
@@ -1426,10 +1662,10 @@ public class Quiz extends javax.swing.JFrame {
     private javax.swing.JComboBox<String> jComboBox2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
