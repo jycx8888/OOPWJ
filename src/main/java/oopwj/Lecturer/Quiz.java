@@ -219,6 +219,14 @@ public class Quiz extends javax.swing.JFrame {
         originalD = ansD != null ? ansD : "";
         originalCorrectAnswer = correctAns != null ? correctAns : "";
 
+        // Disable UI components in edit mode
+        jComboBox1.setEnabled(false);  // Module dropdown
+        jComboBox2.setEnabled(false);  // Quiz set dropdown
+        jButton5.setEnabled(false);    // Add Quiz Set button
+        jButton6.setEnabled(false);    // Enter button
+        jTabbedPane1.setEnabled(false); // Tab panel
+        jTextField9.setEditable(false); // Quiz title field
+
         // Display the current QuestionID on jLabel1 and jLabel7 (for editing)
         if (questionId != null && !questionId.isEmpty()) {
             String questionNumber = String.valueOf(Integer.parseInt(questionId.substring(1))); // Remove "Q" and leading zeros
@@ -469,15 +477,59 @@ public class Quiz extends javax.swing.JFrame {
         String projectRoot = System.getProperty("user.dir");
         File marksFile = new File(projectRoot, "src\\main\\java\\oopwj\\TotalQuizMark.txt");
 
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter(marksFile, true))) {
+        // Read all existing marks
+        java.util.List<String> allLines = new java.util.ArrayList<>();
+        boolean updated = false;
+        
+        if (marksFile.exists()) {
+            try (BufferedReader br = new BufferedReader(new FileReader(marksFile))) {
+                String line;
+                while ((line = br.readLine()) != null) {
+                    String[] parts = line.split(",", -1);
+                    if (parts.length >= 4) {
+                        String lineModuleId = parts[0].trim();
+                        String lineQuizId = parts[1].trim();
+                        String lineQuestionId = parts[2].trim();
+                        
+                        // Check if this is the entry we want to update
+                        if (lineModuleId.equals(moduleId) && lineQuizId.equals(quizId) && lineQuestionId.equals(questionId)) {
+                            // Update this entry
+                            StringBuilder sb = new StringBuilder();
+                            sb.append(csvEscape(moduleId)).append(",")
+                              .append(csvEscape(quizId)).append(",")
+                              .append(csvEscape(questionId)).append(",")
+                              .append(csvEscape(marks));
+                            allLines.add(sb.toString());
+                            updated = true;
+                        } else {
+                            // Keep existing entry
+                            allLines.add(line);
+                        }
+                    } else {
+                        allLines.add(line);
+                    }
+                }
+            } catch (IOException ex) {
+                logger.log(java.util.logging.Level.SEVERE, null, ex);
+            }
+        }
+        
+        // If not updated, add as new entry
+        if (!updated) {
             StringBuilder sb = new StringBuilder();
             sb.append(csvEscape(moduleId)).append(",")
               .append(csvEscape(quizId)).append(",")
               .append(csvEscape(questionId)).append(",")
               .append(csvEscape(marks));
-
-            bw.write(sb.toString());
-            bw.newLine();
+            allLines.add(sb.toString());
+        }
+        
+        // Write all lines back to file
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(marksFile))) {
+            for (String line : allLines) {
+                bw.write(line);
+                bw.newLine();
+            }
         } catch (IOException ex) {
             logger.log(java.util.logging.Level.SEVERE, null, ex);
             JOptionPane.showMessageDialog(this, "Error saving marks: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
@@ -1020,9 +1072,7 @@ public class Quiz extends javax.swing.JFrame {
     }
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {
-        // Save: check if TempQues.txt exists (from Add button)
-        // If it exists, transfer its contents to question.txt
-        // Then also save the current form fields if they are not empty
+        // Save: check if in edit mode or add mode
         String projectRoot = System.getProperty("user.dir");
         File temp = new File(projectRoot, "src\\main\\java\\oopwj\\TempQues.txt");
         File tempMarks = new File(projectRoot, "src\\main\\java\\oopwj\\TempQuizMarks.txt");
@@ -1088,6 +1138,14 @@ public class Quiz extends javax.swing.JFrame {
         }
 
         try {
+            // If in edit mode, update the existing question
+            if (isEditMode) {
+                updateExistingQuestion(quizFile);
+                JOptionPane.showMessageDialog(this, "Question updated successfully", "Success", JOptionPane.INFORMATION_MESSAGE);
+                // Keep the window open with all data intact for further editing
+                return;
+            }
+            
             // First, transfer from TempQues.txt to question.txt if it exists
             if (temp.exists()) {
                 // Read all questions from temp file
@@ -1295,6 +1353,7 @@ public class Quiz extends javax.swing.JFrame {
         // open Assessments
         java.awt.EventQueue.invokeLater(() -> {
             if (parentWindow != null) {
+                parentWindow.refreshTableData(); // Refresh table data before showing
                 parentWindow.setVisible(true);
             } else {
                 new Assessments(lecturerID, null).setVisible(true);
@@ -1456,6 +1515,101 @@ public class Quiz extends javax.swing.JFrame {
         }
 
         return assignedIds;
+    }
+    
+    /**
+     * Updates an existing question in question.txt when in edit mode
+     */
+    private void updateExistingQuestion(File quizFile) throws IOException {
+        String selectedModule = (String) jComboBox1.getSelectedItem();
+        String[] moduleParts = selectedModule.split(" - ", 2);
+        String moduleId = moduleParts[0].trim();
+        
+        // Get the current question ID from the label
+        String questionIdLabel = jLabel1.getText(); // Format: "Question: X"
+        String questionNumber = questionIdLabel.replace("Question:", "").trim();
+        String questionId = String.format("Q%03d", Integer.parseInt(questionNumber));
+        
+        int selectedTabIndex = jTabbedPane1.getSelectedIndex();
+        
+        // Build the updated question line
+        StringBuilder updatedLine = new StringBuilder();
+        updatedLine.append(questionId).append(",")
+                   .append(csvEscape(currentQuizID)).append(",")
+                   .append(csvEscape(moduleId)).append(",");
+        
+        if (selectedTabIndex == 0) { // Objective tab
+            String question = jTextArea1.getText().trim();
+            String a1 = a.getText().trim();
+            String a2 = b.getText().trim();
+            String a3 = c.getText().trim();
+            String a4 = d.getText().trim();
+            String marks = jTextField1.getText().trim();
+            
+            updatedLine.append(csvEscape(question)).append(",")
+                       .append(csvEscape(a1)).append(",")
+                       .append(csvEscape(a2)).append(",")
+                       .append(csvEscape(a3)).append(",")
+                       .append(csvEscape(a4)).append(",")
+                       .append(csvEscape(correctAnswer)).append(",")
+                       .append("Objective");
+            
+            // Update marks in TotalQuizMark.txt
+            saveQuestionMarks(moduleId, currentQuizID, questionId, marks);
+        } else if (selectedTabIndex == 1) { // Subjective tab
+            String subjectiveQuestion = jTextArea2.getText().trim();
+            String marks = jTextField7.getText().trim();
+            
+            updatedLine.append(csvEscape(subjectiveQuestion)).append(",")
+                       .append("Subjective");
+            
+            // Update marks in TotalQuizMark.txt
+            saveQuestionMarks(moduleId, currentQuizID, questionId, marks);
+        }
+        
+        // Read all lines from question.txt
+        java.util.List<String> allLines = new java.util.ArrayList<>();
+        if (quizFile.exists()) {
+            try (BufferedReader br = new BufferedReader(new FileReader(quizFile))) {
+                String line;
+                while ((line = br.readLine()) != null) {
+                    allLines.add(line);
+                }
+            }
+        }
+        
+        // Find and replace the matching question
+        boolean found = false;
+        for (int i = 0; i < allLines.size(); i++) {
+            String line = allLines.get(i);
+            String[] parts = line.split(",", -1);
+            if (parts.length >= 3) {
+                String lineQuestionId = parts[0].trim();
+                String lineQuizId = parts[1].trim().replaceAll("^\"|\"$", "");
+                String lineModuleId = parts[2].trim().replaceAll("^\"|\"$", "");
+                
+                // Match by QuestionID, QuizID, and ModuleID
+                if (lineQuestionId.equals(questionId) && 
+                    lineQuizId.equals(currentQuizID) && 
+                    lineModuleId.equals(moduleId)) {
+                    allLines.set(i, updatedLine.toString());
+                    found = true;
+                    break;
+                }
+            }
+        }
+        
+        if (!found) {
+            throw new IOException("Could not find the question to update in question.txt");
+        }
+        
+        // Write all lines back to question.txt
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(quizFile))) {
+            for (String line : allLines) {
+                bw.write(line);
+                bw.newLine();
+            }
+        }
     }
     
     /**

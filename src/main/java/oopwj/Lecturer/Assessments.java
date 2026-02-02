@@ -541,6 +541,20 @@ public class Assessments extends javax.swing.JFrame {
         loadQuizData();
     }
     
+    /**
+     * Public method to refresh the table data - called when returning from Quiz editing
+     */
+    public void refreshTableData() {
+        if ("quiz".equals(currentDataType)) {
+            loadQuizData();
+        } else if ("quizByModule".equals(currentDataType)) {
+            String selectedModuleID = (String) jComboBox1.getSelectedItem();
+            if (selectedModuleID != null && !selectedModuleID.isEmpty()) {
+                loadQuizzesByModuleID(selectedModuleID);
+            }
+        }
+    }
+    
     private void loadLecturerModules() {
         lecturerModules.clear();
         
