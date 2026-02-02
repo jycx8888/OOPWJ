@@ -31,6 +31,7 @@ Q008,QZ002,M001,How to calculate 6*6?,Subjective
 Q009,QZ002,M001,CO2 formula?,H2O,CO2,O2,N2,B,Objective
 Q010,QZ002,M001,Slowest land animal?,Cheetah,Lion,Snail,Elephant,C,Objective
 Q011,QZ002,M001,Which is a markup language?,Python,HTML,Lizard,Frog,B,Objective
-
 Q001,QZ007,M001,another one,vds,adsv,vsavsa,vsav,A,Objective
 Q002,QZ007,M001,testinggggg,Subjective
+Q001,QZ001,M002,new ques,1,2,3,4,B,Objective
+Q002,QZ001,M002,test also,Subjective
