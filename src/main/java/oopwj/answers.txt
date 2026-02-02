@@ -1,7 +1,38 @@
-S123,M001,QZ001,Q001,Subjective,dont know
-S123,M001,QZ001,Q002,Objective,C
-S123,M001,QZ002,Q003,Objective,D
-S123,M002,QZ001,Q001,Subjective,i try
-S123,M002,QZ001,Q002,Objective,A
-S123,M002,QZ002,Q003,Objective,B
+S123,M001,QZ001,Q001,Objective,D
+S123,M001,QZ001,Q002,Subjective,Java is a programming language used to build applications.
+S123,M001,QZ001,Q003,Objective,B
+S123,M001,QZ001,Q004,Subjective,2+2 equals 4.
+S123,M001,QZ001,Q005,Objective,D
+S123,M001,QZ001,Q006,Subjective,Because the Earth rotates from west to east.
+S123,M001,QZ001,Q007,Objective,C
+S123,M001,QZ001,Q008,Subjective,Multiply 5 by 5 to get 25.
+S123,M001,QZ001,Q009,Objective,B
+S123,M001,QZ001,Q010,Objective,D
+S123,M001,QZ001,Q011,Objective,C
+S123,M001,QZ001,Q012,Objective,A
+S123,M001,QZ001,Q013,Subjective,Not sure, but I think it is a short response.
+S123,M001,QZ001,Q014,Objective,A
+S123,M001,QZ001,Q015,Subjective,I don't know the exact answer.
+S123,M001,QZ001,Q016,Subjective,Need more context to answer this.
+S123,M001,QZ001,Q017,Objective,B
+S123,M001,QZ001,Q018,Objective,D
+S123,M001,QZ001,Q019,Objective,C
+S123,M001,QZ001,Q020,Objective,C
+S123,M001,QZ001,Q021,Objective,B
+S123,M001,QZ001,Q022,Objective,D
+S123,M001,QZ002,Q001,Objective,A
+S123,M001,QZ002,Q002,Subjective,Python is a programming language.
+S123,M001,QZ002,Q003,Objective,A
+S123,M001,QZ002,Q004,Subjective,3+3 equals 6.
+S123,M001,QZ002,Q005,Objective,C
+S123,M001,QZ002,Q006,Subjective,It is the colors in the sky as the sun sets.
+S123,M001,QZ002,Q007,Objective,D
+S123,M001,QZ002,Q008,Subjective,Multiply 6 by 6 to get 36.
+S123,M001,QZ002,Q009,Objective,A
+S123,M001,QZ002,Q010,Objective,B
+S123,M001,QZ002,Q011,Objective,D
+S123,M001,QZ007,Q001,Objective,B
+S123,M001,QZ007,Q002,Subjective,Just testing the quiz.
+S123,M002,QZ001,Q001,Objective,C
+S123,M002,QZ001,Q002,Subjective,This is a sample response.
 

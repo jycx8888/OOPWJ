@@ -138,6 +138,9 @@ public class View_Grade extends javax.swing.JFrame {
         jLabel7 = new javax.swing.JLabel();
         jLabel8 = new javax.swing.JLabel();
         jLabel9 = new javax.swing.JLabel();
+        jButton2 = new javax.swing.JButton();
+        jButton3 = new javax.swing.JButton();
+        jButton4 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setMaximumSize(null);
@@ -291,29 +294,38 @@ public class View_Grade extends javax.swing.JFrame {
 
         jLayeredPane2.add(Subjective, "card2");
 
-        jPanel4.add(jLayeredPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 180, 420, 420));
+        jPanel4.add(jLayeredPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 150, 420, 420));
 
         jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
         jComboBox1.addActionListener(this::jComboBox1ActionPerformed);
-        jPanel4.add(jComboBox1, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 130, 210, 30));
+        jPanel4.add(jComboBox1, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 100, 210, 30));
 
         jButton1.setText("Exit");
-        jPanel4.add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(210, 610, -1, -1));
+        jPanel4.add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(210, 650, -1, -1));
 
         jLabel7.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel7.setForeground(new java.awt.Color(0, 0, 0));
         jLabel7.setText("Module ID:");
-        jPanel4.add(jLabel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 70, 190, -1));
+        jPanel4.add(jLabel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 40, 190, -1));
 
         jLabel8.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel8.setForeground(new java.awt.Color(0, 0, 0));
         jLabel8.setText("Student ID:");
-        jPanel4.add(jLabel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 100, 200, -1));
+        jPanel4.add(jLabel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 70, 200, -1));
 
         jLabel9.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         jLabel9.setForeground(new java.awt.Color(0, 0, 0));
         jLabel9.setText("Quiz ID: ");
-        jPanel4.add(jLabel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 20, 170, -1));
+        jPanel4.add(jLabel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 10, 170, -1));
+
+        jButton2.setText("Previous");
+        jPanel4.add(jButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 580, -1, -1));
+
+        jButton3.setText("Next");
+        jPanel4.add(jButton3, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 580, -1, -1));
+
+        jButton4.setText("Save");
+        jPanel4.add(jButton4, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 580, -1, -1));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -323,7 +335,7 @@ public class View_Grade extends javax.swing.JFrame {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, 653, Short.MAX_VALUE)
+            .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, 704, Short.MAX_VALUE)
         );
 
         pack();
@@ -445,6 +457,8 @@ public class View_Grade extends javax.swing.JFrame {
                         fileQuizID.equals(quizID) && fileQuestionID.equals(questionID)) {
                         
                         if ("Objective".equalsIgnoreCase(questionType)) {
+                            // Show student's objective answer
+                            jTextField1.setText(answer);
                             // Set objective answer radio buttons
                             if ("A".equalsIgnoreCase(answer)) {
                                 jRadioButton1.setSelected(true);
@@ -519,6 +533,9 @@ public class View_Grade extends javax.swing.JFrame {
     private javax.swing.JPanel Objective;
     private javax.swing.JPanel Subjective;
     private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
+    private javax.swing.JButton jButton3;
+    private javax.swing.JButton jButton4;
     private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;

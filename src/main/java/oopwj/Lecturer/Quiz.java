@@ -536,39 +536,6 @@ public class Quiz extends javax.swing.JFrame {
         }
     }
 
-    private void appendTempMarks(String moduleId, String marks) {
-        String projectRoot = System.getProperty("user.dir");
-        File tempMarksFile = new File(projectRoot, "src\\main\\java\\oopwj\\TempQuizMarks.txt");
-
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter(tempMarksFile, true))) {
-            StringBuilder sb = new StringBuilder();
-            sb.append(csvEscape(moduleId)).append(",").append(csvEscape(marks));
-            bw.write(sb.toString());
-            bw.newLine();
-        } catch (IOException ex) {
-            logger.log(java.util.logging.Level.SEVERE, null, ex);
-            JOptionPane.showMessageDialog(this, "Error saving temporary marks: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-        }
-    }
-
-    private java.util.List<String[]> readTempMarks(File tempMarksFile) throws IOException {
-        java.util.List<String[]> entries = new java.util.ArrayList<>();
-
-        try (BufferedReader br = new BufferedReader(new FileReader(tempMarksFile))) {
-            String line;
-            while ((line = br.readLine()) != null) {
-                String[] parts = line.split(",", -1);
-                if (parts.length >= 2) {
-                    String moduleId = parts[0].trim();
-                    String marks = parts[1].trim();
-                    entries.add(new String[]{moduleId, marks});
-                }
-            }
-        }
-
-        return entries;
-    }
-
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -1075,7 +1042,6 @@ public class Quiz extends javax.swing.JFrame {
         // Save: check if in edit mode or add mode
         String projectRoot = System.getProperty("user.dir");
         File temp = new File(projectRoot, "src\\main\\java\\oopwj\\TempQues.txt");
-        File tempMarks = new File(projectRoot, "src\\main\\java\\oopwj\\TempQuizMarks.txt");
         File quizFile = new File(projectRoot, "src\\main\\java\\oopwj\\question.txt");
 
         // Check which tab is selected
@@ -1164,22 +1130,9 @@ public class Quiz extends javax.swing.JFrame {
                 // Insert questions and renumber
                 java.util.List<String> assignedIds = insertQuestionsAndRenumber(quizFile, newQuestions, currentQuizID);
 
-                // Save marks for the newly inserted questions
-                if (tempMarks.exists()) {
-                    java.util.List<String[]> marksEntries = readTempMarks(tempMarks);
-                    int limit = Math.min(assignedIds.size(), marksEntries.size());
-                    for (int i = 0; i < limit; i++) {
-                        String[] entry = marksEntries.get(i);
-                        String moduleId = entry[0];
-                        String marks = entry[1];
-                        saveQuestionMarks(moduleId, currentQuizID, assignedIds.get(i), marks);
-                    }
-                }
-
                 // delete temporary files
                 try {
                     Files.deleteIfExists(temp.toPath());
-                    Files.deleteIfExists(tempMarks.toPath());
                 } catch (IOException ex) {
                     logger.log(java.util.logging.Level.WARNING, null, ex);
                 }
@@ -1286,7 +1239,6 @@ public class Quiz extends javax.swing.JFrame {
         // Check if there's anything to discard
         String projectRoot = System.getProperty("user.dir");
         File temp = new File(projectRoot, "src\\main\\java\\oopwj\\TempQues.txt");
-        File tempMarks = new File(projectRoot, "src\\main\\java\\oopwj\\TempQuizMarks.txt");
         
         String question = jTextArea1.getText().trim();
         String a1 = a.getText().trim();
@@ -1337,13 +1289,6 @@ public class Quiz extends javax.swing.JFrame {
                 } catch (IOException ex) {
                     logger.log(java.util.logging.Level.WARNING, null, ex);
                 }
-            }
-        }
-        if (tempMarks.exists()) {
-            try {
-                Files.deleteIfExists(tempMarks.toPath());
-            } catch (IOException ex) {
-                logger.log(java.util.logging.Level.WARNING, null, ex);
             }
         }
 
