@@ -303,8 +303,8 @@ public class Quiz extends javax.swing.JFrame {
 
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(marksFile, true))) {
             StringBuilder sb = new StringBuilder();
-            sb.append(csvEscape(moduleId)).append(", ")
-              .append(csvEscape(questionId)).append(", ")
+            sb.append(csvEscape(moduleId)).append(",")
+              .append(csvEscape(questionId)).append(",")
               .append(csvEscape(marks));
 
             bw.write(sb.toString());
@@ -865,15 +865,15 @@ public class Quiz extends javax.swing.JFrame {
                 String marks = jTextField1.getText().trim();
 
                 sb.append("TEMP") // Temporary ID, will be replaced
-                  .append(", ")
-                  .append(csvEscape(currentQuizID)).append(", ") // Append QuizID at index[1]
-                  .append(csvEscape(moduleId)).append(", ") // Append ModuleID at index[2]
-                  .append(csvEscape(question)).append(", ")
-                  .append(csvEscape(a1)).append(", ")
-                  .append(csvEscape(a2)).append(", ")
-                  .append(csvEscape(a3)).append(", ")
-                  .append(csvEscape(a4)).append(", ")
-                  .append(csvEscape(correctAnswer)).append(", ")
+                  .append(",")
+                  .append(csvEscape(currentQuizID)).append(",") // Append QuizID at index[1]
+                  .append(csvEscape(moduleId)).append(",") // Append ModuleID at index[2]
+                  .append(csvEscape(question)).append(",")
+                  .append(csvEscape(a1)).append(",")
+                  .append(csvEscape(a2)).append(",")
+                  .append(csvEscape(a3)).append(",")
+                  .append(csvEscape(a4)).append(",")
+                  .append(csvEscape(correctAnswer)).append(",")
                   .append("Objective");
 
                 // Save marks (will update with correct ID after insertion)
@@ -883,10 +883,10 @@ public class Quiz extends javax.swing.JFrame {
                 String marks = jTextField7.getText().trim();
 
                 sb.append("TEMP")
-                  .append(", ")
-                  .append(csvEscape(currentQuizID)).append(", ") // Append QuizID at index[1]
-                  .append(csvEscape(moduleId)).append(", ") // Append ModuleID at index[2]
-                  .append(csvEscape(subjectiveQuestion)).append(", ")
+                  .append(",")
+                  .append(csvEscape(currentQuizID)).append(",") // Append QuizID at index[1]
+                  .append(csvEscape(moduleId)).append(",") // Append ModuleID at index[2]
+                  .append(csvEscape(subjectiveQuestion)).append(",")
                   .append("Subjective");
             }
 
@@ -1037,15 +1037,15 @@ public class Quiz extends javax.swing.JFrame {
                 String moduleId = moduleParts[0].trim();
 
                 StringBuilder sb = new StringBuilder();
-                sb.append(csvEscape(questionId)).append(", ");
-                sb.append(csvEscape(currentQuizID)).append(", "); // Include QuizID at index[1]
-                sb.append(csvEscape(moduleId)).append(", "); // Include ModuleID at index[2]
-                sb.append(csvEscape(question)).append(", ");
-                sb.append(csvEscape(a1)).append(", ");
-                sb.append(csvEscape(a2)).append(", ");
-                sb.append(csvEscape(a3)).append(", ");
-                sb.append(csvEscape(a4)).append(", ");
-                sb.append(csvEscape(correctAnswer)).append(", ");
+                sb.append(csvEscape(questionId)).append(",");
+                sb.append(csvEscape(currentQuizID)).append(","); // Include QuizID at index[1]
+                sb.append(csvEscape(moduleId)).append(","); // Include ModuleID at index[2]
+                sb.append(csvEscape(question)).append(",");
+                sb.append(csvEscape(a1)).append(",");
+                sb.append(csvEscape(a2)).append(",");
+                sb.append(csvEscape(a3)).append(",");
+                sb.append(csvEscape(a4)).append(",");
+                sb.append(csvEscape(correctAnswer)).append(",");
                 sb.append("Objective");
 
                 bw.write(sb.toString());
@@ -1094,10 +1094,10 @@ public class Quiz extends javax.swing.JFrame {
                 String moduleId = moduleParts[0].trim();
 
                 StringBuilder sb = new StringBuilder();
-                sb.append(csvEscape(questionId)).append(", ");
-                sb.append(csvEscape(currentQuizID)).append(", "); // Include QuizID at index[1]
-                sb.append(csvEscape(moduleId)).append(", "); // Include ModuleID at index[2]
-                sb.append(csvEscape(subjectiveQuestion)).append(", ");
+                sb.append(csvEscape(questionId)).append(",");
+                sb.append(csvEscape(currentQuizID)).append(","); // Include QuizID at index[1]
+                sb.append(csvEscape(moduleId)).append(","); // Include ModuleID at index[2]
+                sb.append(csvEscape(subjectiveQuestion)).append(",");
                 sb.append("Subjective");
 
                 bw.write(sb.toString());
@@ -1305,7 +1305,7 @@ public class Quiz extends javax.swing.JFrame {
         File quizFile = new File(projectRoot, "src\\main\\java\\oopwj\\Quiz.txt");
         
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(quizFile, true))) {
-            bw.write(quizId + ", " + moduleId);
+            bw.write(quizId + "," + moduleId);
             bw.newLine();
             return true;
         } catch (IOException ex) {

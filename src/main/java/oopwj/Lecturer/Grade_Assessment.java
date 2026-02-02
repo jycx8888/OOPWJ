@@ -209,11 +209,12 @@ public class Grade_Assessment extends javax.swing.JFrame {
             return;
         }
         
-        // Get moduleID and studentID from selected row
+        // Get moduleID, quizID, and studentID from selected row
         String moduleID = jTable1.getValueAt(selectedRow, 0).toString();
+        String quizID = jTable1.getValueAt(selectedRow, 1).toString();
         String studentID = jTable1.getValueAt(selectedRow, 2).toString();
         
-        View_Grade viewGrade = new View_Grade(moduleID, studentID, lecturerID);
+        View_Grade viewGrade = new View_Grade(moduleID, quizID, studentID, lecturerID);
         viewGrade.setLocationRelativeTo(null);
         viewGrade.setVisible(true);
         this.dispose();

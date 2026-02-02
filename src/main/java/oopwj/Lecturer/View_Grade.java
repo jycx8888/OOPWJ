@@ -13,6 +13,8 @@ public class View_Grade extends javax.swing.JFrame {
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(View_Grade.class.getName());
     private String lecturerID;
     private String moduleID;
+    private String quizID;
+    private String studentID;
 
     /**
      * Creates new form View_Grade
@@ -24,30 +26,33 @@ public class View_Grade extends javax.swing.JFrame {
     }
     
     /**
-     * Creates new form View_Grade with moduleID, studentID, and lecturerID
+     * Creates new form View_Grade with moduleID, quizID, studentID, and lecturerID
      */
-    public View_Grade(String moduleID, String studentID, String lecturerID) {
+    public View_Grade(String moduleID, String quizID, String studentID, String lecturerID) {
         this.lecturerID = lecturerID;
         this.moduleID = moduleID;
+        this.quizID = quizID;
+        this.studentID = studentID;
         initComponents();
         setLocationRelativeTo(null);
         jButton1.addActionListener(this::jButton1ActionPerformed);
         setModuleAndStudentInfo(moduleID, studentID);
-        loadQuestionIDs(moduleID);
+        loadQuestionIDs(moduleID, quizID);
     }
     
     /**
-     * Sets the module ID and student ID on the labels
+     * Sets the module ID, quiz ID, and student ID on the labels
      */
     public void setModuleAndStudentInfo(String moduleID, String studentID) {
         jLabel7.setText("Module ID: " + moduleID);
         jLabel8.setText("Student ID: " + studentID);
+        jLabel9.setText("Quiz ID: " + quizID);
     }
     
     /**
-     * Loads all QuestionIDs for the given moduleID from question.txt
+     * Loads all QuestionIDs for the given moduleID and quizID from question.txt
      */
-    private void loadQuestionIDs(String moduleID) {
+    private void loadQuestionIDs(String moduleID, String quizID) {
         String projectRoot = System.getProperty("user.dir");
         String quizFilePath = projectRoot + "/src/main/java/oopwj/question.txt";
         
@@ -73,11 +78,12 @@ public class View_Grade extends javax.swing.JFrame {
                 if (line.isEmpty() || line.startsWith("#")) continue;
                 
                 String[] parts = line.split(",");
-                if (parts.length >= 2) {
+                if (parts.length >= 3) {
                     String questionID = parts[0].trim();
-                    String fileModuleID = parts[1].trim();
+                    String fileQuizID = parts[1].trim();
+                    String fileModuleID = parts[2].trim();
                     
-                    if (fileModuleID.equals(moduleID)) {
+                    if (fileModuleID.equals(moduleID) && fileQuizID.equals(quizID)) {
                         questionIDs.add(questionID);
                     }
                 }
@@ -88,7 +94,7 @@ public class View_Grade extends javax.swing.JFrame {
                 jComboBox1.addItem(qid);
             }
             
-            logger.log(java.util.logging.Level.INFO, "Loaded " + questionIDs.size() + " questions for module: " + moduleID);
+            logger.log(java.util.logging.Level.INFO, "Loaded " + questionIDs.size() + " questions for module: " + moduleID + ", quiz: " + quizID);
             
         } catch (java.io.IOException e) {
             logger.log(java.util.logging.Level.SEVERE, "Error reading question.txt: " + e.getMessage(), e);
@@ -131,6 +137,7 @@ public class View_Grade extends javax.swing.JFrame {
         jButton1 = new javax.swing.JButton();
         jLabel7 = new javax.swing.JLabel();
         jLabel8 = new javax.swing.JLabel();
+        jLabel9 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setMaximumSize(null);
@@ -182,8 +189,8 @@ public class View_Grade extends javax.swing.JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jRadioButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(jRadioButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(119, 119, 119))
+                .addComponent(jRadioButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(108, 108, 108))
             .addGroup(ObjectiveLayout.createSequentialGroup()
                 .addGap(34, 34, 34)
                 .addGroup(ObjectiveLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -254,7 +261,7 @@ public class View_Grade extends javax.swing.JFrame {
                 .addGap(43, 43, 43)
                 .addGroup(SubjectiveLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(SubjectiveLayout.createSequentialGroup()
-                        .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jSpinner2, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(SubjectiveLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -284,24 +291,29 @@ public class View_Grade extends javax.swing.JFrame {
 
         jLayeredPane2.add(Subjective, "card2");
 
-        jPanel4.add(jLayeredPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 140, 420, 420));
+        jPanel4.add(jLayeredPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 180, 420, 420));
 
         jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
         jComboBox1.addActionListener(this::jComboBox1ActionPerformed);
-        jPanel4.add(jComboBox1, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 90, 210, 30));
+        jPanel4.add(jComboBox1, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 130, 210, 30));
 
         jButton1.setText("Exit");
-        jPanel4.add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(210, 570, -1, -1));
+        jPanel4.add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(210, 610, -1, -1));
 
         jLabel7.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel7.setForeground(new java.awt.Color(0, 0, 0));
         jLabel7.setText("Module ID:");
-        jPanel4.add(jLabel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 30, 190, -1));
+        jPanel4.add(jLabel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 70, 190, -1));
 
         jLabel8.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel8.setForeground(new java.awt.Color(0, 0, 0));
         jLabel8.setText("Student ID:");
-        jPanel4.add(jLabel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 60, 200, -1));
+        jPanel4.add(jLabel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 100, 200, -1));
+
+        jLabel9.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        jLabel9.setForeground(new java.awt.Color(0, 0, 0));
+        jLabel9.setText("Quiz ID: ");
+        jPanel4.add(jLabel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 20, 170, -1));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -311,7 +323,7 @@ public class View_Grade extends javax.swing.JFrame {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, 626, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, 653, Short.MAX_VALUE)
         );
 
         pack();
@@ -332,29 +344,85 @@ public class View_Grade extends javax.swing.JFrame {
             return;
         }
         
-        // Get the question type from answers.txt based on moduleID and questionID
-        String questionType = getQuestionType(moduleID, selectedQuestionID);
+        // Load question data from question.txt
+        loadQuestionData(selectedQuestionID);
         
-        // Swap panels based on question type
-        if (questionType != null) {
-            swapPanels(questionType);
-        }
+        // Load student answer from answers.txt
+        loadStudentAnswer(selectedQuestionID);
     }//GEN-LAST:event_jComboBox1ActionPerformed
     
     /**
-     * Retrieves the question type from answers.txt based on moduleID and questionID
-     * @param moduleID the module ID to search for
-     * @param questionID the question ID to search for
-     * @return the question type (Subjective or Objective) or null if not found
+     * Loads question data from question.txt and displays it in the appropriate panel
      */
-    private String getQuestionType(String moduleID, String questionID) {
+    private void loadQuestionData(String questionID) {
+        String projectRoot = System.getProperty("user.dir");
+        String questionFilePath = projectRoot + "/src/main/java/oopwj/question.txt";
+        
+        java.io.File questionFile = new java.io.File(questionFilePath);
+        if (!questionFile.exists()) {
+            logger.log(java.util.logging.Level.SEVERE, "question.txt not found");
+            return;
+        }
+        
+        try (java.io.BufferedReader br = new java.io.BufferedReader(new java.io.FileReader(questionFile))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                line = line.trim();
+                if (line.isEmpty() || line.startsWith("#")) continue;
+                
+                String[] parts = line.split(",");
+                if (parts.length >= 3) {
+                    String fileQuestionID = parts[0].trim();
+                    String fileQuizID = parts[1].trim();
+                    String fileModuleID = parts[2].trim();
+                    
+                    if (fileQuestionID.equals(questionID) && fileQuizID.equals(quizID) && fileModuleID.equals(moduleID)) {
+                        if (parts.length >= 10) {
+                            // Objective question format: QuestionID,QuizID,ModuleID,Question,A,B,C,D,CorrectAnswer,Type
+                            String question = parts[3].trim().replaceAll("^\\\"|\\\"$", "");
+                            String answerA = parts[4].trim().replaceAll("^\\\"|\\\"$", "");
+                            String answerB = parts[5].trim().replaceAll("^\\\"|\\\"$", "");
+                            String answerC = parts[6].trim().replaceAll("^\\\"|\\\"$", "");
+                            String answerD = parts[7].trim().replaceAll("^\\\"|\\\"$", "");
+                            String correctAnswer = parts[8].trim().replaceAll("^\\\"|\\\"$", "");
+                            
+                            // Fill objective panel
+                            jTextArea1.setText(question);
+                            jTextField1.setText(answerA + " / " + answerB + " / " + answerC + " / " + answerD);
+                            jTextField2.setText(correctAnswer);
+                            
+                            // Show objective panel
+                            swapPanels("Objective");
+                        } else if (parts.length >= 5) {
+                            // Subjective question format: QuestionID,QuizID,ModuleID,Question,Type
+                            String question = parts[3].trim().replaceAll("^\\\"|\\\"$", "");
+                            
+                            // Fill subjective panel
+                            jTextArea2.setText(question);
+                            
+                            // Show subjective panel
+                            swapPanels("Subjective");
+                        }
+                        return;
+                    }
+                }
+            }
+        } catch (java.io.IOException e) {
+            logger.log(java.util.logging.Level.SEVERE, "Error reading question.txt: " + e.getMessage(), e);
+        }
+    }
+    
+    /**
+     * Loads student answer from answers.txt and displays it
+     */
+    private void loadStudentAnswer(String questionID) {
         String projectRoot = System.getProperty("user.dir");
         String answersFilePath = projectRoot + "/src/main/java/oopwj/answers.txt";
         
         java.io.File answersFile = new java.io.File(answersFilePath);
         if (!answersFile.exists()) {
-            logger.log(java.util.logging.Level.SEVERE, "answers.txt not found at: " + answersFile.getAbsolutePath());
-            return null;
+            logger.log(java.util.logging.Level.SEVERE, "answers.txt not found");
+            return;
         }
         
         try (java.io.BufferedReader br = new java.io.BufferedReader(new java.io.FileReader(answersFile))) {
@@ -363,26 +431,38 @@ public class View_Grade extends javax.swing.JFrame {
                 line = line.trim();
                 if (line.isEmpty() || line.startsWith("#")) continue;
                 
+                // Format: StudentID,ModuleID,QuizID,QuestionID,QuestionType,Answer
                 String[] parts = line.split(",");
-                if (parts.length >= 4) {
+                if (parts.length >= 6) {
+                    String fileStudentID = parts[0].trim();
                     String fileModuleID = parts[1].trim();
-                    String fileQuestionID = parts[2].trim();
-                    String questionType = parts[3].trim();
+                    String fileQuizID = parts[2].trim();
+                    String fileQuestionID = parts[3].trim();
+                    String questionType = parts[4].trim();
+                    String answer = parts[5].trim();
                     
-                    if (fileModuleID.equals(moduleID) && fileQuestionID.equals(questionID)) {
-                        logger.log(java.util.logging.Level.INFO, "Found question type: " + questionType + " for module: " + moduleID + ", question: " + questionID);
-                        return questionType;
+                    if (fileStudentID.equals(studentID) && fileModuleID.equals(moduleID) && 
+                        fileQuizID.equals(quizID) && fileQuestionID.equals(questionID)) {
+                        
+                        if ("Objective".equalsIgnoreCase(questionType)) {
+                            // Set objective answer radio buttons
+                            if ("A".equalsIgnoreCase(answer)) {
+                                jRadioButton1.setSelected(true);
+                            } else if ("B".equalsIgnoreCase(answer)) {
+                                jRadioButton2.setSelected(true);
+                            }
+                            // Add more radio buttons if you have C and D
+                        } else if ("Subjective".equalsIgnoreCase(questionType)) {
+                            // Set subjective answer
+                            jTextArea3.setText(answer);
+                        }
+                        return;
                     }
                 }
             }
-            
-            logger.log(java.util.logging.Level.WARNING, "Question not found in answers.txt for module: " + moduleID + ", question: " + questionID);
-            
         } catch (java.io.IOException e) {
             logger.log(java.util.logging.Level.SEVERE, "Error reading answers.txt: " + e.getMessage(), e);
         }
-        
-        return null;
     }
     
     /**
@@ -402,7 +482,7 @@ public class View_Grade extends javax.swing.JFrame {
             logger.log(java.util.logging.Level.WARNING, "Unknown question type: " + questionType);
         }
     }
-
+    
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {
         // Navigate back to Grade_Assessment
         Grade_Assessment gradeAssessment = new Grade_Assessment(lecturerID);
@@ -448,6 +528,7 @@ public class View_Grade extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
     private javax.swing.JLayeredPane jLayeredPane2;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JRadioButton jRadioButton1;
