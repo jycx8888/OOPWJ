@@ -15,6 +15,7 @@ public class View_Grade extends javax.swing.JFrame {
     private String moduleID;
     private String quizID;
     private String studentID;
+    private java.util.Map<String, Integer> maxMarksMap = new java.util.HashMap<>();
 
     /**
      * Creates new form View_Grade
@@ -38,8 +39,10 @@ public class View_Grade extends javax.swing.JFrame {
         jButton1.addActionListener(this::jButton1ActionPerformed);
         jButton2.addActionListener(this::jButton2ActionPerformed);
         jButton3.addActionListener(this::jButton3ActionPerformed);
+        loadMaxMarks(moduleID, quizID);
         setModuleAndStudentInfo(moduleID, studentID);
         loadQuestionIDs(moduleID, quizID);
+        setupSpinnerValidation();
     }
     
     /**
@@ -49,6 +52,79 @@ public class View_Grade extends javax.swing.JFrame {
         jLabel7.setText("Module ID: " + moduleID);
         jLabel8.setText("Student ID: " + studentID);
         jLabel9.setText("Quiz ID: " + quizID);
+    }
+    
+    /**
+     * Loads maximum marks for each question from TotalQuizMark.txt
+     */
+    private void loadMaxMarks(String moduleID, String quizID) {
+        String projectRoot = System.getProperty("user.dir");
+        String totalQuizMarkPath = projectRoot + "/src/main/java/oopwj/TotalQuizMark.txt";
+        
+        java.io.File totalQuizMarkFile = new java.io.File(totalQuizMarkPath);
+        if (!totalQuizMarkFile.exists()) {
+            logger.log(java.util.logging.Level.WARNING, "TotalQuizMark.txt not found at: " + totalQuizMarkFile.getAbsolutePath());
+            return;
+        }
+        
+        maxMarksMap.clear();
+        
+        try (java.io.BufferedReader br = new java.io.BufferedReader(new java.io.FileReader(totalQuizMarkFile))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                line = line.trim();
+                if (line.isEmpty() || line.startsWith("#")) continue;
+                
+                // Format: ModuleID,QuizID,QuestionID,TotalMarks
+                String[] parts = line.split(",");
+                if (parts.length >= 4) {
+                    String fileModuleID = parts[0].trim();
+                    String fileQuizID = parts[1].trim();
+                    String fileQuestionID = parts[2].trim();
+                    String totalMarks = parts[3].trim();
+                    
+                    if (fileModuleID.equals(moduleID) && fileQuizID.equals(quizID)) {
+                        try {
+                            int marks = Integer.parseInt(totalMarks);
+                            maxMarksMap.put(fileQuestionID, marks);
+                            logger.log(java.util.logging.Level.INFO, "Loaded max marks for " + fileQuestionID + ": " + marks);
+                        } catch (NumberFormatException e) {
+                            logger.log(java.util.logging.Level.WARNING, "Invalid marks format for question " + fileQuestionID + ": " + totalMarks);
+                        }
+                    }
+                }
+            }
+            logger.log(java.util.logging.Level.INFO, "Loaded " + maxMarksMap.size() + " max marks entries");
+        } catch (java.io.IOException e) {
+            logger.log(java.util.logging.Level.SEVERE, "Error reading TotalQuizMark.txt: " + e.getMessage(), e);
+        }
+    }
+    
+    /**
+     * Sets up validation for the marks spinner to prevent exceeding maximum marks
+     */
+    private void setupSpinnerValidation() {
+        jSpinner2.addChangeListener(e -> {
+            String selectedQuestionID = (String) jComboBox1.getSelectedItem();
+            if (selectedQuestionID != null && maxMarksMap.containsKey(selectedQuestionID)) {
+                int maxMarks = maxMarksMap.get(selectedQuestionID);
+                int currentValue = (Integer) jSpinner2.getValue();
+                
+                if (currentValue > maxMarks) {
+                    jSpinner2.setValue(maxMarks);
+                    javax.swing.JOptionPane.showMessageDialog(this, 
+                        "Marks cannot exceed maximum marks of " + maxMarks + " for this question.", 
+                        "Invalid Marks", 
+                        javax.swing.JOptionPane.WARNING_MESSAGE);
+                } else if (currentValue < 0) {
+                    jSpinner2.setValue(0);
+                    javax.swing.JOptionPane.showMessageDialog(this, 
+                        "Marks cannot be negative.", 
+                        "Invalid Marks", 
+                        javax.swing.JOptionPane.WARNING_MESSAGE);
+                }
+            }
+        });
     }
     
     /**
@@ -363,6 +439,9 @@ public class View_Grade extends javax.swing.JFrame {
         
         // Load student answer from answers.txt
         loadStudentAnswer(selectedQuestionID);
+        
+        // Update spinner max value and label for subjective questions
+        updateMaxMarksDisplay(selectedQuestionID);
     }//GEN-LAST:event_jComboBox1ActionPerformed
     
     /**
@@ -414,6 +493,9 @@ public class View_Grade extends javax.swing.JFrame {
                             // Fill subjective panel
                             jTextArea2.setText(question);
                             
+                            // Reset spinner value
+                            jSpinner2.setValue(0);
+                            
                             // Show subjective panel
                             swapPanels("Subjective");
                         }
@@ -423,6 +505,23 @@ public class View_Grade extends javax.swing.JFrame {
             }
         } catch (java.io.IOException e) {
             logger.log(java.util.logging.Level.SEVERE, "Error reading question.txt: " + e.getMessage(), e);
+        }
+    }
+    
+    /**
+     * Updates the display of maximum marks for the selected question
+     */
+    private void updateMaxMarksDisplay(String questionID) {
+        if (maxMarksMap.containsKey(questionID)) {
+            int maxMarks = maxMarksMap.get(questionID);
+            
+            // Set spinner model with proper range
+            javax.swing.SpinnerNumberModel spinnerModel = new javax.swing.SpinnerNumberModel(0, 0, maxMarks, 1);
+            jSpinner2.setModel(spinnerModel);
+            
+            logger.log(java.util.logging.Level.INFO, "Max marks for " + questionID + " set to: " + maxMarks);
+        } else {
+            logger.log(java.util.logging.Level.WARNING, "No max marks found for question: " + questionID);
         }
     }
     
