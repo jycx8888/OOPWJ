@@ -1,22 +1,23 @@
 Q001,QZ001,M001,test,1,2,3,4,B,Objective
-Q002,QZ001,M001,What is Java?,OOP,Script,Markup,Query,A,Objective
+Q002,QZ001,M001,What is Java?,Subjective
 Q003,QZ001,M001,Capital of France?,London,Berlin,Paris,Rome,C,Objective
-Q004,QZ001,M001,2+2=?,3,4,5,6,B,Objective
+Q004,QZ001,M001,Explain 2+2,Subjective
 Q005,QZ001,M001,Color of sky?,Blue,Green,Red,Yellow,A,Objective
-Q006,QZ001,M001,Sun rises in?,East,West,North,South,A,Objective
+Q006,QZ001,M001,Why does the sun rise in the east?,Subjective
 Q007,QZ001,M001,Which is a fruit?,Apple,Car,Chair,Table,A,Objective
-Q008,QZ001,M001,5*5=?,10,15,20,25,D,Objective
+Q008,QZ001,M001,How to calculate 5*5?,Subjective
 Q009,QZ001,M001,Water formula?,H2O,CO2,O2,N2,A,Objective
 Q010,QZ001,M001,Fastest land animal?,Cheetah,Lion,Tiger,Elephant,A,Objective
 Q011,QZ001,M001,Which is a programming language?,Python,Snake,Lizard,Frog,A,Objective
 Q001,QZ002,M001,vdsv,vds,ds,vfbfbfb,dsb,B,Objective
-Q002,QZ002,M001,What is Python?,OOP,Script,Markup,Query,A,Objective
+Q002,QZ002,M001,What is Python?,Subjective
 Q003,QZ002,M001,Capital of Italy?,London,Berlin,Paris,Rome,D,Objective
-Q004,QZ002,M001,3+3=?,3,4,5,6,D,Objective
+Q004,QZ002,M001,Explain 3+3,Subjective
 Q005,QZ002,M001,Color of grass?,Blue,Green,Red,Yellow,B,Objective
-Q006,QZ002,M001,Sun sets in?,East,West,North,South,B,Objective
+Q006,QZ002,M001,Describe the sunset,Subjective
 Q007,QZ002,M001,Which is a vegetable?,Apple,Carrot,Chair,Table,B,Objective
-Q008,QZ002,M001,6*6=?,10,15,20,36,D,Objective
+Q008,QZ002,M001,How to calculate 6*6?,Subjective
 Q009,QZ002,M001,CO2 formula?,H2O,CO2,O2,N2,B,Objective
 Q010,QZ002,M001,Slowest land animal?,Cheetah,Lion,Snail,Elephant,C,Objective
 Q011,QZ002,M001,Which is a markup language?,Python,HTML,Lizard,Frog,B,Objective
+
