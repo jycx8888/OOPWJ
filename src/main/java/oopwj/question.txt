@@ -9,6 +9,15 @@ Q008,QZ001,M001,How to calculate 5*5?,Subjective
 Q009,QZ001,M001,Water formula?,H2O,CO2,O2,N2,A,Objective
 Q010,QZ001,M001,Fastest land animal?,Cheetah,Lion,Tiger,Elephant,A,Objective
 Q011,QZ001,M001,Which is a programming language?,Python,Snake,Lizard,Frog,A,Objective
+Q012,QZ001,M001,test mark,1,2,3,4,D,Objective
+Q013,QZ001,M001,hehe,Subjective
+Q014,QZ001,M001,add add,1,23,4,4few,B,Objective
+Q015,QZ001,M001,1fefedvsdv,Subjective
+Q016,QZ001,M001,vdsvsdv,Subjective
+Q017,QZ001,M001,another one,1,2,3,4,A,Objective
+Q018,QZ001,M001,another one,1,2,3,4,C,Objective
+Q019,QZ001,M001,moreeee,q2,cvsdavcdsvsa,svad,vascv,B,Objective
+Q020,QZ001,M001,raaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaah,vds,dvasvsvsa,sc,ascs,A,Objective
 Q001,QZ002,M001,vdsv,vds,ds,vfbfbfb,dsb,B,Objective
 Q002,QZ002,M001,What is Python?,Subjective
 Q003,QZ002,M001,Capital of Italy?,London,Berlin,Paris,Rome,D,Objective

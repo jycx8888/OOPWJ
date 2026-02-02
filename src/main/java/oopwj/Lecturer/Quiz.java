@@ -68,8 +68,6 @@ public class Quiz extends javax.swing.JFrame {
         b = jTextField3;
         c = jTextField4;
         d = jTextField6;
-        // Add the missing action listener for jButton3
-        jButton3.addActionListener(this::jButton3ActionPerformed);
         // Add action listener for jButton6 (Enter button)
         jButton6.addActionListener(this::jButton6ActionPerformed);
         // Add action listener for jButton5 (Add Quiz Set button)
@@ -97,8 +95,6 @@ public class Quiz extends javax.swing.JFrame {
         b = jTextField3;
         c = jTextField4;
         d = jTextField6;
-        // Add the missing action listener for jButton3
-        jButton3.addActionListener(this::jButton3ActionPerformed);
         this.setLocationRelativeTo(null);
 
         // Initialize ButtonGroup for radio buttons
@@ -319,6 +315,39 @@ public class Quiz extends javax.swing.JFrame {
         }
     }
 
+    private void appendTempMarks(String moduleId, String marks) {
+        String projectRoot = System.getProperty("user.dir");
+        File tempMarksFile = new File(projectRoot, "src\\main\\java\\oopwj\\TempQuizMarks.txt");
+
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(tempMarksFile, true))) {
+            StringBuilder sb = new StringBuilder();
+            sb.append(csvEscape(moduleId)).append(",").append(csvEscape(marks));
+            bw.write(sb.toString());
+            bw.newLine();
+        } catch (IOException ex) {
+            logger.log(java.util.logging.Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(this, "Error saving temporary marks: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private java.util.List<String[]> readTempMarks(File tempMarksFile) throws IOException {
+        java.util.List<String[]> entries = new java.util.ArrayList<>();
+
+        try (BufferedReader br = new BufferedReader(new FileReader(tempMarksFile))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] parts = line.split(",", -1);
+                if (parts.length >= 2) {
+                    String moduleId = parts[0].trim();
+                    String marks = parts[1].trim();
+                    entries.add(new String[]{moduleId, marks});
+                }
+            }
+        }
+
+        return entries;
+    }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -335,7 +364,6 @@ public class Quiz extends javax.swing.JFrame {
         jPanel1 = new javax.swing.JPanel();
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
         jComboBox1 = new javax.swing.JComboBox<>();
         jLabel8 = new javax.swing.JLabel();
         jButton4 = new javax.swing.JButton();
@@ -390,8 +418,6 @@ public class Quiz extends javax.swing.JFrame {
 
         jButton2.setText("Exit and Discard");
         jButton2.addActionListener(this::jButton2ActionPerformed);
-
-        jButton3.setText("Add");
 
         jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { }));
         jComboBox1.addActionListener(this::jComboBox1ActionPerformed);
@@ -646,37 +672,34 @@ public class Quiz extends javax.swing.JFrame {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(0, 64, Short.MAX_VALUE)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jButton5)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jButton6))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 370, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel8)
+                                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                        .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(jLabel9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addGroup(jPanel1Layout.createSequentialGroup()
+                                        .addComponent(jButton5)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addComponent(jButton6))
+                                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                        .addComponent(jComboBox1, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(jComboBox2, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(jTextField9, javax.swing.GroupLayout.PREFERRED_SIZE, 291, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                        .addGap(64, 64, 64))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                         .addComponent(jButton2)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGap(18, 18, 18)
                         .addComponent(jButton4)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton3)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jButton1))
-                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addGroup(jPanel1Layout.createSequentialGroup()
-                            .addComponent(jLabel8)
-                            .addGap(31, 31, 31)
-                            .addComponent(jComboBox1, 0, 291, Short.MAX_VALUE))
-                        .addGroup(jPanel1Layout.createSequentialGroup()
-                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(jLabel9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addGroup(jPanel1Layout.createSequentialGroup()
-                                    .addGap(18, 18, 18)
-                                    .addComponent(jComboBox2, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                .addGroup(jPanel1Layout.createSequentialGroup()
-                                    .addGap(18, 18, 18)
-                                    .addComponent(jTextField9))))
-                        .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 370, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(60, 60, 60))
+                        .addGap(18, 18, 18)
+                        .addComponent(jButton1)
+                        .addGap(94, 94, 94))))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -699,22 +722,19 @@ public class Quiz extends javax.swing.JFrame {
                     .addComponent(jButton6))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 460, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton2)
                     .addComponent(jButton4)
-                    .addComponent(jButton1)
-                    .addComponent(jButton3))
-                .addContainerGap())
+                    .addComponent(jButton1))
+                .addGap(12, 12, 12))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(0, 0, Short.MAX_VALUE)
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -818,6 +838,7 @@ public class Quiz extends javax.swing.JFrame {
         // Then also save the current form fields if they are not empty
         String projectRoot = System.getProperty("user.dir");
         File temp = new File(projectRoot, "src\\main\\java\\oopwj\\TempQues.txt");
+        File tempMarks = new File(projectRoot, "src\\main\\java\\oopwj\\TempQuizMarks.txt");
         File quizFile = new File(projectRoot, "src\\main\\java\\oopwj\\question.txt");
 
         // Check which tab is selected
@@ -896,11 +917,24 @@ public class Quiz extends javax.swing.JFrame {
                 }
 
                 // Insert questions and renumber
-                insertQuestionsAndRenumber(quizFile, newQuestions, currentQuizID);
+                java.util.List<String> assignedIds = insertQuestionsAndRenumber(quizFile, newQuestions, currentQuizID);
 
-                // delete temporary file
+                // Save marks for the newly inserted questions
+                if (tempMarks.exists()) {
+                    java.util.List<String[]> marksEntries = readTempMarks(tempMarks);
+                    int limit = Math.min(assignedIds.size(), marksEntries.size());
+                    for (int i = 0; i < limit; i++) {
+                        String[] entry = marksEntries.get(i);
+                        String moduleId = entry[0];
+                        String marks = entry[1];
+                        saveQuestionMarks(assignedIds.get(i), moduleId, marks);
+                    }
+                }
+
+                // delete temporary files
                 try {
                     Files.deleteIfExists(temp.toPath());
+                    Files.deleteIfExists(tempMarks.toPath());
                 } catch (IOException ex) {
                     logger.log(java.util.logging.Level.WARNING, null, ex);
                 }
@@ -966,7 +1000,18 @@ public class Quiz extends javax.swing.JFrame {
             // Insert the single question and renumber
             java.util.List<String> singleQuestion = new java.util.ArrayList<>();
             singleQuestion.add(sb.toString());
-            insertQuestionsAndRenumber(quizFile, singleQuestion, currentQuizID);
+            java.util.List<String> assignedIds = insertQuestionsAndRenumber(quizFile, singleQuestion, currentQuizID);
+
+            // Save marks for the single question after final ID is assigned
+            if (!assignedIds.isEmpty()) {
+                if (selectedTabIndex == 0) {
+                    String marks = jTextField1.getText().trim();
+                    saveQuestionMarks(assignedIds.get(0), moduleId, marks);
+                } else if (selectedTabIndex == 1) {
+                    String marks = jTextField7.getText().trim();
+                    saveQuestionMarks(assignedIds.get(0), moduleId, marks);
+                }
+            }
 
         } catch (Exception ex) {
             logger.log(java.util.logging.Level.SEVERE, null, ex);
@@ -996,6 +1041,7 @@ public class Quiz extends javax.swing.JFrame {
         // Check if there's anything to discard
         String projectRoot = System.getProperty("user.dir");
         File temp = new File(projectRoot, "src\\main\\java\\oopwj\\TempQues.txt");
+        File tempMarks = new File(projectRoot, "src\\main\\java\\oopwj\\TempQuizMarks.txt");
         
         String question = jTextArea1.getText().trim();
         String a1 = a.getText().trim();
@@ -1048,6 +1094,13 @@ public class Quiz extends javax.swing.JFrame {
                 }
             }
         }
+        if (tempMarks.exists()) {
+            try {
+                Files.deleteIfExists(tempMarks.toPath());
+            } catch (IOException ex) {
+                logger.log(java.util.logging.Level.WARNING, null, ex);
+            }
+        }
 
         // reset session count after discarding
         sessionQuestionCount = 0;
@@ -1061,135 +1114,6 @@ public class Quiz extends javax.swing.JFrame {
             }
         });
         this.dispose();
-    }
-
-    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {
-        // Add: validate fields, append current entry to TemporaryQuiz.txt, then clear fields
-        int selectedTabIndex = jTabbedPane1.getSelectedIndex();
-
-        // Validate quiz selection
-        if (currentQuizID == null || currentQuizID.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Please create or select a quiz before adding questions.", "Validation", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
-
-        String projectRoot = System.getProperty("user.dir");
-        File temp = new File(projectRoot, "src\\main\\java\\oopwj\\TempQues.txt");
-
-        if (selectedTabIndex == 0) { // Objective tab
-            String question = jTextArea1.getText().trim();
-            String a1 = a.getText().trim();
-            String a2 = b.getText().trim();
-            String a3 = c.getText().trim();
-            String a4 = d.getText().trim();
-            String marks = jTextField1.getText().trim();
-
-            if (question.isEmpty() || a1.isEmpty() || a2.isEmpty() || a3.isEmpty() || a4.isEmpty()) {
-                JOptionPane.showMessageDialog(this, "Please fill in all fields before adding.", "Validation", JOptionPane.WARNING_MESSAGE);
-                return;
-            }
-
-            // Check if correct answer is selected
-            if (correctAnswer.isEmpty()) {
-                JOptionPane.showMessageDialog(this, "Please select the correct answer.", "Validation", JOptionPane.WARNING_MESSAGE);
-                return;
-            }
-
-            if (marks.isEmpty()) {
-                JOptionPane.showMessageDialog(this, "Please enter the marks for this question.", "Validation", JOptionPane.WARNING_MESSAGE);
-                return;
-            }
-
-            try (BufferedWriter bw = new BufferedWriter(new FileWriter(temp, true))) {
-                sessionQuestionCount++;
-                String questionId = String.format("Q%03d", sessionQuestionCount);
-
-                // Get module ID
-                String selectedModule = (String) jComboBox1.getSelectedItem();
-                String[] moduleParts = selectedModule.split(" - ", 2);
-                String moduleId = moduleParts[0].trim();
-
-                StringBuilder sb = new StringBuilder();
-                sb.append(csvEscape(questionId)).append(",");
-                sb.append(csvEscape(currentQuizID)).append(","); // Include QuizID at index[1]
-                sb.append(csvEscape(moduleId)).append(","); // Include ModuleID at index[2]
-                sb.append(csvEscape(question)).append(",");
-                sb.append(csvEscape(a1)).append(",");
-                sb.append(csvEscape(a2)).append(",");
-                sb.append(csvEscape(a3)).append(",");
-                sb.append(csvEscape(a4)).append(",");
-                sb.append(csvEscape(correctAnswer)).append(",");
-                sb.append("Objective");
-
-                bw.write(sb.toString());
-                bw.newLine();
-
-                // Save marks
-                saveQuestionMarks(questionId, moduleId, marks);
-            } catch (IOException ex) {
-                logger.log(java.util.logging.Level.SEVERE, null, ex);
-                JOptionPane.showMessageDialog(this, "Failed to append question: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-
-            // Clear fields except title
-            jTextArea1.setText("");
-            a.setText("");
-            b.setText("");
-            c.setText("");
-            d.setText("");
-            jTextField1.setText("");
-            answerGroup.clearSelection();
-            correctAnswer = "";
-
-            JOptionPane.showMessageDialog(this, "Objective question added successfully", "Added", JOptionPane.INFORMATION_MESSAGE);
-        } else if (selectedTabIndex == 1) { // Subjective tab
-            String subjectiveQuestion = jTextArea2.getText().trim();
-            String marks = jTextField7.getText().trim();
-
-            if (subjectiveQuestion.isEmpty()) {
-                JOptionPane.showMessageDialog(this, "Please type your subjective question before adding.", "Validation", JOptionPane.WARNING_MESSAGE);
-                return;
-            }
-
-            if (marks.isEmpty()) {
-                JOptionPane.showMessageDialog(this, "Please enter the marks for this question.", "Validation", JOptionPane.WARNING_MESSAGE);
-                return;
-            }
-
-            try (BufferedWriter bw = new BufferedWriter(new FileWriter(temp, true))) {
-                sessionQuestionCount++;
-                String questionId = String.format("Q%03d", sessionQuestionCount);
-
-                // Get module ID
-                String selectedModule = (String) jComboBox1.getSelectedItem();
-                String[] moduleParts = selectedModule.split(" - ", 2);
-                String moduleId = moduleParts[0].trim();
-
-                StringBuilder sb = new StringBuilder();
-                sb.append(csvEscape(questionId)).append(",");
-                sb.append(csvEscape(currentQuizID)).append(","); // Include QuizID at index[1]
-                sb.append(csvEscape(moduleId)).append(","); // Include ModuleID at index[2]
-                sb.append(csvEscape(subjectiveQuestion)).append(",");
-                sb.append("Subjective");
-
-                bw.write(sb.toString());
-                bw.newLine();
-
-                // Save marks
-                saveQuestionMarks(questionId, moduleId, marks);
-            } catch (IOException ex) {
-                logger.log(java.util.logging.Level.SEVERE, null, ex);
-                JOptionPane.showMessageDialog(this, "Failed to append question: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-
-            // Clear the subjective question field after adding or saving
-            jTextArea2.setText("");
-            jTextField7.setText("");
-
-            JOptionPane.showMessageDialog(this, "Subjective question added successfully", "Added", JOptionPane.INFORMATION_MESSAGE);
-        }
     }
 
     private void jTextField3ActionPerformed(java.awt.event.ActionEvent evt) {
@@ -1259,8 +1183,9 @@ public class Quiz extends javax.swing.JFrame {
      * Inserts new questions after existing ones with the same QuizID and ModuleID
      * and renumbers QuestionIDs only for that specific QuizID+ModuleID combination
      */
-    private void insertQuestionsAndRenumber(File quizFile, java.util.List<String> newQuestions, String targetQuizID) throws IOException {
+    private java.util.List<String> insertQuestionsAndRenumber(File quizFile, java.util.List<String> newQuestions, String targetQuizID) throws IOException {
         java.util.List<String> allLines = new java.util.ArrayList<>();
+        java.util.List<String> assignedIds = new java.util.ArrayList<>();
         
         // Read all existing questions
         if (quizFile.exists()) {
@@ -1330,6 +1255,20 @@ public class Quiz extends javax.swing.JFrame {
                 bw.newLine();
             }
         }
+
+        // Collect assigned QuestionIDs for the inserted questions (in order)
+        if (!newQuestions.isEmpty()) {
+            int start = Math.max(0, insertionIndex);
+            int end = Math.min(allLines.size(), insertionIndex + newQuestions.size());
+            for (int i = start; i < end; i++) {
+                String[] parts = allLines.get(i).split(",", -1);
+                if (parts.length >= 1) {
+                    assignedIds.add(parts[0].trim());
+                }
+            }
+        }
+
+        return assignedIds;
     }
     
     /**
@@ -1480,7 +1419,6 @@ public class Quiz extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
     private javax.swing.JButton jButton5;
     private javax.swing.JButton jButton6;
