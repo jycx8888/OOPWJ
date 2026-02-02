@@ -45,17 +45,17 @@ public class View_Grade extends javax.swing.JFrame {
     }
     
     /**
-     * Loads all QuestionIDs for the given moduleID from Quiz.txt
+     * Loads all QuestionIDs for the given moduleID from question.txt
      */
     private void loadQuestionIDs(String moduleID) {
         String projectRoot = System.getProperty("user.dir");
-        String quizFilePath = projectRoot + "/src/main/java/oopwj/Quiz.txt";
+        String quizFilePath = projectRoot + "/src/main/java/oopwj/question.txt";
         
         java.io.File quizFile = new java.io.File(quizFilePath);
         if (!quizFile.exists()) {
-            logger.log(java.util.logging.Level.SEVERE, "Quiz.txt not found at: " + quizFile.getAbsolutePath());
+            logger.log(java.util.logging.Level.SEVERE, "question.txt not found at: " + quizFile.getAbsolutePath());
             javax.swing.JOptionPane.showMessageDialog(this, 
-                "Quiz.txt not found at: " + quizFile.getAbsolutePath(), 
+                "question.txt not found at: " + quizFile.getAbsolutePath(), 
                 "File Not Found", 
                 javax.swing.JOptionPane.ERROR_MESSAGE);
             return;
@@ -91,9 +91,9 @@ public class View_Grade extends javax.swing.JFrame {
             logger.log(java.util.logging.Level.INFO, "Loaded " + questionIDs.size() + " questions for module: " + moduleID);
             
         } catch (java.io.IOException e) {
-            logger.log(java.util.logging.Level.SEVERE, "Error reading Quiz.txt: " + e.getMessage(), e);
+            logger.log(java.util.logging.Level.SEVERE, "Error reading question.txt: " + e.getMessage(), e);
             javax.swing.JOptionPane.showMessageDialog(this, 
-                "Error reading Quiz.txt: " + e.getMessage(), 
+                "Error reading question.txt: " + e.getMessage(), 
                 "File Error", 
                 javax.swing.JOptionPane.ERROR_MESSAGE);
         }

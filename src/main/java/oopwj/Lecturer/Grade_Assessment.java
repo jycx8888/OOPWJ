@@ -10,8 +10,10 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.swing.table.DefaultTableModel;
@@ -71,7 +73,7 @@ public class Grade_Assessment extends javax.swing.JFrame {
 
     private void clearTable() {
         jTable1.setModel(new DefaultTableModel(
-            new Object[]{"ModuleID", "StudentID"}, 0
+            new Object[]{"ModuleID", "QuizID", "StudentID"}, 0
         ));
     }
 
@@ -209,7 +211,7 @@ public class Grade_Assessment extends javax.swing.JFrame {
         
         // Get moduleID and studentID from selected row
         String moduleID = jTable1.getValueAt(selectedRow, 0).toString();
-        String studentID = jTable1.getValueAt(selectedRow, 1).toString();
+        String studentID = jTable1.getValueAt(selectedRow, 2).toString();
         
         View_Grade viewGrade = new View_Grade(moduleID, studentID, lecturerID);
         viewGrade.setLocationRelativeTo(null);
@@ -224,7 +226,9 @@ public class Grade_Assessment extends javax.swing.JFrame {
         String projectRoot = System.getProperty("user.dir");
         String modulesFilePath = projectRoot + "/src/main/java/oopwj/modules.txt";
         String answersFilePath = projectRoot + "/src/main/java/oopwj/answers.txt";
+        String quizFilePath = projectRoot + "/src/main/java/oopwj/Quiz.txt";
         Set<String> allowedModuleIDs = new HashSet<>();
+        Map<String, List<String>> quizByModule = new HashMap<>();
 
         // Debug: Check if lecturerID is set
         if (lecturerID == null || lecturerID.isEmpty()) {
@@ -239,6 +243,7 @@ public class Grade_Assessment extends javax.swing.JFrame {
         // Validate file existence
         java.io.File modulesFile = new java.io.File(modulesFilePath);
         java.io.File answersFile = new java.io.File(answersFilePath);
+        java.io.File quizFile = new java.io.File(quizFilePath);
         
         if (!modulesFile.exists()) {
             logger.log(java.util.logging.Level.SEVERE, "modules.txt not found at: " + modulesFile.getAbsolutePath());
@@ -258,10 +263,20 @@ public class Grade_Assessment extends javax.swing.JFrame {
             return;
         }
 
+        if (!quizFile.exists()) {
+            logger.log(java.util.logging.Level.SEVERE, "Quiz.txt not found at: " + quizFile.getAbsolutePath());
+            javax.swing.JOptionPane.showMessageDialog(this, 
+                "Quiz.txt not found at: " + quizFile.getAbsolutePath(), 
+                "File Not Found", 
+                javax.swing.JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
         logger.log(java.util.logging.Level.INFO, "Starting load for lecturer: " + lecturerID);
         System.out.println("Project root: " + projectRoot);
         System.out.println("Modules file path: " + modulesFilePath);
         System.out.println("Answers file path: " + answersFilePath);
+        System.out.println("Quiz file path: " + quizFilePath);
         System.out.println("LecturerID: '" + lecturerID + "'");
         
         // Build set of moduleIDs for this lecturer
@@ -308,6 +323,38 @@ public class Grade_Assessment extends javax.swing.JFrame {
             return;
         }
 
+        // Build map of moduleID -> quizIDs
+        try (BufferedReader br = new BufferedReader(new FileReader(quizFile))) {
+            String line;
+            int lineCount = 0;
+            while ((line = br.readLine()) != null) {
+                lineCount++;
+                line = line.trim();
+                if (line.isEmpty() || line.startsWith("#")) continue;
+
+                String[] parts = line.split(",");
+                if (parts.length >= 2) {
+                    String quizID = parts[0].trim();
+                    String moduleID = parts[1].trim();
+
+                    if (!quizByModule.containsKey(moduleID)) {
+                        quizByModule.put(moduleID, new ArrayList<>());
+                    }
+                    quizByModule.get(moduleID).add(quizID);
+                } else {
+                    logger.log(java.util.logging.Level.WARNING, "Malformed line in Quiz.txt (line " + lineCount + "): " + line);
+                }
+            }
+            logger.log(java.util.logging.Level.INFO, "Quiz map size: " + quizByModule.size());
+        } catch (IOException e) {
+            logger.log(java.util.logging.Level.SEVERE, "Error reading Quiz.txt: " + e.getMessage(), e);
+            javax.swing.JOptionPane.showMessageDialog(this, 
+                "Error reading Quiz.txt: " + e.getMessage(), 
+                "File Error", 
+                javax.swing.JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
         // Show unique moduleID and studentID pairs only
         Set<String> uniqueStudentModulePairs = new HashSet<>();
         List<String[]> tableData = new ArrayList<>();
@@ -328,8 +375,16 @@ public class Grade_Assessment extends javax.swing.JFrame {
                         String pairKey = moduleID + "|" + studentID;
                         if (!uniqueStudentModulePairs.contains(pairKey)) {
                             uniqueStudentModulePairs.add(pairKey);
-                            tableData.add(new String[]{moduleID, studentID});
-                            System.out.println("✓ Added unique student - Module: " + moduleID + ", Student: " + studentID);
+                            List<String> quizIDs = quizByModule.get(moduleID);
+                            if (quizIDs == null || quizIDs.isEmpty()) {
+                                tableData.add(new String[]{moduleID, "N/A", studentID});
+                                System.out.println("✓ Added unique student - Module: " + moduleID + ", Quiz: N/A, Student: " + studentID);
+                            } else {
+                                for (String quizID : quizIDs) {
+                                    tableData.add(new String[]{moduleID, quizID, studentID});
+                                    System.out.println("✓ Added unique student - Module: " + moduleID + ", Quiz: " + quizID + ", Student: " + studentID);
+                                }
+                            }
                         }
                     }
                 } else {
@@ -348,7 +403,7 @@ public class Grade_Assessment extends javax.swing.JFrame {
         }
 
         DefaultTableModel model = new DefaultTableModel(
-            new Object[]{"ModuleID", "StudentID"}, 0
+            new Object[]{"ModuleID", "QuizID", "StudentID"}, 0
         );
         for (String[] row : tableData) {
             model.addRow(row);

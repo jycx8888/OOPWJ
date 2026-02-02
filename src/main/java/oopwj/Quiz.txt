@@ -1,7 +1,3 @@
-Q001, M002, Type your ans here, Subjective
-Q002, M002, vdsvvd, ans1, ans2, ans3, ans4, A, Objective
-Q003, M002, tjtb, ans1, ans2, ans3, ans4, C, Objective
-Q001, M001, vsdfvd, Subjective
-Q002, M001, bbsbd, bfbdbsd, dsv, vdv, adv, B, Objective
-Q003, M001, test, Ans1, Ans2, Ans3, Ans4, C, Objective
-
+QZ001, M001
+QZ002, M001
+QZ001, M002
