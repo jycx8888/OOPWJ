@@ -1058,6 +1058,9 @@ public class View_Grade extends javax.swing.JFrame {
         // Step 3: Calculate percentage (normalize to 100%)
         double percentage = ((double) studentTotalMarks / totalPossibleMarks) * 100.0;
         
+        // Step 3.5: Determine letter grade based on grading.txt
+        String letterGrade = determineLetterGrade(percentage);
+        
         // Step 4: Save to FinalGrade.txt
         // First, read existing file to update or add the record
         java.util.Map<String, String> finalGrades = new java.util.LinkedHashMap<>();
@@ -1093,7 +1096,7 @@ public class View_Grade extends javax.swing.JFrame {
         
         // Add or update current student's final grade
         String key = studentID + "," + moduleID + "," + quizID;
-        String finalGradeEntry = String.format("%s,%s,%s,%.2f", studentID, moduleID, quizID, percentage);
+        String finalGradeEntry = String.format("%s,%s,%s,%.2f,%s", studentID, moduleID, quizID, percentage, letterGrade);
         finalGrades.put(key, finalGradeEntry);
         
         // Write all grades back to file
@@ -1103,8 +1106,8 @@ public class View_Grade extends javax.swing.JFrame {
                 bw.newLine();
             }
             logger.log(java.util.logging.Level.INFO, 
-                String.format("Final grade saved: %s - %.2f%% (%d/%d)", 
-                    studentID, percentage, studentTotalMarks, totalPossibleMarks));
+                String.format("Final grade saved: %s - %.2f%% (%d/%d) - Grade: %s", 
+                    studentID, percentage, studentTotalMarks, totalPossibleMarks, letterGrade));
         } catch (java.io.IOException e) {
             logger.log(java.util.logging.Level.SEVERE, "Error writing to FinalGrade.txt: " + e.getMessage(), e);
             javax.swing.JOptionPane.showMessageDialog(this,
@@ -1112,6 +1115,50 @@ public class View_Grade extends javax.swing.JFrame {
                 "File Error",
                 javax.swing.JOptionPane.ERROR_MESSAGE);
         }
+    }
+    
+    /**
+     * Determines the letter grade based on the percentage score using grading.txt
+     */
+    private String determineLetterGrade(double percentage) {
+        String projectRoot = System.getProperty("user.dir");
+        String gradingFilePath = projectRoot + "/src/main/java/oopwj/grading.txt";
+        
+        java.io.File gradingFile = new java.io.File(gradingFilePath);
+        if (!gradingFile.exists()) {
+            logger.log(java.util.logging.Level.WARNING, "grading.txt not found, defaulting to F");
+            return "F";
+        }
+        
+        try (java.io.BufferedReader br = new java.io.BufferedReader(new java.io.FileReader(gradingFile))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                line = line.trim();
+                if (line.isEmpty() || line.startsWith("#")) continue;
+                
+                // Format: Grade,MinPercentage,MaxPercentage
+                String[] parts = line.split(",");
+                if (parts.length >= 3) {
+                    String grade = parts[0].trim();
+                    try {
+                        double minPercentage = Double.parseDouble(parts[1].trim());
+                        double maxPercentage = Double.parseDouble(parts[2].trim());
+                        
+                        // Check if percentage falls within this grade range (inclusive)
+                        if (percentage >= minPercentage && percentage <= maxPercentage) {
+                            return grade;
+                        }
+                    } catch (NumberFormatException e) {
+                        logger.log(java.util.logging.Level.WARNING, "Invalid grading range format: " + line);
+                    }
+                }
+            }
+        } catch (java.io.IOException e) {
+            logger.log(java.util.logging.Level.SEVERE, "Error reading grading.txt: " + e.getMessage(), e);
+        }
+        
+        // Default to F if no grade range matches
+        return "F";
     }
 
     /**
