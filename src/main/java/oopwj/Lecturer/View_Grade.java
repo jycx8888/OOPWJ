@@ -717,6 +717,9 @@ public class View_Grade extends javax.swing.JFrame {
         // Save all subjective grades to Grade.txt
         saveAllSubjectiveGrades();
         
+        // Calculate and save final grade to FinalGrade.txt
+        calculateAndSaveFinalGrade();
+        
         // Show confirmation with count
         int gradedCount = subjectiveGrades.size();
         StringBuilder message = new StringBuilder("Successfully saved " + gradedCount + " subjective grade(s):\n\n");
@@ -955,6 +958,157 @@ public class View_Grade extends javax.swing.JFrame {
             logger.log(java.util.logging.Level.SEVERE, "Error writing to Grade.txt: " + e.getMessage(), e);
             javax.swing.JOptionPane.showMessageDialog(this,
                 "Error saving grades: " + e.getMessage(),
+                "File Error",
+                javax.swing.JOptionPane.ERROR_MESSAGE);
+        }
+    }
+    
+    /**
+     * Calculates the final grade percentage for the student and saves to FinalGrade.txt
+     * Formula: (Student's total marks / Quiz total marks) * 100%
+     */
+    private void calculateAndSaveFinalGrade() {
+        String projectRoot = System.getProperty("user.dir");
+        String totalQuizMarkPath = projectRoot + "/src/main/java/oopwj/TotalQuizMark.txt";
+        String gradeFilePath = projectRoot + "/src/main/java/oopwj/Grade.txt";
+        String finalGradeFilePath = projectRoot + "/src/main/java/oopwj/FinalGrade.txt";
+        
+        // Step 1: Calculate total possible marks for this quiz from TotalQuizMark.txt
+        int totalPossibleMarks = 0;
+        java.io.File totalQuizMarkFile = new java.io.File(totalQuizMarkPath);
+        
+        if (totalQuizMarkFile.exists()) {
+            try (java.io.BufferedReader br = new java.io.BufferedReader(new java.io.FileReader(totalQuizMarkFile))) {
+                String line;
+                while ((line = br.readLine()) != null) {
+                    line = line.trim();
+                    if (line.isEmpty() || line.startsWith("#")) continue;
+                    
+                    // Format: ModuleID,QuizID,QuestionID,TotalMarks
+                    String[] parts = line.split(",");
+                    if (parts.length >= 4) {
+                        String fileModuleID = parts[0].trim();
+                        String fileQuizID = parts[1].trim();
+                        String marks = parts[3].trim();
+                        
+                        if (fileModuleID.equals(moduleID) && fileQuizID.equals(quizID)) {
+                            try {
+                                totalPossibleMarks += Integer.parseInt(marks);
+                            } catch (NumberFormatException e) {
+                                logger.log(java.util.logging.Level.WARNING, "Invalid marks format: " + marks);
+                            }
+                        }
+                    }
+                }
+            } catch (java.io.IOException e) {
+                logger.log(java.util.logging.Level.SEVERE, "Error reading TotalQuizMark.txt: " + e.getMessage(), e);
+                return;
+            }
+        }
+        
+        if (totalPossibleMarks == 0) {
+            logger.log(java.util.logging.Level.WARNING, "Total possible marks is 0, cannot calculate percentage");
+            return;
+        }
+        
+        // Step 2: Calculate student's total marks from Grade.txt
+        int studentTotalMarks = 0;
+        java.io.File gradeFile = new java.io.File(gradeFilePath);
+        
+        if (gradeFile.exists()) {
+            try (java.io.BufferedReader br = new java.io.BufferedReader(new java.io.FileReader(gradeFile))) {
+                String line;
+                java.util.Set<String> processedQuestions = new java.util.HashSet<>();
+                
+                while ((line = br.readLine()) != null) {
+                    line = line.trim();
+                    if (line.isEmpty() || line.startsWith("#")) continue;
+                    
+                    // Format: StudentID,ModuleID,QuizID,QuestionID,QuestionType,Answer,MarkObtained
+                    String[] parts = line.split(",");
+                    if (parts.length >= 7) {
+                        String fileStudentID = parts[0].trim();
+                        String fileModuleID = parts[1].trim();
+                        String fileQuizID = parts[2].trim();
+                        String fileQuestionID = parts[3].trim();
+                        String marksObtained = parts[6].trim();
+                        
+                        if (fileStudentID.equals(studentID) && 
+                            fileModuleID.equals(moduleID) && 
+                            fileQuizID.equals(quizID)) {
+                            
+                            // Avoid counting duplicate entries for the same question
+                            if (!processedQuestions.contains(fileQuestionID)) {
+                                try {
+                                    studentTotalMarks += Integer.parseInt(marksObtained);
+                                    processedQuestions.add(fileQuestionID);
+                                } catch (NumberFormatException e) {
+                                    logger.log(java.util.logging.Level.WARNING, "Invalid marks obtained format: " + marksObtained);
+                                }
+                            }
+                        }
+                    }
+                }
+            } catch (java.io.IOException e) {
+                logger.log(java.util.logging.Level.SEVERE, "Error reading Grade.txt: " + e.getMessage(), e);
+                return;
+            }
+        }
+        
+        // Step 3: Calculate percentage (normalize to 100%)
+        double percentage = ((double) studentTotalMarks / totalPossibleMarks) * 100.0;
+        
+        // Step 4: Save to FinalGrade.txt
+        // First, read existing file to update or add the record
+        java.util.Map<String, String> finalGrades = new java.util.LinkedHashMap<>();
+        java.io.File finalGradeFile = new java.io.File(finalGradeFilePath);
+        
+        if (finalGradeFile.exists()) {
+            try (java.io.BufferedReader br = new java.io.BufferedReader(new java.io.FileReader(finalGradeFile))) {
+                String line;
+                while ((line = br.readLine()) != null) {
+                    String trimmedLine = line.trim();
+                    if (trimmedLine.isEmpty() || trimmedLine.startsWith("#")) continue;
+                    
+                    // Format: StudentID,ModuleID,QuizID,Percentage
+                    String[] parts = trimmedLine.split(",");
+                    if (parts.length >= 4) {
+                        String fileStudentID = parts[0].trim();
+                        String fileModuleID = parts[1].trim();
+                        String fileQuizID = parts[2].trim();
+                        String key = fileStudentID + "," + fileModuleID + "," + fileQuizID;
+                        
+                        // Don't add current student/module/quiz combination yet
+                        if (!(fileStudentID.equals(studentID) && 
+                              fileModuleID.equals(moduleID) && 
+                              fileQuizID.equals(quizID))) {
+                            finalGrades.put(key, line);
+                        }
+                    }
+                }
+            } catch (java.io.IOException e) {
+                logger.log(java.util.logging.Level.SEVERE, "Error reading FinalGrade.txt: " + e.getMessage(), e);
+            }
+        }
+        
+        // Add or update current student's final grade
+        String key = studentID + "," + moduleID + "," + quizID;
+        String finalGradeEntry = String.format("%s,%s,%s,%.2f", studentID, moduleID, quizID, percentage);
+        finalGrades.put(key, finalGradeEntry);
+        
+        // Write all grades back to file
+        try (java.io.BufferedWriter bw = new java.io.BufferedWriter(new java.io.FileWriter(finalGradeFile))) {
+            for (String gradeEntry : finalGrades.values()) {
+                bw.write(gradeEntry);
+                bw.newLine();
+            }
+            logger.log(java.util.logging.Level.INFO, 
+                String.format("Final grade saved: %s - %.2f%% (%d/%d)", 
+                    studentID, percentage, studentTotalMarks, totalPossibleMarks));
+        } catch (java.io.IOException e) {
+            logger.log(java.util.logging.Level.SEVERE, "Error writing to FinalGrade.txt: " + e.getMessage(), e);
+            javax.swing.JOptionPane.showMessageDialog(this,
+                "Error saving final grade: " + e.getMessage(),
                 "File Error",
                 javax.swing.JOptionPane.ERROR_MESSAGE);
         }
