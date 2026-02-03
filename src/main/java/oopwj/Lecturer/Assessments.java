@@ -31,6 +31,7 @@ public class Assessments extends javax.swing.JFrame {
     private Lecturer_menu parentWindow;
     private Map<String, String> lecturerModules = new HashMap<>(); // moduleId -> moduleName
     private List<String> originalQuizLines = new ArrayList<>(); // Store original lines from question.txt
+    private List<Integer> displayedQuizLineIndices = new ArrayList<>(); // Map displayed rows to original line indices
 
     /**
      * Creates new form Assessments
@@ -248,7 +249,11 @@ public class Assessments extends javax.swing.JFrame {
         java.util.Set<Integer> linesToDelete = new java.util.HashSet<>();
         for (int selectedRow : selectedRows) {
             if (selectedRow >= 0 && selectedRow < model.getRowCount()) {
-                linesToDelete.add(selectedRow);
+                if ("quiz".equals(currentDataType) && selectedRow < displayedQuizLineIndices.size()) {
+                    linesToDelete.add(displayedQuizLineIndices.get(selectedRow));
+                } else {
+                    linesToDelete.add(selectedRow);
+                }
             }
         }
         
@@ -366,6 +371,12 @@ public class Assessments extends javax.swing.JFrame {
 
                 if (matches) {
                     if (isQuiz) {
+                        if (fields.length >= 3 && lecturerID != null) {
+                            String moduleID = fields[2].trim();
+                            if (!lecturerModules.containsKey(moduleID)) {
+                                continue;
+                            }
+                        }
                         // Check if the question is subjective or objective
                         if (fields.length == 6) {
                             // Subjective question: [Module ID, Module Name, Question ID, Question, Type]
@@ -633,14 +644,24 @@ public class Assessments extends javax.swing.JFrame {
         String[] columnNames = {"ModuleID", "QuizID", "QuestionID", "Question Type", "Total Marks"};
         List<Object[]> rows = new ArrayList<>();
         originalQuizLines.clear(); // Clear previous data
+        displayedQuizLineIndices.clear();
 
         if (quizFile.exists()) {
             try (BufferedReader br = new BufferedReader(new FileReader(quizFile))) {
                 String line;
+                int lineIndex = 0;
                 while ((line = br.readLine()) != null) {
                     String[] fields = parseCSV(line);
                     // Store the original line
                     originalQuizLines.add(line);
+
+                    if (fields.length >= 3 && lecturerID != null) {
+                        String moduleID = fields[2].trim();
+                        if (!lecturerModules.containsKey(moduleID)) {
+                            lineIndex++;
+                            continue;
+                        }
+                    }
                     
                     // New format: QuestionID[0], QuizID[1], ModuleID[2], Question[3], Options[4-7], CorrectAnswer[8], Type[9]
                     if (fields.length == 10) { // Objective question with QuizID
@@ -650,6 +671,7 @@ public class Assessments extends javax.swing.JFrame {
                         String key = moduleID + "|" + quizID + "|" + questionID;
                         String totalMarks = quizMarks.getOrDefault(key, "0");
                         rows.add(new Object[]{moduleID, quizID, questionID, fields[9], totalMarks});
+                        displayedQuizLineIndices.add(lineIndex);
                     } else if (fields.length == 5) { // Subjective question with QuizID
                         String quizID = fields[1];
                         String moduleID = fields[2];
@@ -657,7 +679,9 @@ public class Assessments extends javax.swing.JFrame {
                         String key = moduleID + "|" + quizID + "|" + questionID;
                         String totalMarks = quizMarks.getOrDefault(key, "0");
                         rows.add(new Object[]{moduleID, quizID, questionID, fields[4], totalMarks});
+                        displayedQuizLineIndices.add(lineIndex);
                     }
+                    lineIndex++;
                 }
             } catch (IOException ex) {
                 logger.log(java.util.logging.Level.SEVERE, null, ex);
@@ -744,7 +768,9 @@ public class Assessments extends javax.swing.JFrame {
                     if (fields.length >= 2) {
                         String moduleID = fields[1].trim();
                         if (!moduleID.isEmpty()) {
-                            moduleIDs.add(moduleID);
+                            if (lecturerID == null || lecturerModules.containsKey(moduleID)) {
+                                moduleIDs.add(moduleID);
+                            }
                         }
                     }
                 }
@@ -765,6 +791,13 @@ public class Assessments extends javax.swing.JFrame {
     private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {
         String selectedModuleID = (String) jComboBox1.getSelectedItem();
         if (selectedModuleID != null && !selectedModuleID.isEmpty()) {
+            if (lecturerID != null && !lecturerModules.containsKey(selectedModuleID)) {
+                JOptionPane.showMessageDialog(this,
+                    "You are not assigned to this module.",
+                    "Access Denied",
+                    JOptionPane.WARNING_MESSAGE);
+                return;
+            }
             loadQuizzesByModuleID(selectedModuleID);
         }
     }
