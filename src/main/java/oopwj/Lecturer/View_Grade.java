@@ -16,6 +16,7 @@ public class View_Grade extends javax.swing.JFrame {
     private String quizID;
     private String studentID;
     private java.util.Map<String, Integer> maxMarksMap = new java.util.HashMap<>();
+    private java.util.Map<String, Integer> subjectiveGrades = new java.util.HashMap<>(); // Stores questionID -> marks for subjective questions
 
     /**
      * Creates new form View_Grade
@@ -39,10 +40,13 @@ public class View_Grade extends javax.swing.JFrame {
         jButton1.addActionListener(this::jButton1ActionPerformed);
         jButton2.addActionListener(this::jButton2ActionPerformed);
         jButton3.addActionListener(this::jButton3ActionPerformed);
+        jButton4.addActionListener(this::jButton4ActionPerformed);
         loadMaxMarks(moduleID, quizID);
         setModuleAndStudentInfo(moduleID, studentID);
         loadQuestionIDs(moduleID, quizID);
+        loadExistingGrades(); // Load already saved grades from Grade.txt
         setupSpinnerValidation();
+        setupSpinnerChangeListener(); // Listen for mark changes
     }
     
     /**
@@ -125,6 +129,70 @@ public class View_Grade extends javax.swing.JFrame {
                 }
             }
         });
+    }
+    
+    /**
+     * Sets up listener to save marks when spinner value changes
+     */
+    private void setupSpinnerChangeListener() {
+        jSpinner2.addChangeListener(e -> {
+            String selectedQuestionID = (String) jComboBox1.getSelectedItem();
+            if (selectedQuestionID != null && isSubjectiveQuestion(selectedQuestionID)) {
+                int marks = (Integer) jSpinner2.getValue();
+                subjectiveGrades.put(selectedQuestionID, marks);
+                logger.log(java.util.logging.Level.INFO, "Stored grade for " + selectedQuestionID + ": " + marks);
+            }
+        });
+    }
+    
+    /**
+     * Loads existing grades from Grade.txt for this student/module/quiz
+     */
+    private void loadExistingGrades() {
+        String projectRoot = System.getProperty("user.dir");
+        String gradeFilePath = projectRoot + "/src/main/java/oopwj/Grade.txt";
+        
+        java.io.File gradeFile = new java.io.File(gradeFilePath);
+        if (!gradeFile.exists()) {
+            logger.log(java.util.logging.Level.INFO, "Grade.txt not found, starting fresh");
+            return;
+        }
+        
+        try (java.io.BufferedReader br = new java.io.BufferedReader(new java.io.FileReader(gradeFile))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                line = line.trim();
+                if (line.isEmpty() || line.startsWith("#")) continue;
+                
+                // Format: studentID,moduleID,quizID,questionID,QuestionType,CorrectAnswer,mark
+                String[] parts = line.split(",");
+                if (parts.length >= 7) {
+                    String fileStudentID = parts[0].trim();
+                    String fileModuleID = parts[1].trim();
+                    String fileQuizID = parts[2].trim();
+                    String fileQuestionID = parts[3].trim();
+                    String questionType = parts[4].trim();
+                    String markStr = parts[6].trim();
+                    
+                    // Load subjective grades for this student/module/quiz
+                    if (fileStudentID.equals(studentID) && 
+                        fileModuleID.equals(moduleID) && 
+                        fileQuizID.equals(quizID) &&
+                        "Subjective".equalsIgnoreCase(questionType)) {
+                        
+                        try {
+                            int mark = Integer.parseInt(markStr);
+                            subjectiveGrades.put(fileQuestionID, mark);
+                            logger.log(java.util.logging.Level.INFO, "Loaded existing grade for " + fileQuestionID + ": " + mark);
+                        } catch (NumberFormatException e) {
+                            logger.log(java.util.logging.Level.WARNING, "Invalid mark format: " + markStr);
+                        }
+                    }
+                }
+            }
+        } catch (java.io.IOException e) {
+            logger.log(java.util.logging.Level.SEVERE, "Error reading Grade.txt: " + e.getMessage(), e);
+        }
     }
     
     /**
@@ -493,8 +561,7 @@ public class View_Grade extends javax.swing.JFrame {
                             // Fill subjective panel
                             jTextArea2.setText(question);
                             
-                            // Reset spinner value
-                            jSpinner2.setValue(0);
+                            // Note: Spinner value will be set by updateMaxMarksDisplay() which is called after this
                             
                             // Show subjective panel
                             swapPanels("Subjective");
@@ -515,11 +582,14 @@ public class View_Grade extends javax.swing.JFrame {
         if (maxMarksMap.containsKey(questionID)) {
             int maxMarks = maxMarksMap.get(questionID);
             
-            // Set spinner model with proper range
-            javax.swing.SpinnerNumberModel spinnerModel = new javax.swing.SpinnerNumberModel(0, 0, maxMarks, 1);
+            // Get the saved mark for this question (if exists)
+            int savedMark = subjectiveGrades.getOrDefault(questionID, 0);
+            
+            // Set spinner model with proper range and saved value
+            javax.swing.SpinnerNumberModel spinnerModel = new javax.swing.SpinnerNumberModel(savedMark, 0, maxMarks, 1);
             jSpinner2.setModel(spinnerModel);
             
-            logger.log(java.util.logging.Level.INFO, "Max marks for " + questionID + " set to: " + maxMarks);
+            logger.log(java.util.logging.Level.INFO, "Max marks for " + questionID + " set to: " + maxMarks + ", current value: " + savedMark);
         } else {
             logger.log(java.util.logging.Level.WARNING, "No max marks found for question: " + questionID);
         }
@@ -629,6 +699,264 @@ public class View_Grade extends javax.swing.JFrame {
                 "This is the last question.", 
                 "Information", 
                 javax.swing.JOptionPane.INFORMATION_MESSAGE);
+        }
+    }
+
+    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {
+        // Save button - save ALL subjective question grades to Grade.txt
+        
+        // Check if there are any subjective grades to save
+        if (subjectiveGrades.isEmpty()) {
+            javax.swing.JOptionPane.showMessageDialog(this, 
+                "No subjective questions have been graded yet.", 
+                "No Grades to Save", 
+                javax.swing.JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        // Save all subjective grades to Grade.txt
+        saveAllSubjectiveGrades();
+        
+        // Show confirmation with count
+        int gradedCount = subjectiveGrades.size();
+        StringBuilder message = new StringBuilder("Successfully saved " + gradedCount + " subjective grade(s):\n\n");
+        for (java.util.Map.Entry<String, Integer> entry : subjectiveGrades.entrySet()) {
+            message.append(entry.getKey()).append(": ").append(entry.getValue()).append(" marks\n");
+        }
+        
+        javax.swing.JOptionPane.showMessageDialog(this, 
+            message.toString(), 
+            "Grades Saved Successfully", 
+            javax.swing.JOptionPane.INFORMATION_MESSAGE);
+        
+        logger.log(java.util.logging.Level.INFO, "Saved " + gradedCount + " subjective grades to Grade.txt");
+    }
+    
+    /**
+     * Checks if the given question is a subjective question
+     */
+    private boolean isSubjectiveQuestion(String questionID) {
+        String projectRoot = System.getProperty("user.dir");
+        String questionFilePath = projectRoot + "/src/main/java/oopwj/question.txt";
+        
+        java.io.File questionFile = new java.io.File(questionFilePath);
+        if (!questionFile.exists()) {
+            logger.log(java.util.logging.Level.SEVERE, "question.txt not found");
+            return false;
+        }
+        
+        try (java.io.BufferedReader br = new java.io.BufferedReader(new java.io.FileReader(questionFile))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                line = line.trim();
+                if (line.isEmpty() || line.startsWith("#")) continue;
+                
+                String[] parts = line.split(",");
+                if (parts.length >= 3) {
+                    String fileQuestionID = parts[0].trim();
+                    String fileQuizID = parts[1].trim();
+                    String fileModuleID = parts[2].trim();
+                    
+                    if (fileQuestionID.equals(questionID) && fileQuizID.equals(quizID) && fileModuleID.equals(moduleID)) {
+                        // Check question type - subjective has fewer columns (5) vs objective (10)
+                        String questionType = parts[parts.length - 1].trim();
+                        return "Subjective".equalsIgnoreCase(questionType);
+                    }
+                }
+            }
+        } catch (java.io.IOException e) {
+            logger.log(java.util.logging.Level.SEVERE, "Error reading question.txt: " + e.getMessage(), e);
+        }
+        
+        return false;
+    }
+    
+    /**
+     * Compares two questionIDs numerically (e.g., Q002 < Q010)
+     */
+    private int compareQuestionIDs(String q1, String q2) {
+        try {
+            // Extract numeric part from question IDs (e.g., "Q006" -> 6)
+            int num1 = Integer.parseInt(q1.replaceAll("[^0-9]", ""));
+            int num2 = Integer.parseInt(q2.replaceAll("[^0-9]", ""));
+            return Integer.compare(num1, num2);
+        } catch (NumberFormatException e) {
+            // If parsing fails, fall back to string comparison
+            return q1.compareTo(q2);
+        }
+    }
+    
+    /**
+     * Loads subjective question answers from answers.txt for the current student/module/quiz
+     * Returns map of questionID -> answer
+     */
+    private java.util.Map<String, String> loadSubjectiveAnswers() {
+        java.util.Map<String, String> answers = new java.util.HashMap<>();
+        String projectRoot = System.getProperty("user.dir");
+        String answersFilePath = projectRoot + "/src/main/java/oopwj/answers.txt";
+        
+        java.io.File answersFile = new java.io.File(answersFilePath);
+        if (!answersFile.exists()) {
+            logger.log(java.util.logging.Level.WARNING, "answers.txt not found at: " + answersFilePath);
+            return answers;
+        }
+        
+        try (java.io.BufferedReader br = new java.io.BufferedReader(new java.io.FileReader(answersFile))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                line = line.trim();
+                if (line.isEmpty() || line.startsWith("#")) continue;
+                
+                // Format: StudentID,ModuleID,QuizID,QuestionID,QuestionType,Answer
+                String[] parts = line.split(",", 6); // Split into max 6 parts to preserve commas in answer
+                if (parts.length >= 6) {
+                    String fileStudentID = parts[0].trim();
+                    String fileModuleID = parts[1].trim();
+                    String fileQuizID = parts[2].trim();
+                    String fileQuestionID = parts[3].trim();
+                    String questionType = parts[4].trim();
+                    String answer = parts[5].trim(); // Answer may contain commas
+                    
+                    // Match student, module, quiz, and question type
+                    if (fileStudentID.equals(studentID) && 
+                        fileModuleID.equals(moduleID) && 
+                        fileQuizID.equals(quizID) &&
+                        "Subjective".equalsIgnoreCase(questionType)) {
+                        answers.put(fileQuestionID, answer);
+                    }
+                }
+            }
+            logger.log(java.util.logging.Level.INFO, "Loaded " + answers.size() + " subjective answers from answers.txt");
+        } catch (java.io.IOException e) {
+            logger.log(java.util.logging.Level.SEVERE, "Error reading answers.txt: " + e.getMessage(), e);
+        }
+        
+        return answers;
+    }
+    
+    /**
+     * Saves all subjective question grades in Grade.txt
+     * Format: studentID,moduleID,quizID,questionID,Subjective,Answer,mark
+     */
+    private void saveAllSubjectiveGrades() {
+        String projectRoot = System.getProperty("user.dir");
+        String gradeFilePath = projectRoot + "/src/main/java/oopwj/Grade.txt";
+        
+        java.io.File gradeFile = new java.io.File(gradeFilePath);
+        
+        // Load student answers for subjective questions from answers.txt
+        java.util.Map<String, String> subjectiveAnswers = loadSubjectiveAnswers();
+        
+        // Separate lists for different types of lines
+        java.util.List<String> otherLines = new java.util.ArrayList<>(); // Lines not related to this student/module/quiz
+        java.util.List<String> currentQuizGrades = new java.util.ArrayList<>(); // Grades for current student/module/quiz
+        java.util.Set<String> processedQuestions = new java.util.HashSet<>(); // Track which questions we've already handled
+        
+        if (gradeFile.exists()) {
+            try (java.io.BufferedReader br = new java.io.BufferedReader(new java.io.FileReader(gradeFile))) {
+                String line;
+                while ((line = br.readLine()) != null) {
+                    String originalLine = line;
+                    line = line.trim();
+                    
+                    if (line.isEmpty() || line.startsWith("#")) {
+                        otherLines.add(originalLine);
+                        continue;
+                    }
+                    
+                    // Format: studentID,moduleID,quizID,questionID,QuestionType,CorrectAnswer,mark
+                    String[] parts = line.split(",");
+                    if (parts.length >= 7) {
+                        String fileStudentID = parts[0].trim();
+                        String fileModuleID = parts[1].trim();
+                        String fileQuizID = parts[2].trim();
+                        String fileQuestionID = parts[3].trim();
+                        String questionType = parts[4].trim();
+                        
+                        // Check if this grade belongs to current student/module/quiz
+                        if (fileStudentID.equals(studentID) && 
+                            fileModuleID.equals(moduleID) && 
+                            fileQuizID.equals(quizID)) {
+                            
+                            // Prevent duplicates - skip if we already processed this question
+                            if (processedQuestions.contains(fileQuestionID)) {
+                                logger.log(java.util.logging.Level.WARNING, "Skipping duplicate entry for question: " + fileQuestionID);
+                                continue;
+                            }
+                            
+                            // If it's a subjective question we're updating, use new value
+                            if ("Subjective".equalsIgnoreCase(questionType) &&
+                                subjectiveGrades.containsKey(fileQuestionID)) {
+                                
+                                int newMark = subjectiveGrades.get(fileQuestionID);
+                                String answer = subjectiveAnswers.getOrDefault(fileQuestionID, "N/A");
+                                String updatedLine = studentID + "," + moduleID + "," + quizID + "," + 
+                                                   fileQuestionID + ",Subjective," + answer + "," + newMark;
+                                currentQuizGrades.add(updatedLine);
+                                processedQuestions.add(fileQuestionID);
+                                logger.log(java.util.logging.Level.INFO, "Updated existing grade: " + updatedLine);
+                            } else {
+                                // Keep existing grade (objective or not updated subjective)
+                                currentQuizGrades.add(originalLine);
+                                processedQuestions.add(fileQuestionID);
+                            }
+                        } else {
+                            // Different student/module/quiz - keep in other lines
+                            otherLines.add(originalLine);
+                        }
+                    } else {
+                        otherLines.add(originalLine);
+                    }
+                }
+            } catch (java.io.IOException e) {
+                logger.log(java.util.logging.Level.SEVERE, "Error reading Grade.txt: " + e.getMessage(), e);
+                javax.swing.JOptionPane.showMessageDialog(this,
+                    "Error reading grades file: " + e.getMessage(),
+                    "File Error",
+                    javax.swing.JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+        }
+        
+        // Add new subjective grades that weren't in the file
+        for (java.util.Map.Entry<String, Integer> entry : subjectiveGrades.entrySet()) {
+            String questionID = entry.getKey();
+            int marks = entry.getValue();
+            
+            if (!processedQuestions.contains(questionID)) {
+                String answer = subjectiveAnswers.getOrDefault(questionID, "N/A");
+                String newGrade = studentID + "," + moduleID + "," + quizID + "," + 
+                                questionID + ",Subjective," + answer + "," + marks;
+                currentQuizGrades.add(newGrade);
+                logger.log(java.util.logging.Level.INFO, "Added new grade: " + newGrade);
+            }
+        }
+        
+        // Sort all grades for this quiz by questionID (numerically)
+        currentQuizGrades.sort((g1, g2) -> {
+            String q1 = g1.split(",")[3]; // Extract questionID
+            String q2 = g2.split(",")[3];
+            return compareQuestionIDs(q1, q2);
+        });
+        
+        // Combine all lines: other lines + sorted current quiz grades
+        java.util.List<String> allLines = new java.util.ArrayList<>();
+        allLines.addAll(otherLines);
+        allLines.addAll(currentQuizGrades);
+        
+        // Write all lines back to file
+        try (java.io.BufferedWriter bw = new java.io.BufferedWriter(new java.io.FileWriter(gradeFile))) {
+            for (String line : allLines) {
+                bw.write(line);
+                bw.newLine();
+            }
+            logger.log(java.util.logging.Level.INFO, "Successfully saved all subjective grades to Grade.txt");
+        } catch (java.io.IOException e) {
+            logger.log(java.util.logging.Level.SEVERE, "Error writing to Grade.txt: " + e.getMessage(), e);
+            javax.swing.JOptionPane.showMessageDialog(this,
+                "Error saving grades: " + e.getMessage(),
+                "File Error",
+                javax.swing.JOptionPane.ERROR_MESSAGE);
         }
     }
 
