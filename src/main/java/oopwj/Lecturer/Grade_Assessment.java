@@ -7,7 +7,9 @@ package oopwj.Lecturer;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -214,6 +216,9 @@ public class Grade_Assessment extends javax.swing.JFrame {
         String quizID = jTable1.getValueAt(selectedRow, 1).toString();
         String studentID = jTable1.getValueAt(selectedRow, 2).toString();
         
+        // Auto-grade objective questions
+        autoGradeObjectiveQuestions(studentID, moduleID, quizID);
+        
         View_Grade viewGrade = new View_Grade(moduleID, quizID, studentID, lecturerID);
         viewGrade.setLocationRelativeTo(null);
         viewGrade.setVisible(true);
@@ -411,11 +416,224 @@ public class Grade_Assessment extends javax.swing.JFrame {
         jTable1.setModel(model);
         
         System.out.println("DEBUG: loadAssessmentAnswers() END");
-    }   
-
+    }
+    
     /**
-     * @param args the command line arguments
+     * Auto-grades all objective questions for a student in a specific quiz
      */
+    private void autoGradeObjectiveQuestions(String studentID, String moduleID, String quizID) {
+        System.out.println("DEBUG: autoGradeObjectiveQuestions() START");
+        System.out.println("StudentID: " + studentID + ", ModuleID: " + moduleID + ", QuizID: " + quizID);
+        
+        String projectRoot = System.getProperty("user.dir");
+        String questionFilePath = projectRoot + "/src/main/java/oopwj/question.txt";
+        String answersFilePath = projectRoot + "/src/main/java/oopwj/answers.txt";
+        String totalQuizMarkPath = projectRoot + "/src/main/java/oopwj/TotalQuizMark.txt";
+        String gradeFilePath = projectRoot + "/src/main/java/oopwj/Grade.txt";
+        
+        // Load question data (map of questionID -> [correctAnswer, questionType])
+        Map<String, String[]> questionData = loadQuestionData(questionFilePath, moduleID, quizID);
+        
+        // Load student answers (map of questionID -> studentAnswer)
+        Map<String, String> studentAnswers = loadStudentAnswers(answersFilePath, studentID, moduleID, quizID);
+        
+        // Load max marks (map of questionID -> maxMark)
+        Map<String, Integer> maxMarks = loadMaxMarks(totalQuizMarkPath, moduleID, quizID);
+        
+        // Grade each objective question and save to Grade.txt
+        List<String> gradesToAdd = new ArrayList<>();
+        
+        // Sort question IDs numerically for ordered output
+        List<String> sortedQuestionIDs = new ArrayList<>(questionData.keySet());
+        sortedQuestionIDs.sort((q1, q2) -> {
+            // Extract numeric part from question IDs (e.g., "Q001" -> 1)
+            try {
+                int num1 = Integer.parseInt(q1.replaceAll("[^0-9]", ""));
+                int num2 = Integer.parseInt(q2.replaceAll("[^0-9]", ""));
+                return Integer.compare(num1, num2);
+            } catch (NumberFormatException e) {
+                return q1.compareTo(q2);
+            }
+        });
+        
+        for (String questionID : sortedQuestionIDs) {
+            String[] qData = questionData.get(questionID);
+            String correctAnswer = qData[0];
+            String questionType = qData[1];
+            
+            // Only grade objective questions
+            if ("Objective".equals(questionType)) {
+                String studentAnswer = studentAnswers.getOrDefault(questionID, "");
+                Integer maxMarkObj = maxMarks.getOrDefault(questionID, 0);
+                int maxMark = (maxMarkObj != null) ? maxMarkObj : 0;
+                
+                // Compare answers (case-insensitive)
+                int mark = correctAnswer.equalsIgnoreCase(studentAnswer) ? maxMark : 0;
+                
+                // Format: studentID,moduleID,quizID,questionID,Objective,correctAnswer,mark
+                String gradeEntry = studentID + "," + moduleID + "," + quizID + "," + questionID + ",Objective," + correctAnswer + "," + mark;
+                gradesToAdd.add(gradeEntry);
+                
+                System.out.println("Graded Q" + questionID + ": Student=" + studentAnswer + ", Correct=" + correctAnswer + ", Mark=" + mark);
+            }
+        }
+        
+        // Save grades to Grade.txt
+        if (!gradesToAdd.isEmpty()) {
+            appendGradesToFile(gradeFilePath, gradesToAdd);
+            System.out.println("DEBUG: Saved " + gradesToAdd.size() + " grades to Grade.txt");
+        }
+        
+        System.out.println("DEBUG: autoGradeObjectiveQuestions() END");
+    }
+    
+    /**
+     * Loads question data from question.txt for a specific module and quiz
+     * Returns map of questionID -> [correctAnswer, questionType]
+     */
+    private Map<String, String[]> loadQuestionData(String questionFilePath, String moduleID, String quizID) {
+        Map<String, String[]> questionData = new HashMap<>();
+        
+        java.io.File questionFile = new java.io.File(questionFilePath);
+        if (!questionFile.exists()) {
+            logger.log(java.util.logging.Level.WARNING, "question.txt not found at: " + questionFilePath);
+            return questionData;
+        }
+        
+        try (BufferedReader br = new BufferedReader(new FileReader(questionFile))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                line = line.trim();
+                if (line.isEmpty() || line.startsWith("#")) continue;
+                
+                String[] parts = line.split(",");
+                if (parts.length >= 4) {
+                    String questionID = parts[0].trim();
+                    String quizIDFromFile = parts[1].trim();
+                    String moduleIDFromFile = parts[2].trim();
+                    String questionType = parts[parts.length - 1].trim(); // Last column is type
+                    
+                    // Check if this question belongs to the target quiz and module
+                    if (quizIDFromFile.equals(quizID) && moduleIDFromFile.equals(moduleID)) {
+                        String correctAnswer = "";
+                        
+                        if ("Objective".equals(questionType) && parts.length >= 9) {
+                            // For objective: format is Q,QZ,M,question,opt1,opt2,opt3,opt4,correctAns,Type
+                            correctAnswer = parts[8].trim(); // Correct answer is at index 8
+                        }
+                        
+                        questionData.put(questionID, new String[]{correctAnswer, questionType});
+                    }
+                }
+            }
+        } catch (IOException e) {
+            logger.log(java.util.logging.Level.SEVERE, "Error reading question.txt: " + e.getMessage(), e);
+        }
+        
+        return questionData;
+    }
+    
+    /**
+     * Loads student answers from answers.txt
+     * Returns map of questionID -> studentAnswer
+     */
+    private Map<String, String> loadStudentAnswers(String answersFilePath, String studentID, String moduleID, String quizID) {
+        Map<String, String> studentAnswers = new HashMap<>();
+        
+        java.io.File answersFile = new java.io.File(answersFilePath);
+        if (!answersFile.exists()) {
+            logger.log(java.util.logging.Level.WARNING, "answers.txt not found at: " + answersFilePath);
+            return studentAnswers;
+        }
+        
+        try (BufferedReader br = new BufferedReader(new FileReader(answersFile))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                line = line.trim();
+                if (line.isEmpty() || line.startsWith("#")) continue;
+                
+                String[] parts = line.split(",", 6); // Split into max 6 parts
+                if (parts.length >= 6) {
+                    String studentIDFromFile = parts[0].trim();
+                    String moduleIDFromFile = parts[1].trim();
+                    String quizIDFromFile = parts[2].trim();
+                    String questionID = parts[3].trim();
+                    String answer = parts[5].trim(); // Answer is at index 5
+                    
+                    // Match student, module, and quiz
+                    if (studentIDFromFile.equals(studentID) && 
+                        moduleIDFromFile.equals(moduleID) && 
+                        quizIDFromFile.equals(quizID)) {
+                        studentAnswers.put(questionID, answer);
+                    }
+                }
+            }
+        } catch (IOException e) {
+            logger.log(java.util.logging.Level.SEVERE, "Error reading answers.txt: " + e.getMessage(), e);
+        }
+        
+        return studentAnswers;
+    }
+    
+    /**
+     * Loads max marks from TotalQuizMark.txt
+     * Returns map of questionID -> maxMark
+     */
+    private Map<String, Integer> loadMaxMarks(String totalQuizMarkPath, String moduleID, String quizID) {
+        Map<String, Integer> maxMarks = new HashMap<>();
+        
+        java.io.File totalQuizMarkFile = new java.io.File(totalQuizMarkPath);
+        if (!totalQuizMarkFile.exists()) {
+            logger.log(java.util.logging.Level.WARNING, "TotalQuizMark.txt not found at: " + totalQuizMarkPath);
+            return maxMarks;
+        }
+        
+        try (BufferedReader br = new BufferedReader(new FileReader(totalQuizMarkFile))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                line = line.trim();
+                if (line.isEmpty() || line.startsWith("#")) continue;
+                
+                String[] parts = line.split(",");
+                if (parts.length >= 4) {
+                    String moduleIDFromFile = parts[0].trim();
+                    String quizIDFromFile = parts[1].trim();
+                    String questionID = parts[2].trim();
+                    int maxMark = Integer.parseInt(parts[3].trim());
+                    
+                    // Match module and quiz
+                    if (moduleIDFromFile.equals(moduleID) && quizIDFromFile.equals(quizID)) {
+                        maxMarks.put(questionID, maxMark);
+                    }
+                }
+            }
+        } catch (IOException | NumberFormatException e) {
+            logger.log(java.util.logging.Level.SEVERE, "Error reading TotalQuizMark.txt: " + e.getMessage(), e);
+        }
+        
+        return maxMarks;
+    }
+    
+    /**
+     * Appends grade entries to Grade.txt file
+     */
+    private void appendGradesToFile(String gradeFilePath, List<String> gradesToAdd) {
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(gradeFilePath, true))) {
+            for (String gradeEntry : gradesToAdd) {
+                bw.write(gradeEntry);
+                bw.newLine();
+                System.out.println("Written to Grade.txt: " + gradeEntry);
+            }
+        } catch (IOException e) {
+            logger.log(java.util.logging.Level.SEVERE, "Error writing to Grade.txt: " + e.getMessage(), e);
+            javax.swing.JOptionPane.showMessageDialog(this,
+                "Error writing grades to file: " + e.getMessage(),
+                "File Error",
+                javax.swing.JOptionPane.ERROR_MESSAGE);
+        }
+    }
+    
+
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
