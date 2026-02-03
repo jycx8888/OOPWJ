@@ -239,9 +239,6 @@ public class Grade_Assessment extends javax.swing.JFrame {
         String quizID = jTable1.getValueAt(selectedRow, 1).toString();
         String studentID = jTable1.getValueAt(selectedRow, 2).toString();
         
-        // Auto-grade objective questions
-        autoGradeObjectiveQuestions(studentID, moduleID, quizID);
-        
         View_Grade viewGrade = new View_Grade(moduleID, quizID, studentID, lecturerID);
         viewGrade.setLocationRelativeTo(null);
         viewGrade.setVisible(true);
