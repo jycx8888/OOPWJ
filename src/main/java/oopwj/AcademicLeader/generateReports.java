@@ -5,8 +5,11 @@
 package oopwj.AcademicLeader;
 
 import java.io.*;
+import java.awt.Color;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -17,6 +20,10 @@ public class generateReports extends javax.swing.JFrame {
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(generateReports.class.getName());
     private String academicLeaderID;  // Store the logged-in Academic Leader ID
     private academicLeader parentWindow;  // Store reference to parent window
+    private static final String MODULE_PLACEHOLDER = "Module";
+    private static final String QUIZ_PLACEHOLDER = "Quiz";
+    private final Map<String, String> moduleNameToId = new HashMap<>();
+    private final Map<String, String> quizNameToId = new HashMap<>();
 
     /**
      * Creates new form generateReports
@@ -40,6 +47,8 @@ public class generateReports extends javax.swing.JFrame {
         this.parentWindow = parentWindow;
         initComponents();
         loadModulesFromFile();
+        resetQuizDropdown();
+        setDefaultPlaceholders();
     }
 
     /**
@@ -54,6 +63,7 @@ public class generateReports extends javax.swing.JFrame {
         modules = new javax.swing.JComboBox<>();
         exit = new javax.swing.JToggleButton();
         jLabel1 = new javax.swing.JLabel();
+        quiz = new javax.swing.JComboBox<>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -75,34 +85,45 @@ public class generateReports extends javax.swing.JFrame {
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel1.setText("Report");
 
+        quiz.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        quiz.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                quizActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(534, Short.MAX_VALUE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(exit)
-                .addGap(18, 18, 18))
+                .addGap(40, 40, 40))
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(174, 174, 174)
-                        .addComponent(modules, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(251, 251, 251)
+                        .addComponent(jLabel1))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(249, 249, 249)
-                        .addComponent(jLabel1)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(62, 62, 62)
+                        .addComponent(modules, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(44, 44, 44)
+                        .addComponent(quiz, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(0, 88, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(12, 12, 12)
+                .addGap(19, 19, 19)
                 .addComponent(exit)
-                .addGap(4, 4, 4)
+                .addGap(2, 2, 2)
                 .addComponent(jLabel1)
-                .addGap(28, 28, 28)
-                .addComponent(modules, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(326, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(modules, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(quiz, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(331, Short.MAX_VALUE))
         );
 
         pack();
@@ -120,14 +141,32 @@ public class generateReports extends javax.swing.JFrame {
     }//GEN-LAST:event_exitActionPerformed
 
     private void modulesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_modulesActionPerformed
-        String selectedModule = (String) modules.getSelectedItem();
-        if (selectedModule != null && !selectedModule.isEmpty()) {
-            System.out.println("Selected module: " + selectedModule);
+        String selectedModuleName = (String) modules.getSelectedItem();
+        if (selectedModuleName == null || selectedModuleName.equals(MODULE_PLACEHOLDER)) {
+            resetQuizDropdown();
+            return;
+        }
+
+        String moduleId = moduleNameToId.get(selectedModuleName);
+        if (moduleId != null) {
+            loadQuizzesForModule(moduleId);
+            modules.setForeground(Color.BLACK);
+        } else {
+            resetQuizDropdown();
         }
     }//GEN-LAST:event_modulesActionPerformed
 
+    private void quizActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_quizActionPerformed
+        String selectedQuizName = (String) quiz.getSelectedItem();
+        if (selectedQuizName != null && !selectedQuizName.equals(QUIZ_PLACEHOLDER)) {
+            quiz.setForeground(Color.BLACK);
+        }
+    }//GEN-LAST:event_quizActionPerformed
+
     private void loadModulesFromFile() {
         modules.removeAllItems();
+        moduleNameToId.clear();
+        modules.addItem(MODULE_PLACEHOLDER);
         try (BufferedReader reader = new BufferedReader(new FileReader("src\\main\\java\\oopwj\\modules.txt"))) {
             String line;
             while ((line = reader.readLine()) != null) {
@@ -135,6 +174,7 @@ public class generateReports extends javax.swing.JFrame {
                 if (!trimmed.isEmpty()) {
                     String[] parts = trimmed.split(",");
                     if (parts.length >= 3) {
+                        String moduleId = parts[0].trim();
                         String moduleName = parts[1].trim();
                         String moduleACID = parts[2].trim();  // Academic Leader ID
                         
@@ -142,8 +182,9 @@ public class generateReports extends javax.swing.JFrame {
                         if (this.academicLeaderID != null && !moduleACID.equals(this.academicLeaderID)) {
                             continue;  // Skip modules not belonging to this AC
                         }
-                        
+
                         modules.addItem(moduleName);
+                        moduleNameToId.put(moduleName, moduleId);
                     }
                 }
             }
@@ -151,6 +192,45 @@ public class generateReports extends javax.swing.JFrame {
             logger.log(java.util.logging.Level.WARNING, "Unable to load modules list", e);
             modules.addItem("Error loading modules");
         }
+    }
+
+    private void loadQuizzesForModule(String moduleId) {
+        quiz.removeAllItems();
+        quizNameToId.clear();
+        quiz.addItem(QUIZ_PLACEHOLDER);
+        try (BufferedReader reader = new BufferedReader(new FileReader("src\\main\\java\\oopwj\\Quiz.txt"))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String trimmed = line.trim();
+                if (!trimmed.isEmpty()) {
+                    String[] parts = trimmed.split(",");
+                    if (parts.length >= 3) {
+                        String quizId = parts[0].trim();
+                        String quizModuleId = parts[1].trim();
+                        String quizName = parts[2].trim();
+                        if (quizModuleId.equals(moduleId)) {
+                            quiz.addItem(quizName);
+                            quizNameToId.put(quizName, quizId);
+                        }
+                    }
+                }
+            }
+        } catch (IOException e) {
+            logger.log(java.util.logging.Level.WARNING, "Unable to load quiz list", e);
+            quiz.addItem("Error loading quiz");
+        }
+        quiz.setForeground(Color.GRAY);
+    }
+
+    private void setDefaultPlaceholders() {
+        modules.setForeground(Color.GRAY);
+        quiz.setForeground(Color.GRAY);
+    }
+
+    private void resetQuizDropdown() {
+        quiz.removeAllItems();
+        quiz.addItem(QUIZ_PLACEHOLDER);
+        quiz.setForeground(Color.GRAY);
     }
 
     /**
@@ -182,5 +262,6 @@ public class generateReports extends javax.swing.JFrame {
     private javax.swing.JToggleButton exit;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JComboBox<String> modules;
+    private javax.swing.JComboBox<String> quiz;
     // End of variables declaration//GEN-END:variables
 }
