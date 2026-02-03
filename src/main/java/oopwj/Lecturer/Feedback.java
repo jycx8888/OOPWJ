@@ -4,6 +4,12 @@
  */
 package oopwj.Lecturer;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+
 /**
  *
  * @author User
@@ -11,12 +17,31 @@ package oopwj.Lecturer;
 public class Feedback extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(Feedback.class.getName());
+    
+    private String moduleID;
+    private String quizID;
+    private String studentID;
 
     /**
      * Creates new form Feedback
      */
     public Feedback() {
         initComponents();
+    }
+    
+    /**
+     * Creates new form Feedback with parameters
+     */
+    public Feedback(String moduleID, String quizID, String studentID, String lecturerID) {
+        this.moduleID = moduleID;
+        this.quizID = quizID;
+        this.studentID = studentID;
+        
+        initComponents();
+        setLocationRelativeTo(null);
+        
+        // Attach action listener to Save button
+        jButton1.addActionListener(evt -> jButton1ActionPerformed(evt));
     }
 
     /**
@@ -91,6 +116,123 @@ public class Feedback extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {
+        // Get feedback from text area
+        String feedback = jTextArea1.getText();
+        
+        if (feedback.trim().isEmpty()) {
+            javax.swing.JOptionPane.showMessageDialog(this,
+                "Please enter feedback before saving.",
+                "Empty Feedback",
+                javax.swing.JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        // Update feedback in FinalGrade.txt
+        String projectRoot = System.getProperty("user.dir");
+        String finalGradeFilePath = projectRoot + "/src/main/java/oopwj/FinalGrade.txt";
+        
+        if (!updateFeedbackInFile(finalGradeFilePath, feedback)) {
+            javax.swing.JOptionPane.showMessageDialog(this,
+                "Could not find grade record for this student.",
+                "Error",
+                javax.swing.JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        
+        javax.swing.JOptionPane.showMessageDialog(this,
+            "Feedback saved successfully!",
+            "Success",
+            javax.swing.JOptionPane.INFORMATION_MESSAGE);
+        
+        this.dispose();
+    }
+    
+    /**
+     * Updates the feedback in FinalGrade.txt for the given student
+     */
+    private boolean updateFeedbackInFile(String finalGradeFilePath, String feedback) {
+        java.io.File finalGradeFile = new java.io.File(finalGradeFilePath);
+        if (!finalGradeFile.exists()) {
+            logger.log(java.util.logging.Level.WARNING, "FinalGrade.txt not found");
+            return false;
+        }
+        
+        java.util.List<String> lines = new java.util.ArrayList<>();
+        boolean found = false;
+        
+        try (BufferedReader br = new BufferedReader(new FileReader(finalGradeFile))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                String trimmedLine = line.trim();
+                if (trimmedLine.isEmpty() || trimmedLine.startsWith("#")) {
+                    lines.add(line);
+                    continue;
+                }
+                
+                String[] parts = trimmedLine.split(",", 6); // Split into max 6 parts to preserve feedback quotes
+                if (parts.length >= 5) {
+                    String studentIDFromFile = parts[0].trim();
+                    String moduleIDFromFile = parts[1].trim();
+                    String quizIDFromFile = parts[2].trim();
+                    String markFromFile = parts[3].trim();
+                    String gradeFromFile = parts[4].trim();
+                    
+                    // Match this student's quiz
+                    if (studentIDFromFile.equals(studentID) &&
+                        moduleIDFromFile.equals(moduleID) &&
+                        quizIDFromFile.equals(quizID)) {
+                        
+                        // Reconstruct line with new feedback
+                        // Format: StudentID,ModuleID,QuizID,Mark,Grade,"Feedback"
+                        String formattedFeedback = formatFeedbackField(feedback);
+                        String updatedLine = studentID + "," + moduleID + "," + quizID + "," +
+                                           markFromFile + "," + gradeFromFile + "," + formattedFeedback;
+                        lines.add(updatedLine);
+                        found = true;
+                        System.out.println("Updated feedback for student: " + studentID);
+                    } else {
+                        lines.add(trimmedLine);
+                    }
+                } else {
+                    lines.add(trimmedLine);
+                }
+            }
+        } catch (IOException e) {
+            System.err.println("Error reading FinalGrade.txt: " + e.getMessage());
+            return false;
+        }
+        
+        // Write back to file
+        if (found) {
+            try (BufferedWriter bw = new BufferedWriter(new FileWriter(finalGradeFile))) {
+                for (String line : lines) {
+                    bw.write(line);
+                    bw.newLine();
+                }
+                System.out.println("Saved feedback to FinalGrade.txt");
+            } catch (IOException e) {
+                System.err.println("Error writing to FinalGrade.txt: " + e.getMessage());
+                javax.swing.JOptionPane.showMessageDialog(this,
+                    "Error saving feedback: " + e.getMessage(),
+                    "File Error",
+                    javax.swing.JOptionPane.ERROR_MESSAGE);
+                return false;
+            }
+        }
+        
+        return found;
+    }
+
+    private String formatFeedbackField(String feedback) {
+        if (feedback == null) {
+            return "\"\"";
+        }
+        String trimmed = feedback.trim();
+        String escaped = trimmed.replace("\"", "\"\"");
+        return "\"" + escaped + "\"";
+    }
 
     /**
      * @param args the command line arguments

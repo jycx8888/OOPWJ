@@ -1051,8 +1051,9 @@ public class View_Grade extends javax.swing.JFrame {
         String letterGrade = determineLetterGrade(percentage);
         
         // Step 4: Save to FinalGrade.txt
-        // First, read existing file to update or add the record
+        // First, read existing file to update or add the record (preserve feedback column)
         java.util.Map<String, String> finalGrades = new java.util.LinkedHashMap<>();
+        String existingFeedback = "";
         java.io.File finalGradeFile = new java.io.File(finalGradeFilePath);
         
         if (finalGradeFile.exists()) {
@@ -1062,18 +1063,28 @@ public class View_Grade extends javax.swing.JFrame {
                     String trimmedLine = line.trim();
                     if (trimmedLine.isEmpty() || trimmedLine.startsWith("#")) continue;
                     
-                    // Format: StudentID,ModuleID,QuizID,Percentage
-                    String[] parts = trimmedLine.split(",");
+                    // Format: StudentID,ModuleID,QuizID,Mark,Feedback (old 5-col format)
+                    //    or: StudentID,ModuleID,QuizID,Mark,Grade,Feedback (new 6-col format)
+                    String[] parts = trimmedLine.split(",", 6);
                     if (parts.length >= 4) {
                         String fileStudentID = parts[0].trim();
                         String fileModuleID = parts[1].trim();
                         String fileQuizID = parts[2].trim();
                         String key = fileStudentID + "," + fileModuleID + "," + fileQuizID;
                         
-                        // Don't add current student/module/quiz combination yet
-                        if (!(fileStudentID.equals(studentID) && 
-                              fileModuleID.equals(moduleID) && 
-                              fileQuizID.equals(quizID))) {
+                        // Check if this is the current student's record
+                        if (fileStudentID.equals(studentID) &&
+                            fileModuleID.equals(moduleID) &&
+                            fileQuizID.equals(quizID)) {
+                            // Preserve existing feedback
+                            // In old format (5 columns): feedback is at index 4
+                            // In new format (6 columns): feedback is at index 5
+                            if (parts.length == 5) {
+                                existingFeedback = parts[4]; // Old format
+                            } else if (parts.length >= 6) {
+                                existingFeedback = parts[5]; // New format
+                            }
+                        } else {
                             finalGrades.put(key, line);
                         }
                     }
@@ -1085,7 +1096,10 @@ public class View_Grade extends javax.swing.JFrame {
         
         // Add or update current student's final grade
         String key = studentID + "," + moduleID + "," + quizID;
-        String finalGradeEntry = String.format("%s,%s,%s,%.2f,%s", studentID, moduleID, quizID, percentage, letterGrade);
+        // Use existing feedback as-is (already formatted), or empty string if none
+        String feedbackValue = existingFeedback.isEmpty() ? "\"\"" : existingFeedback;
+        String finalGradeEntry = String.format("%s,%s,%s,%d,%s,%s",
+            studentID, moduleID, quizID, (int)percentage, letterGrade, feedbackValue);
         finalGrades.put(key, finalGradeEntry);
         
         // Write all grades back to file
@@ -1095,8 +1109,8 @@ public class View_Grade extends javax.swing.JFrame {
                 bw.newLine();
             }
             logger.log(java.util.logging.Level.INFO, 
-                String.format("Final grade saved: %s - %.2f%% (%d/%d) - Grade: %s", 
-                    studentID, percentage, studentTotalMarks, totalPossibleMarks, letterGrade));
+                String.format("Final grade saved: %s - %d%% (%d/%d) - Grade: %s", 
+                    studentID, (int)percentage, studentTotalMarks, totalPossibleMarks, letterGrade));
         } catch (java.io.IOException e) {
             logger.log(java.util.logging.Level.SEVERE, "Error writing to FinalGrade.txt: " + e.getMessage(), e);
             javax.swing.JOptionPane.showMessageDialog(this,
@@ -1105,6 +1119,8 @@ public class View_Grade extends javax.swing.JFrame {
                 javax.swing.JOptionPane.ERROR_MESSAGE);
         }
     }
+
+
     
     /**
      * Determines the letter grade based on the percentage score using grading.txt

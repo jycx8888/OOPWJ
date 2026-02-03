@@ -251,11 +251,10 @@ public class Grade_Assessment extends javax.swing.JFrame {
         String quizID = jTable1.getValueAt(selectedRow, 1).toString();
         String studentID = jTable1.getValueAt(selectedRow, 2).toString();
         
-        // TODO: Implement feedback functionality
-        javax.swing.JOptionPane.showMessageDialog(this, 
-            "Feedback feature for Student: " + studentID + " is not yet implemented.", 
-            "Feedback", 
-            javax.swing.JOptionPane.INFORMATION_MESSAGE);
+        // Open Feedback window
+        Feedback feedback = new Feedback(moduleID, quizID, studentID, lecturerID);
+        feedback.setVisible(true);
+        this.dispose();
     }
     
     private void loadAssessmentAnswers() {
