@@ -29,7 +29,6 @@ public class Lecturer_menu extends javax.swing.JFrame {
     private void setupListeners() {
         Assessmentsbutton.addActionListener(this::AssessmentsbuttonActionPerformed);
         Settings.addActionListener(this::SettingsActionPerformed);
-        AssessmentFeedbackButton.addActionListener(this::AssessmentFeedbackButtonActionPerformed);
     }
 
     /**
@@ -45,7 +44,6 @@ public class Lecturer_menu extends javax.swing.JFrame {
         Settings = new javax.swing.JButton();
         Assessmentsbutton = new javax.swing.JButton();
         GradeAssessmentButton = new javax.swing.JButton();
-        AssessmentFeedbackButton = new javax.swing.JButton();
         BackButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -63,9 +61,6 @@ public class Lecturer_menu extends javax.swing.JFrame {
         GradeAssessmentButton.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         GradeAssessmentButton.addActionListener(this::GradeAssessmentButtonActionPerformed);
 
-        AssessmentFeedbackButton.setText("Assessment Feedback");
-        AssessmentFeedbackButton.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-
         BackButton.setText("Back");
         BackButton.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         BackButton.addActionListener(this::BackButtonActionPerformed);
@@ -76,13 +71,11 @@ public class Lecturer_menu extends javax.swing.JFrame {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(140, 140, 140)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                        .addComponent(Settings, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(Assessmentsbutton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(GradeAssessmentButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(BackButton, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(AssessmentFeedbackButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(Settings, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(Assessmentsbutton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(GradeAssessmentButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(BackButton, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(134, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
@@ -95,10 +88,8 @@ public class Lecturer_menu extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addComponent(GradeAssessmentButton)
                 .addGap(18, 18, 18)
-                .addComponent(AssessmentFeedbackButton)
-                .addGap(18, 18, 18)
                 .addComponent(BackButton)
-                .addContainerGap(111, Short.MAX_VALUE))
+                .addContainerGap(149, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -118,7 +109,7 @@ public class Lecturer_menu extends javax.swing.JFrame {
     private void GradeAssessmentButtonActionPerformed(java.awt.event.ActionEvent evt) {
         new Grade_Assessment(lecturerID, this).setVisible(true);
         this.setVisible(false);
-    }//GEN-LAST:event_GradeAssessmentButtonActionPerformed
+    }                                                     
 
     private void SettingsActionPerformed(java.awt.event.ActionEvent evt) {
         new Lecturer_Settings(lecturerID, this).setVisible(true);
@@ -137,11 +128,6 @@ public class Lecturer_menu extends javax.swing.JFrame {
 
     private void AssessmentMarkButtonActionPerformed(java.awt.event.ActionEvent evt) {
         new Assessment_Marks(lecturerID, this).setVisible(true);
-        this.setVisible(false);
-    }
-
-    private void AssessmentFeedbackButtonActionPerformed(java.awt.event.ActionEvent evt) {
-        new Assessment_Feedback(lecturerID, this).setVisible(true);
         this.setVisible(false);
     }
 
@@ -175,7 +161,6 @@ public class Lecturer_menu extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton AssessmentFeedbackButton;
     private javax.swing.JButton Assessmentsbutton;
     private javax.swing.JButton BackButton;
     private javax.swing.JButton GradeAssessmentButton;
