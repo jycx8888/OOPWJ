@@ -21,6 +21,7 @@ public class Feedback extends javax.swing.JFrame {
     private String moduleID;
     private String quizID;
     private String studentID;
+    private String lecturerID;
 
     /**
      * Creates new form Feedback
@@ -36,12 +37,18 @@ public class Feedback extends javax.swing.JFrame {
         this.moduleID = moduleID;
         this.quizID = quizID;
         this.studentID = studentID;
+        this.lecturerID = lecturerID;
         
         initComponents();
         setLocationRelativeTo(null);
         
+        // Load existing feedback if available
+        loadExistingFeedback();
+        
         // Attach action listener to Save button
         jButton1.addActionListener(evt -> jButton1ActionPerformed(evt));
+        // Attach action listener to Back button
+        jButton2.addActionListener(evt -> jButton2ActionPerformed(evt));
     }
 
     /**
@@ -58,6 +65,7 @@ public class Feedback extends javax.swing.JFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         jTextArea1 = new javax.swing.JTextArea();
         jButton1 = new javax.swing.JButton();
+        jButton2 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -72,6 +80,8 @@ public class Feedback extends javax.swing.JFrame {
         jScrollPane1.setViewportView(jTextArea1);
 
         jButton1.setText("Save");
+
+        jButton2.setText("Back");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -88,8 +98,10 @@ public class Feedback extends javax.swing.JFrame {
                 .addContainerGap(46, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(jButton2)
+                .addGap(43, 43, 43)
                 .addComponent(jButton1)
-                .addGap(206, 206, 206))
+                .addGap(154, 154, 154))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -99,7 +111,9 @@ public class Feedback extends javax.swing.JFrame {
                 .addGap(36, 36, 36)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(37, 37, 37)
-                .addComponent(jButton1)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jButton1)
+                    .addComponent(jButton2))
                 .addContainerGap(53, Short.MAX_VALUE))
         );
 
@@ -145,7 +159,17 @@ public class Feedback extends javax.swing.JFrame {
             "Feedback saved successfully!",
             "Success",
             javax.swing.JOptionPane.INFORMATION_MESSAGE);
-        
+    }
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {
+        Grade_Assessment gradeAssessment;
+        if (lecturerID != null && !lecturerID.isEmpty()) {
+            gradeAssessment = new Grade_Assessment(lecturerID);
+        } else {
+            gradeAssessment = new Grade_Assessment();
+        }
+        gradeAssessment.setLocationRelativeTo(null);
+        gradeAssessment.setVisible(true);
         this.dispose();
     }
     
@@ -233,6 +257,59 @@ public class Feedback extends javax.swing.JFrame {
         String escaped = trimmed.replace("\"", "\"\"");
         return "\"" + escaped + "\"";
     }
+    
+    /**
+     * Loads existing feedback from FinalGrade.txt and displays it in the text area
+     */
+    private void loadExistingFeedback() {
+        String projectRoot = System.getProperty("user.dir");
+        String finalGradeFilePath = projectRoot + "/src/main/java/oopwj/FinalGrade.txt";
+        
+        java.io.File finalGradeFile = new java.io.File(finalGradeFilePath);
+        if (!finalGradeFile.exists()) {
+            logger.log(java.util.logging.Level.WARNING, "FinalGrade.txt not found");
+            return;
+        }
+        
+        try (BufferedReader br = new BufferedReader(new FileReader(finalGradeFile))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                String trimmedLine = line.trim();
+                if (trimmedLine.isEmpty() || trimmedLine.startsWith("#")) {
+                    continue;
+                }
+                
+                String[] parts = trimmedLine.split(",", 6);
+                if (parts.length >= 6) {
+                    String studentIDFromFile = parts[0].trim();
+                    String moduleIDFromFile = parts[1].trim();
+                    String quizIDFromFile = parts[2].trim();
+                    
+                    // Match this student's quiz
+                    if (studentIDFromFile.equals(studentID) &&
+                        moduleIDFromFile.equals(moduleID) &&
+                        quizIDFromFile.equals(quizID)) {
+                        
+                        // Extract feedback (6th column)
+                        String feedbackField = parts[5].trim();
+                        // Remove surrounding quotes and unescape
+                        String feedback = feedbackField;
+                        if (feedback.startsWith("\"") && feedback.endsWith("\"")) {
+                            feedback = feedback.substring(1, feedback.length() - 1);
+                            feedback = feedback.replace("\"\"", "\"");
+                        }
+                        
+                        jTextArea1.setText(feedback);
+                        System.out.println("Loaded feedback for student: " + studentID);
+                        return;
+                    }
+                }
+            }
+        } catch (IOException e) {
+            System.err.println("Error reading FinalGrade.txt: " + e.getMessage());
+            logger.log(java.util.logging.Level.WARNING, "Error loading feedback: " + e.getMessage());
+        }
+    }
 
     /**
      * @param args the command line arguments
@@ -261,6 +338,7 @@ public class Feedback extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;

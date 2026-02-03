@@ -60,6 +60,19 @@ public class Grade_Assessment extends javax.swing.JFrame {
         jButton2.addActionListener(this::jButton2ActionPerformed);
         jButton3.addActionListener(this::jButton3ActionPerformed);
         
+        // Add double-click listener to table
+        jTable1.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                if (evt.getClickCount() == 2) {
+                    int row = jTable1.rowAtPoint(evt.getPoint());
+                    if (row >= 0) {
+                        showRowDetailsPopup(row);
+                    }
+                }
+            }
+        });
+        
         initLoadOnShow();
         // REMOVED: loadAssessmentAnswers() - will be called after window is shown
     }
@@ -80,7 +93,7 @@ public class Grade_Assessment extends javax.swing.JFrame {
 
     private void clearTable() {
         jTable1.setModel(new DefaultTableModel(
-            new Object[]{"ModuleID", "QuizID", "StudentID", "Grade", "Feedback"}, 0
+            new Object[]{"ModuleID", "QuizID", "StudentID", "Total Grade", "Grade", "Feedback"}, 0
         ));
     }
 
@@ -161,35 +174,35 @@ public class Grade_Assessment extends javax.swing.JFrame {
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap(38, Short.MAX_VALUE)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                .addContainerGap(70, Short.MAX_VALUE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jButton2)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGap(65, 65, 65)
                         .addComponent(jButton3)
-                        .addGap(52, 52, 52)
+                        .addGap(90, 90, 90)
                         .addComponent(jButton1))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 353, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(38, 38, 38))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 391, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(70, 70, 70))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap(33, Short.MAX_VALUE)
+                .addContainerGap(87, Short.MAX_VALUE)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 376, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton1)
                     .addComponent(jButton2)
                     .addComponent(jButton3))
-                .addGap(33, 33, 33))
+                .addGap(28, 28, 28))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -257,6 +270,84 @@ public class Grade_Assessment extends javax.swing.JFrame {
         this.dispose();
     }
     
+    /**
+     * Shows a popup dialog with all details of the selected row
+     */
+    private void showRowDetailsPopup(int row) {
+        // Get data from the selected row
+        String moduleID = jTable1.getValueAt(row, 0).toString();
+        String quizID = jTable1.getValueAt(row, 1).toString();
+        String studentID = jTable1.getValueAt(row, 2).toString();
+        String totalGrade = jTable1.getValueAt(row, 3).toString();
+        String grade = jTable1.getValueAt(row, 4).toString();
+        String feedback = jTable1.getValueAt(row, 5).toString();
+        
+        // Create a JDialog for the popup
+        javax.swing.JDialog detailsDialog = new javax.swing.JDialog(this, "Student Details", true);
+        detailsDialog.setDefaultCloseOperation(javax.swing.JDialog.DISPOSE_ON_CLOSE);
+        detailsDialog.setSize(400, 300);
+        detailsDialog.setLocationRelativeTo(this);
+        
+        // Create a panel for the content
+        javax.swing.JPanel panel = new javax.swing.JPanel();
+        panel.setLayout(new javax.swing.BoxLayout(panel, javax.swing.BoxLayout.Y_AXIS));
+        panel.setBorder(javax.swing.BorderFactory.createEmptyBorder(15, 15, 15, 15));
+        panel.setBackground(new java.awt.Color(255, 255, 255));
+        
+        // Add labels with the data
+        addDetailRow(panel, "Module ID:", moduleID);
+        addDetailRow(panel, "Quiz ID:", quizID);
+        addDetailRow(panel, "Student ID:", studentID);
+        addDetailRow(panel, "Total Grade:", totalGrade);
+        addDetailRow(panel, "Grade:", grade);
+        
+        // Add feedback with a text area
+        panel.add(new javax.swing.JLabel("Feedback:"));
+        javax.swing.JTextArea feedbackArea = new javax.swing.JTextArea(feedback);
+        feedbackArea.setLineWrap(true);
+        feedbackArea.setWrapStyleWord(true);
+        feedbackArea.setEditable(false);
+        feedbackArea.setBackground(new java.awt.Color(240, 240, 240));
+        javax.swing.JScrollPane scrollPane = new javax.swing.JScrollPane(feedbackArea);
+        scrollPane.setPreferredSize(new java.awt.Dimension(350, 80));
+        panel.add(scrollPane);
+        
+        panel.add(javax.swing.Box.createVerticalStrut(10));
+        
+        // Add close button
+        javax.swing.JButton closeButton = new javax.swing.JButton("Close");
+        closeButton.addActionListener(e -> detailsDialog.dispose());
+        javax.swing.JPanel buttonPanel = new javax.swing.JPanel();
+        buttonPanel.setBackground(new java.awt.Color(255, 255, 255));
+        buttonPanel.add(closeButton);
+        panel.add(buttonPanel);
+        
+        detailsDialog.add(panel);
+        detailsDialog.setVisible(true);
+    }
+    
+    /**
+     * Helper method to add a detail row with label and value
+     */
+    private void addDetailRow(javax.swing.JPanel panel, String label, String value) {
+        javax.swing.JPanel rowPanel = new javax.swing.JPanel();
+        rowPanel.setLayout(new java.awt.BorderLayout());
+        rowPanel.setBackground(new java.awt.Color(255, 255, 255));
+        rowPanel.setMaximumSize(new java.awt.Dimension(Integer.MAX_VALUE, 30));
+        
+        javax.swing.JLabel labelComponent = new javax.swing.JLabel(label);
+        labelComponent.setFont(new java.awt.Font("Segoe UI", java.awt.Font.BOLD, 12));
+        
+        javax.swing.JLabel valueComponent = new javax.swing.JLabel(value);
+        valueComponent.setFont(new java.awt.Font("Segoe UI", java.awt.Font.PLAIN, 12));
+        
+        rowPanel.add(labelComponent, java.awt.BorderLayout.WEST);
+        rowPanel.add(valueComponent, java.awt.BorderLayout.CENTER);
+        
+        panel.add(rowPanel);
+        panel.add(javax.swing.Box.createVerticalStrut(5));
+    }
+    
     private void loadAssessmentAnswers() {
         System.out.println("DEBUG: loadAssessmentAnswers() START");
         
@@ -265,8 +356,10 @@ public class Grade_Assessment extends javax.swing.JFrame {
         String modulesFilePath = projectRoot + "/src/main/java/oopwj/modules.txt";
         String answersFilePath = projectRoot + "/src/main/java/oopwj/answers.txt";
         String quizFilePath = projectRoot + "/src/main/java/oopwj/Quiz.txt";
+        String finalGradeFilePath = projectRoot + "/src/main/java/oopwj/FinalGrade.txt";
         Set<String> allowedModuleIDs = new HashSet<>();
         Map<String, List<String>> quizByModule = new HashMap<>();
+        Map<String, String[]> finalGrades = loadFinalGrades(finalGradeFilePath);
 
         // Debug: Check if lecturerID is set
         if (lecturerID == null || lecturerID.isEmpty()) {
@@ -434,13 +527,22 @@ public class Grade_Assessment extends javax.swing.JFrame {
         }
 
         DefaultTableModel model = new DefaultTableModel(
-            new Object[]{"ModuleID", "QuizID", "StudentID", "Grade", "Feedback"}, 0
+            new Object[]{"ModuleID", "QuizID", "StudentID", "Total Grade", "Grade", "Feedback"}, 0
         );
         for (String[] row : tableData) {
-            String[] expandedRow = new String[5];
+            String[] expandedRow = new String[6];
             System.arraycopy(row, 0, expandedRow, 0, 3);
-            expandedRow[3] = "Pending";  // Grade column
-            expandedRow[4] = "Pending";  // Feedback column
+            String key = row[2] + "|" + row[0] + "|" + row[1];
+            String[] finalGradeRecord = finalGrades.get(key);
+            if (finalGradeRecord != null) {
+                expandedRow[3] = finalGradeRecord[0]; // Total Grade (mark)
+                expandedRow[4] = finalGradeRecord[1]; // Grade (letter)
+                expandedRow[5] = finalGradeRecord[2]; // Feedback
+            } else {
+                expandedRow[3] = "Pending";  // Total Grade column
+                expandedRow[4] = "Pending";  // Grade column
+                expandedRow[5] = "Pending";  // Feedback column
+            }
             model.addRow(expandedRow);
             System.out.println("DEBUG: Added row - " + java.util.Arrays.toString(expandedRow));
         }
@@ -448,6 +550,61 @@ public class Grade_Assessment extends javax.swing.JFrame {
         jTable1.setModel(model);
         
         System.out.println("DEBUG: loadAssessmentAnswers() END");
+    }
+
+    /**
+     * Loads final grade data from FinalGrade.txt
+     * Map key: studentID|moduleID|quizID -> [mark, grade, feedback]
+     */
+    private Map<String, String[]> loadFinalGrades(String finalGradeFilePath) {
+        Map<String, String[]> finalGrades = new HashMap<>();
+
+        java.io.File finalGradeFile = new java.io.File(finalGradeFilePath);
+        if (!finalGradeFile.exists()) {
+            logger.log(java.util.logging.Level.WARNING, "FinalGrade.txt not found at: " + finalGradeFilePath);
+            return finalGrades;
+        }
+
+        try (BufferedReader br = new BufferedReader(new FileReader(finalGradeFile))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                line = line.trim();
+                if (line.isEmpty() || line.startsWith("#")) {
+                    continue;
+                }
+
+                String[] parts = line.split(",", 6);
+                if (parts.length >= 5) {
+                    String studentID = parts[0].trim();
+                    String moduleID = parts[1].trim();
+                    String quizID = parts[2].trim();
+                    String mark = parts[3].trim();
+                    String grade = parts[4].trim();
+                    String feedback = "";
+                    
+                    if (parts.length >= 6) {
+                        feedback = parts[5].trim();
+                        // Remove surrounding quotes if present
+                        if (feedback.startsWith("\"") && feedback.endsWith("\"")) {
+                            feedback = feedback.substring(1, feedback.length() - 1);
+                            feedback = feedback.replace("\"\"", "\"");
+                        }
+                    }
+                    
+                    // Set to "Pending" if feedback is empty
+                    if (feedback.isEmpty()) {
+                        feedback = "Pending";
+                    }
+
+                    String key = studentID + "|" + moduleID + "|" + quizID;
+                    finalGrades.put(key, new String[]{mark, grade, feedback});
+                }
+            }
+        } catch (IOException e) {
+            logger.log(java.util.logging.Level.SEVERE, "Error reading FinalGrade.txt: " + e.getMessage(), e);
+        }
+
+        return finalGrades;
     }
     
     /**
