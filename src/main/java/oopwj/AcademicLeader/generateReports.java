@@ -24,6 +24,7 @@ public class generateReports extends javax.swing.JFrame {
     private static final String QUIZ_PLACEHOLDER = "Quiz";
     private final Map<String, String> moduleNameToId = new HashMap<>();
     private final Map<String, String> quizNameToId = new HashMap<>();
+    private final Map<String, String> studentIdToName = new HashMap<>();
 
     /**
      * Creates new form generateReports
@@ -46,9 +47,11 @@ public class generateReports extends javax.swing.JFrame {
         this.academicLeaderID = academicLeaderID;
         this.parentWindow = parentWindow;
         initComponents();
+        loadStudentNamesFromFile();
         loadModulesFromFile();
         resetQuizDropdown();
         setDefaultPlaceholders();
+        resetReportLabels();
     }
 
     /**
@@ -64,6 +67,19 @@ public class generateReports extends javax.swing.JFrame {
         exit = new javax.swing.JToggleButton();
         jLabel1 = new javax.swing.JLabel();
         quiz = new javax.swing.JComboBox<>();
+        jPanel1 = new javax.swing.JPanel();
+        jLabel2 = new javax.swing.JLabel();
+        passRate = new javax.swing.JLabel();
+        numberOfStudents = new javax.swing.JLabel();
+        jPanel2 = new javax.swing.JPanel();
+        jLabel3 = new javax.swing.JLabel();
+        highestMark = new javax.swing.JLabel();
+        studentNameHighest = new javax.swing.JLabel();
+        studentIDHighest = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
+        lowestMark = new javax.swing.JLabel();
+        studentNameLowest = new javax.swing.JLabel();
+        studentIDLowest = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -92,6 +108,107 @@ public class generateReports extends javax.swing.JFrame {
             }
         });
 
+        jPanel1.setBackground(new java.awt.Color(255, 255, 255));
+
+        jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
+        jLabel2.setText("Total Pass Rate");
+
+        passRate.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
+        passRate.setText("jLabel3");
+
+        numberOfStudents.setText("jLabel5");
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(numberOfStudents, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jPanel1Layout.createSequentialGroup()
+                            .addGap(57, 57, 57)
+                            .addComponent(jLabel2))
+                        .addGroup(jPanel1Layout.createSequentialGroup()
+                            .addGap(84, 84, 84)
+                            .addComponent(passRate))))
+                .addContainerGap(63, Short.MAX_VALUE))
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel2)
+                .addGap(26, 26, 26)
+                .addComponent(passRate, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(numberOfStudents)
+                .addContainerGap(25, Short.MAX_VALUE))
+        );
+
+        jPanel2.setBackground(new java.awt.Color(255, 255, 255));
+
+        jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
+        jLabel3.setText("Highest Mark");
+
+        highestMark.setText("jLabel4");
+
+        studentNameHighest.setText("jLabel5");
+
+        studentIDHighest.setText("jLabel4");
+
+        jLabel4.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
+        jLabel4.setText("Lowest Mark");
+
+        lowestMark.setText("jLabel5");
+
+        studentNameLowest.setText("jLabel5");
+
+        studentIDLowest.setText("jLabel6");
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGap(62, 62, 62)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(studentNameLowest, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(studentIDLowest, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jLabel3)
+                    .addComponent(highestMark, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(studentNameHighest, javax.swing.GroupLayout.PREFERRED_SIZE, 78, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(studentIDHighest, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jLabel4)
+                    .addComponent(lowestMark, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(41, Short.MAX_VALUE))
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel3)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(highestMark)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(studentNameHighest)
+                    .addComponent(studentIDHighest))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel4)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(lowestMark)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(studentNameLowest)
+                    .addComponent(studentIDLowest))
+                .addContainerGap(7, Short.MAX_VALUE))
+        );
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -107,10 +224,14 @@ public class generateReports extends javax.swing.JFrame {
                         .addComponent(jLabel1))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(62, 62, 62)
-                        .addComponent(modules, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(modules, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addGap(44, 44, 44)
-                        .addComponent(quiz, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(0, 88, Short.MAX_VALUE))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(quiz, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                .addGap(0, 46, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -123,7 +244,11 @@ public class generateReports extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(modules, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(quiz, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(331, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(389, Short.MAX_VALUE))
         );
 
         pack();
@@ -160,6 +285,14 @@ public class generateReports extends javax.swing.JFrame {
         String selectedQuizName = (String) quiz.getSelectedItem();
         if (selectedQuizName != null && !selectedQuizName.equals(QUIZ_PLACEHOLDER)) {
             quiz.setForeground(Color.BLACK);
+            String quizId = quizNameToId.get(selectedQuizName);
+            if (quizId != null) {
+                updateReportForQuiz(quizId);
+            } else {
+                resetReportLabels();
+            }
+        } else {
+            resetReportLabels();
         }
     }//GEN-LAST:event_quizActionPerformed
 
@@ -222,6 +355,111 @@ public class generateReports extends javax.swing.JFrame {
         quiz.setForeground(Color.GRAY);
     }
 
+    private void loadStudentNamesFromFile() {
+        studentIdToName.clear();
+        try (BufferedReader reader = new BufferedReader(new FileReader("src\\main\\java\\oopwj\\student.txt"))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String trimmed = line.trim();
+                if (!trimmed.isEmpty()) {
+                    String[] parts = trimmed.split(",");
+                    if (parts.length >= 2) {
+                        String studentId = parts[0].trim();
+                        String studentName = parts[1].trim();
+                        studentIdToName.put(studentId, studentName);
+                    }
+                }
+            }
+        } catch (IOException e) {
+            logger.log(java.util.logging.Level.WARNING, "Unable to load student list", e);
+        }
+    }
+
+    private void updateReportForQuiz(String quizId) {
+        int totalStudents = 0;
+        int passedStudents = 0;
+        Integer highest = null;
+        Integer lowest = null;
+        String highestStudentId = "";
+        String lowestStudentId = "";
+
+        try (BufferedReader reader = new BufferedReader(new FileReader("src\\main\\java\\oopwj\\FinalGrade.txt"))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String trimmed = line.trim();
+                if (trimmed.isEmpty()) {
+                    continue;
+                }
+                String[] parts = trimmed.split(",");
+                if (parts.length >= 5) {
+                    String studentId = parts[0].trim();
+                    String quizIdInFile = parts[2].trim();
+                    String markStr = parts[3].trim();
+                    String grade = parts[4].trim();
+
+                    if (!quizIdInFile.equals(quizId)) {
+                        continue;
+                    }
+
+                    int mark;
+                    try {
+                        mark = Integer.parseInt(markStr);
+                    } catch (NumberFormatException ex) {
+                        continue;
+                    }
+
+                    totalStudents++;
+                    if (!"F".equalsIgnoreCase(grade)) {
+                        passedStudents++;
+                    }
+
+                    if (highest == null || mark > highest) {
+                        highest = mark;
+                        highestStudentId = studentId;
+                    }
+                    if (lowest == null || mark < lowest) {
+                        lowest = mark;
+                        lowestStudentId = studentId;
+                    }
+                }
+            }
+        } catch (IOException e) {
+            logger.log(java.util.logging.Level.WARNING, "Unable to load final grades", e);
+        }
+
+        if (totalStudents == 0) {
+            resetReportLabels();
+            return;
+        }
+
+        double passRateValue = (passedStudents * 100.0) / totalStudents;
+        passRate.setText(String.format("%.2f%%", passRateValue));
+        
+        // Set color based on pass rate
+        if (passRateValue >= 70) {
+            passRate.setForeground(new Color(0, 128, 0));  // Green
+        } else if (passRateValue >= 50) {
+            passRate.setForeground(new Color(255, 193, 7));  // Yellow
+        } else {
+            passRate.setForeground(new Color(255, 0, 0));  // Red
+        }
+        
+        // Set student count label
+        numberOfStudents.setText(passedStudents + " out of " + totalStudents + " students");
+
+        if (highest != null) {
+            highestMark.setText(String.valueOf(highest));
+            studentIDHighest.setText(highestStudentId);
+            studentNameHighest.setText(studentIdToName.getOrDefault(highestStudentId, "Unknown"));
+        }
+
+        if (lowest != null) {
+            lowestMark.setText(String.valueOf(lowest));
+            studentIDLowest.setText(lowestStudentId);
+            studentNameLowest.setText(studentIdToName.getOrDefault(lowestStudentId, "Unknown"));
+        }
+    }
+
     private void setDefaultPlaceholders() {
         modules.setForeground(Color.GRAY);
         quiz.setForeground(Color.GRAY);
@@ -231,6 +469,18 @@ public class generateReports extends javax.swing.JFrame {
         quiz.removeAllItems();
         quiz.addItem(QUIZ_PLACEHOLDER);
         quiz.setForeground(Color.GRAY);
+    }
+
+    private void resetReportLabels() {
+        passRate.setText("-");
+        passRate.setForeground(Color.BLACK);
+        numberOfStudents.setText("-");
+        highestMark.setText("-");
+        studentNameHighest.setText("-");
+        studentIDHighest.setText("-");
+        lowestMark.setText("-");
+        studentNameLowest.setText("-");
+        studentIDLowest.setText("-");
     }
 
     /**
@@ -260,8 +510,21 @@ public class generateReports extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JToggleButton exit;
+    private javax.swing.JLabel highestMark;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
+    private javax.swing.JLabel lowestMark;
     private javax.swing.JComboBox<String> modules;
+    private javax.swing.JLabel numberOfStudents;
+    private javax.swing.JLabel passRate;
     private javax.swing.JComboBox<String> quiz;
+    private javax.swing.JLabel studentIDHighest;
+    private javax.swing.JLabel studentIDLowest;
+    private javax.swing.JLabel studentNameHighest;
+    private javax.swing.JLabel studentNameLowest;
     // End of variables declaration//GEN-END:variables
 }
