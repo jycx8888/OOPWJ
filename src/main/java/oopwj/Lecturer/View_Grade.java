@@ -238,10 +238,8 @@ public class View_Grade extends javax.swing.JFrame {
         jTextField1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         jTextField1.addActionListener(this::jTextField1ActionPerformed);
 
-        jLabel2.setForeground(new java.awt.Color(0, 0, 0));
         jLabel2.setText("Answer:");
 
-        jLabel3.setForeground(new java.awt.Color(0, 0, 0));
         jLabel3.setText("Correct Answer:");
 
         jTextField2.setEditable(false);
@@ -252,14 +250,11 @@ public class View_Grade extends javax.swing.JFrame {
         jTextArea1.setRows(5);
         jTextArea1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
-        jRadioButton1.setForeground(new java.awt.Color(0, 0, 0));
         jRadioButton1.setText("Incorrect");
         jRadioButton1.addActionListener(this::jRadioButton1ActionPerformed);
 
-        jRadioButton2.setForeground(new java.awt.Color(0, 0, 0));
         jRadioButton2.setText("Correct");
 
-        jLabel1.setForeground(new java.awt.Color(0, 0, 0));
         jLabel1.setText("Question:");
 
         javax.swing.GroupLayout ObjectiveLayout = new javax.swing.GroupLayout(Objective);
@@ -320,7 +315,6 @@ public class View_Grade extends javax.swing.JFrame {
         jTextArea2.setRows(5);
         jTextArea2.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
-        jLabel4.setForeground(new java.awt.Color(0, 0, 0));
         jLabel4.setText("Question:");
 
         jTextArea3.setEditable(false);
@@ -328,10 +322,8 @@ public class View_Grade extends javax.swing.JFrame {
         jTextArea3.setRows(5);
         jTextArea3.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
-        jLabel5.setForeground(new java.awt.Color(0, 0, 0));
         jLabel5.setText("Answer:");
 
-        jLabel6.setForeground(new java.awt.Color(0, 0, 0));
         jLabel6.setText("Marks Given:");
 
         javax.swing.GroupLayout SubjectiveLayout = new javax.swing.GroupLayout(Subjective);
@@ -382,17 +374,14 @@ public class View_Grade extends javax.swing.JFrame {
         jPanel4.add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(210, 650, -1, -1));
 
         jLabel7.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        jLabel7.setForeground(new java.awt.Color(0, 0, 0));
         jLabel7.setText("Module ID:");
         jPanel4.add(jLabel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 40, 190, -1));
 
         jLabel8.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        jLabel8.setForeground(new java.awt.Color(0, 0, 0));
         jLabel8.setText("Student ID:");
         jPanel4.add(jLabel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 70, 200, -1));
 
         jLabel9.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
-        jLabel9.setForeground(new java.awt.Color(0, 0, 0));
         jLabel9.setText("Quiz ID: ");
         jPanel4.add(jLabel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 10, 170, -1));
 
