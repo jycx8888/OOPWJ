@@ -55,6 +55,11 @@ public class Grade_Assessment extends javax.swing.JFrame {
         initComponents();
         setLocationRelativeTo(null);
         clearTable();
+        
+        // Attach action listeners for buttons
+        jButton2.addActionListener(this::jButton2ActionPerformed);
+        jButton3.addActionListener(this::jButton3ActionPerformed);
+        
         initLoadOnShow();
         // REMOVED: loadAssessmentAnswers() - will be called after window is shown
     }
@@ -229,6 +234,29 @@ public class Grade_Assessment extends javax.swing.JFrame {
         viewGrade.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_jButton2ActionPerformed
+    
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {
+        // Check if a row is selected
+        int selectedRow = jTable1.getSelectedRow();
+        if (selectedRow == -1) {
+            javax.swing.JOptionPane.showMessageDialog(this, 
+                "Please select a student to provide feedback.", 
+                "No Selection", 
+                javax.swing.JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        // Get moduleID, quizID, and studentID from selected row
+        String moduleID = jTable1.getValueAt(selectedRow, 0).toString();
+        String quizID = jTable1.getValueAt(selectedRow, 1).toString();
+        String studentID = jTable1.getValueAt(selectedRow, 2).toString();
+        
+        // TODO: Implement feedback functionality
+        javax.swing.JOptionPane.showMessageDialog(this, 
+            "Feedback feature for Student: " + studentID + " is not yet implemented.", 
+            "Feedback", 
+            javax.swing.JOptionPane.INFORMATION_MESSAGE);
+    }
     
     private void loadAssessmentAnswers() {
         System.out.println("DEBUG: loadAssessmentAnswers() START");
