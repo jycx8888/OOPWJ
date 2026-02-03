@@ -45,14 +45,11 @@
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace min="-2" pref="140" max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="0" attributes="0">
-                      <Group type="103" groupAlignment="1" max="-2" attributes="0">
-                          <Component id="Settings" alignment="1" max="32767" attributes="0"/>
-                          <Component id="Assessmentsbutton" alignment="1" max="32767" attributes="0"/>
-                          <Component id="GradeAssessmentButton" alignment="1" max="32767" attributes="0"/>
-                          <Component id="BackButton" min="-2" pref="126" max="-2" attributes="0"/>
-                      </Group>
-                      <Component id="AssessmentFeedbackButton" alignment="1" min="-2" pref="126" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="1" max="-2" attributes="0">
+                      <Component id="Settings" alignment="1" max="32767" attributes="0"/>
+                      <Component id="Assessmentsbutton" alignment="1" max="32767" attributes="0"/>
+                      <Component id="GradeAssessmentButton" alignment="1" max="32767" attributes="0"/>
+                      <Component id="BackButton" alignment="0" min="-2" pref="126" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace pref="134" max="32767" attributes="0"/>
               </Group>
@@ -68,10 +65,8 @@
                   <EmptySpace type="separate" max="-2" attributes="0"/>
                   <Component id="GradeAssessmentButton" min="-2" max="-2" attributes="0"/>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
-                  <Component id="AssessmentFeedbackButton" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace type="separate" max="-2" attributes="0"/>
                   <Component id="BackButton" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace pref="111" max="32767" attributes="0"/>
+                  <EmptySpace pref="149" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -110,16 +105,6 @@
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="GradeAssessmentButtonActionPerformed"/>
           </Events>
-        </Component>
-        <Component class="javax.swing.JButton" name="AssessmentFeedbackButton">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="Assessment Feedback"/>
-            <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
-              <Border info="org.netbeans.modules.form.compat2.border.EtchedBorderInfo">
-                <EtchetBorder/>
-              </Border>
-            </Property>
-          </Properties>
         </Component>
         <Component class="javax.swing.JButton" name="BackButton">
           <Properties>
