@@ -23,6 +23,7 @@ public class Feedback extends javax.swing.JFrame {
     private String studentID;
     private String lecturerID;
     private boolean isQuizSetFeedback = false;
+    private javax.swing.JFrame parentWindow = null;
 
     /**
      * Creates new form Feedback
@@ -62,6 +63,32 @@ public class Feedback extends javax.swing.JFrame {
         this.lecturerID = lecturerID;
         this.isQuizSetFeedback = isQuizSetFeedback;
         this.studentID = null;
+        this.parentWindow = null;
+        
+        initComponents();
+        setLocationRelativeTo(null);
+        
+        // Load existing quiz-set feedback if available
+        if (isQuizSetFeedback) {
+            loadExistingQuizSetFeedback();
+        }
+        
+        // Attach action listener to Save button
+        jButton1.addActionListener(evt -> jButton1ActionPerformed(evt));
+        // Attach action listener to Back button
+        jButton2.addActionListener(evt -> jButton2ActionPerformed(evt));
+    }
+    
+    /**
+     * Creates new form Feedback for quiz set feedback with parent window reference
+     */
+    public Feedback(String moduleID, String quizID, String lecturerID, boolean isQuizSetFeedback, javax.swing.JFrame parentWindow) {
+        this.moduleID = moduleID;
+        this.quizID = quizID;
+        this.lecturerID = lecturerID;
+        this.isQuizSetFeedback = isQuizSetFeedback;
+        this.studentID = null;
+        this.parentWindow = parentWindow;
         
         initComponents();
         setLocationRelativeTo(null);
@@ -200,15 +227,22 @@ public class Feedback extends javax.swing.JFrame {
     }
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {
-        Grade_Assessment gradeAssessment;
-        if (lecturerID != null && !lecturerID.isEmpty()) {
-            gradeAssessment = new Grade_Assessment(lecturerID);
+        // If there's a parent window (Assessments), return to it
+        if (parentWindow != null) {
+            parentWindow.setVisible(true);
+            this.dispose();
         } else {
-            gradeAssessment = new Grade_Assessment();
+            // Otherwise, navigate to Grade_Assessment (original behavior)
+            Grade_Assessment gradeAssessment;
+            if (lecturerID != null && !lecturerID.isEmpty()) {
+                gradeAssessment = new Grade_Assessment(lecturerID);
+            } else {
+                gradeAssessment = new Grade_Assessment();
+            }
+            gradeAssessment.setLocationRelativeTo(null);
+            gradeAssessment.setVisible(true);
+            this.dispose();
         }
-        gradeAssessment.setLocationRelativeTo(null);
-        gradeAssessment.setVisible(true);
-        this.dispose();
     }
     
     /**

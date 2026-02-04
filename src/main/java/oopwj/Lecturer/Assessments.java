@@ -613,10 +613,12 @@ public class Assessments extends javax.swing.JFrame {
                 return;
             }
             
-            // Open Feedback window for quiz set feedback
-            Feedback feedbackWindow = new Feedback(selectedModule, selectedQuiz, lecturerID, true);
+            // Open Feedback window for quiz set feedback with parent reference
+            Feedback feedbackWindow = new Feedback(selectedModule, selectedQuiz, lecturerID, true, this);
             feedbackWindow.setVisible(true);
             dialog.dispose();
+            // Close the Assessments window
+            Assessments.this.setVisible(false);
         });
         
         cancelButton.addActionListener(e -> dialog.dispose());
