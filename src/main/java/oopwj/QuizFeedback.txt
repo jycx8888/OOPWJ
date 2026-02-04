@@ -1,2 +1,2 @@
-M001,QZ001,L101,"This quiz a lot of students pass"
+M001,QZ001,L101,"This quiz should be challenging"
 M002,QZ001,L101,"another one"
