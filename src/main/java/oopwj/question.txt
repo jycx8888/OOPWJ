@@ -1,25 +1,27 @@
-Q001,QZ001,M001,test test,1,2,3,4,B,Objective
-Q002,QZ001,M001,What is Java?,Subjective
-Q003,QZ001,M001,Capital of France?,London,Berlin,Paris,Rome,C,Objective
-Q004,QZ001,M001,Explain 2+2,Subjective
-Q005,QZ001,M001,Color of sky?,Blue,Green,Red,Yellow,A,Objective
-Q006,QZ001,M001,Why does the sun rise in the east?,Subjective
-Q007,QZ001,M001,Which is a fruit?,Apple,Car,Chair,Table,A,Objective
-Q008,QZ001,M001,How to calculate 5*5?,Subjective
-Q009,QZ001,M001,Water formula?,H2O,CO2,O2,N2,A,Objective
-Q010,QZ001,M001,Fastest land animal?,Cheetah,Lion,Tiger,Elephant,A,Objective
-Q011,QZ001,M001,Which is a programming language?,Python,Snake,Lizard,Frog,A,Objective
-Q012,QZ001,M001,test mark,1,2,3,4,D,Objective
-Q013,QZ001,M001,hehe,Subjective
-Q014,QZ001,M001,add add,1,23,4,4few,B,Objective
-Q015,QZ001,M001,1fefedvsdv,Subjective
-Q016,QZ001,M001,vdsvsdv,Subjective
-Q017,QZ001,M001,another one,1,2,3,4,A,Objective
-Q018,QZ001,M001,another one,1,2,3,4,C,Objective
-Q019,QZ001,M001,moreeee,q2,cvsdavcdsvsa,svad,vascv,B,Objective
-Q020,QZ001,M001,rah,vds,dvasvsvsa,sc,ascs,A,Objective
-Q021,QZ001,M001,test marksss,1,2,3,4,A,Objective
-Q022,QZ001,M001,test again,1,23,3,4,A,Objective
+Q001,QZ001,M001,What is Java?,Subjective
+Q002,QZ001,M001,Capital of France?,London,Berlin,Paris,Rome,C,Objective
+Q003,QZ001,M001,Explain 2+2,Subjective
+Q004,QZ001,M001,Color of sky?,Blue,Green,Red,Yellow,A,Objective
+Q005,QZ001,M001,Why does the sun rise in the east?,Subjective
+Q006,QZ001,M001,Which is a fruit?,Apple,Car,Chair,Table,A,Objective
+Q007,QZ001,M001,How to calculate 5*5?,Subjective
+Q008,QZ001,M001,Water formula?,H2O,CO2,O2,N2,A,Objective
+Q009,QZ001,M001,Fastest land animal?,Cheetah,Lion,Tiger,Elephant,A,Objective
+Q010,QZ001,M001,Which is a programming language?,Python,Snake,Lizard,Frog,A,Objective
+Q011,QZ001,M001,test mark,1,2,3,4,D,Objective
+Q012,QZ001,M001,hehe,Subjective
+Q013,QZ001,M001,add add,1,23,4,4few,B,Objective
+Q014,QZ001,M001,1fefedvsdv,Subjective
+Q015,QZ001,M001,vdsvsdv,Subjective
+Q016,QZ001,M001,another one,1,2,3,4,A,Objective
+Q017,QZ001,M001,another one,1,2,3,4,C,Objective
+Q018,QZ001,M001,moreeee,q2,cvsdavcdsvsa,svad,vascv,B,Objective
+Q019,QZ001,M001,rah,vds,dvasvsvsa,sc,ascs,A,Objective
+Q020,QZ001,M001,test marksss,1,2,3,4,A,Objective
+Q021,QZ001,M001,test again,1,23,3,4,A,Objective
+Q022,QZ001,M001,yoyoyoy,vas,vs,vsavv,vd,A,Objective
+Q023,QZ001,M001,vdsvd,va,vsa,vsacsacs,dvd,A,Objective
+Q024,QZ001,M001,bfdbfb,bgb,gb,fdbfv,dsv,A,Objective
 Q001,QZ002,M001,vdsv,vds,ds,vfbfbfb,dsb,B,Objective
 Q002,QZ002,M001,What is Python?,Subjective
 Q003,QZ002,M001,Capital of Italy?,London,Berlin,Paris,Rome,D,Objective
@@ -35,3 +37,5 @@ Q001,QZ007,M001,another one,vds,adsv,vsavsa,vsav,A,Objective
 Q002,QZ007,M001,testinggggg,Subjective
 Q001,QZ001,M002,new ques,1,2,3,4,B,Objective
 Q002,QZ001,M002,test also,Subjective
+Q001,QZ003,M001,test,1,2,3,4,A,Objective
+Q002,QZ003,M001,vds,Subjective

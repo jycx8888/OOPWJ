@@ -33,6 +33,7 @@ public class Assessments extends javax.swing.JFrame {
     private Map<String, String> allModuleNames = new HashMap<>(); // moduleId -> moduleName
     private List<String> originalQuizLines = new ArrayList<>(); // Store original lines from question.txt
     private List<Integer> displayedQuizLineIndices = new ArrayList<>(); // Map displayed rows to original line indices
+    private List<String> displayedQuizSetKeys = new ArrayList<>(); // Map displayed rows to QuizID|ModuleID
 
     /**
      * Creates new form Assessments
@@ -329,8 +330,8 @@ public class Assessments extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
-        if (!"question".equals(currentDataType)) {
-            JOptionPane.showMessageDialog(this, "Please load questions before deleting.", "Delete", JOptionPane.INFORMATION_MESSAGE);
+        if (!"question".equals(currentDataType) && !"quizSets".equals(currentDataType)) {
+            JOptionPane.showMessageDialog(this, "Please load questions or quiz sets before deleting.", "Delete", JOptionPane.INFORMATION_MESSAGE);
             return;
         }
 
@@ -341,9 +342,15 @@ public class Assessments extends javax.swing.JFrame {
             return;
         }
         
-        int confirmation = JOptionPane.showConfirmDialog(this, 
-            "Are you sure you want to delete " + selectedRows.length + " row(s)?", 
-            "Confirm Deletion", 
+        String confirmationMessage = "Are you sure you want to delete " + selectedRows.length + " row(s)?";
+        if ("quizSets".equals(currentDataType)) {
+            confirmationMessage = "Are you sure you want to delete " + selectedRows.length + " quiz set(s)?\n" +
+                "This will also delete related questions in question.txt.";
+        }
+
+        int confirmation = JOptionPane.showConfirmDialog(this,
+            confirmationMessage,
+            "Confirm Deletion",
             JOptionPane.YES_NO_OPTION,
             JOptionPane.WARNING_MESSAGE);
         
@@ -354,33 +361,139 @@ public class Assessments extends javax.swing.JFrame {
     
     private void deleteSelectedRows(int[] selectedRows) {
         DefaultTableModel model = (DefaultTableModel) jTable2.getModel();
-        
+
         // Collect the indices to delete in descending order
         java.util.Arrays.sort(selectedRows);
-        
-        // Create a set of original line indices to delete
-        java.util.Set<Integer> linesToDelete = new java.util.HashSet<>();
-        for (int selectedRow : selectedRows) {
-            if (selectedRow >= 0 && selectedRow < model.getRowCount()) {
-                if ("question".equals(currentDataType) && selectedRow < displayedQuizLineIndices.size()) {
-                    linesToDelete.add(displayedQuizLineIndices.get(selectedRow));
-                } else {
-                    linesToDelete.add(selectedRow);
+
+        if ("question".equals(currentDataType)) {
+            // Create a set of original line indices to delete
+            java.util.Set<Integer> linesToDelete = new java.util.HashSet<>();
+            for (int selectedRow : selectedRows) {
+                if (selectedRow >= 0 && selectedRow < model.getRowCount()) {
+                    if (selectedRow < displayedQuizLineIndices.size()) {
+                        linesToDelete.add(displayedQuizLineIndices.get(selectedRow));
+                    }
                 }
             }
-        }
-        
-        // Remove from table (in reverse order)
-        for (int i = selectedRows.length - 1; i >= 0; i--) {
-            model.removeRow(selectedRows[i]);
-        }
-        
-        // Update the file with remaining data
-        if ("question".equals(currentDataType)) {
+
+            // Remove from table (in reverse order)
+            for (int i = selectedRows.length - 1; i >= 0; i--) {
+                model.removeRow(selectedRows[i]);
+            }
+
+            // Update the file with remaining data
             updateQuizFile(linesToDelete);
+            JOptionPane.showMessageDialog(this, "Row(s) deleted successfully", "Success", JOptionPane.INFORMATION_MESSAGE);
+            return;
         }
-        
-        JOptionPane.showMessageDialog(this, "Row(s) deleted successfully", "Success", JOptionPane.INFORMATION_MESSAGE);
+
+        if ("quizSets".equals(currentDataType)) {
+            java.util.Set<String> quizSetKeysToDelete = new java.util.HashSet<>();
+            for (int selectedRow : selectedRows) {
+                if (selectedRow >= 0 && selectedRow < displayedQuizSetKeys.size()) {
+                    quizSetKeysToDelete.add(displayedQuizSetKeys.get(selectedRow));
+                }
+            }
+
+            if (quizSetKeysToDelete.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Unable to determine selected quiz sets.", "Delete", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+            deleteQuizSets(quizSetKeysToDelete);
+            loadQuizSetsData();
+            JOptionPane.showMessageDialog(this, "Quiz set(s) deleted successfully", "Success", JOptionPane.INFORMATION_MESSAGE);
+        }
+    }
+
+    private void deleteQuizSets(java.util.Set<String> quizSetKeysToDelete) {
+        String projectRoot = System.getProperty("user.dir");
+        File quizFile = new File(projectRoot, "src\\main\\java\\oopwj\\Quiz.txt");
+        File questionFile = new File(projectRoot, "src\\main\\java\\oopwj\\question.txt");
+
+        // Update Quiz.txt
+        if (quizFile.exists()) {
+            List<String> remainingQuizLines = new ArrayList<>();
+            try (BufferedReader br = new BufferedReader(new FileReader(quizFile))) {
+                String line;
+                while ((line = br.readLine()) != null) {
+                    String[] fields = line.split(",", 3);
+                    if (fields.length >= 2) {
+                        String quizID = fields[0].trim();
+                        String moduleID = fields[1].trim();
+                        String key = quizID + "|" + moduleID;
+                        if (quizSetKeysToDelete.contains(key)) {
+                            continue;
+                        }
+                    }
+                    remainingQuizLines.add(line);
+                }
+            } catch (IOException ex) {
+                logger.log(java.util.logging.Level.SEVERE, null, ex);
+                JOptionPane.showMessageDialog(this, "Error reading Quiz.txt: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            try (java.io.FileWriter fw = new java.io.FileWriter(quizFile)) {
+                for (String line : remainingQuizLines) {
+                    fw.write(line + "\n");
+                }
+            } catch (IOException ex) {
+                logger.log(java.util.logging.Level.SEVERE, null, ex);
+                JOptionPane.showMessageDialog(this, "Error updating Quiz.txt: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+        }
+
+        // Update question.txt and renumber remaining questions
+        if (questionFile.exists()) {
+            List<String> remainingQuestionLines = new ArrayList<>();
+            try (BufferedReader br = new BufferedReader(new FileReader(questionFile))) {
+                String line;
+                while ((line = br.readLine()) != null) {
+                    String[] fields = line.split(",", -1);
+                    if (fields.length >= 3) {
+                        String quizID = fields[1].trim();
+                        String moduleID = fields[2].trim();
+                        String key = quizID + "|" + moduleID;
+                        if (quizSetKeysToDelete.contains(key)) {
+                            continue;
+                        }
+                    }
+                    remainingQuestionLines.add(line);
+                }
+            } catch (IOException ex) {
+                logger.log(java.util.logging.Level.SEVERE, null, ex);
+                JOptionPane.showMessageDialog(this, "Error reading question.txt: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            Map<String, Integer> questionCounters = new HashMap<>();
+            List<String> updatedLines = new ArrayList<>();
+            for (String line : remainingQuestionLines) {
+                String[] fields = line.split(",", -1);
+                if (fields.length >= 3) {
+                    String quizID = fields[1].trim();
+                    String moduleID = fields[2].trim();
+                    String key = quizID + "|" + moduleID;
+                    int newCount = questionCounters.getOrDefault(key, 0) + 1;
+                    questionCounters.put(key, newCount);
+                    fields[0] = String.format("Q%03d", newCount);
+                    updatedLines.add(String.join(",", fields));
+                } else {
+                    updatedLines.add(line);
+                }
+            }
+
+            try (java.io.FileWriter fw = new java.io.FileWriter(questionFile)) {
+                for (String line : updatedLines) {
+                    fw.write(line + "\n");
+                }
+            } catch (IOException ex) {
+                logger.log(java.util.logging.Level.SEVERE, null, ex);
+                JOptionPane.showMessageDialog(this, "Error updating question.txt: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
     }
     
     private void updateQuizFile(java.util.Set<Integer> linesToDelete) {
@@ -457,6 +570,7 @@ public class Assessments extends javax.swing.JFrame {
 
         originalQuizLines.clear();
         displayedQuizLineIndices.clear();
+        displayedQuizSetKeys.clear();
 
         if (questionFile.exists()) {
             try (BufferedReader br = new BufferedReader(new FileReader(questionFile))) {
@@ -583,15 +697,15 @@ public class Assessments extends javax.swing.JFrame {
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {
         if (currentDataType == null) {
-            JOptionPane.showMessageDialog(this, "Please click a button above (Quiz) before clicking Add", "Validation Error", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Please select a filter before clicking Add", "Validation Error", JOptionPane.WARNING_MESSAGE);
             return;
         }
-        
-        if ("question".equals(currentDataType)) {
+
+        if ("question".equals(currentDataType) || "quizSets".equals(currentDataType)) {
             new Quiz(lecturerID, this).setVisible(true);
             this.dispose();
         } else {
-            JOptionPane.showMessageDialog(this, "Please load questions before adding.", "Add", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Please load questions or quiz sets before adding.", "Add", JOptionPane.INFORMATION_MESSAGE);
         }
     }
     
@@ -959,6 +1073,7 @@ public class Assessments extends javax.swing.JFrame {
         List<Object[]> rows = new ArrayList<>();
         originalQuizLines.clear(); // Clear previous data
         displayedQuizLineIndices.clear();
+        displayedQuizSetKeys.clear();
 
         if (quizFile.exists()) {
             try (BufferedReader br = new BufferedReader(new FileReader(quizFile))) {
@@ -1139,6 +1254,8 @@ public class Assessments extends javax.swing.JFrame {
         String[] columnNames = {"Module Name", "Quiz Name", "Total Questions"};
         List<Object[]> rows = new ArrayList<>();
 
+        displayedQuizSetKeys.clear();
+
         if (quizFile.exists()) {
             try (BufferedReader br = new BufferedReader(new FileReader(quizFile))) {
                 String line;
@@ -1158,6 +1275,7 @@ public class Assessments extends javax.swing.JFrame {
                         int totalQuestions = questionCounts.getOrDefault(key, 0);
 
                         rows.add(new Object[]{moduleName, quizName, totalQuestions});
+                        displayedQuizSetKeys.add(quizID + "|" + moduleID);
                     }
                 }
             } catch (IOException ex) {
@@ -1181,6 +1299,8 @@ public class Assessments extends javax.swing.JFrame {
         String projectRoot = System.getProperty("user.dir");
         File quizFile = new File(projectRoot, "src\\main\\java\\oopwj\\Quiz.txt");
         File questionFile = new File(projectRoot, "src\\main\\java\\oopwj\\question.txt");
+
+        displayedQuizSetKeys.clear();
         
         // Count questions per QuizID and ModuleID combination
         Map<String, Integer> questionCounts = new HashMap<>();
