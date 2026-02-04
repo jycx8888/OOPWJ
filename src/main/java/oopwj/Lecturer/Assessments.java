@@ -45,6 +45,7 @@ public class Assessments extends javax.swing.JFrame {
         this.parentWindow = parentWindow;
         loadLecturerModules(); // Load modules assigned to this lecturer
         initComponents();
+        resetPanelLayoutForLabel();
         centerWindow();
         setupTable();
         setupSearchField();
@@ -93,6 +94,99 @@ public class Assessments extends javax.swing.JFrame {
         ));
         centerAlignTable(jTable2);
     }
+
+    private void setTableLabel(String labelText) {
+        if (labelText == null || labelText.trim().isEmpty()) {
+            jLabel2.setText("Table");
+        } else {
+            jLabel2.setText(labelText);
+        }
+        updateLabelSizeToText(jLabel2);
+    }
+
+    private void updateLabelSizeToText(javax.swing.JLabel label) {
+        if (label == null) {
+            return;
+        }
+        java.awt.Font font = label.getFont();
+        java.awt.FontMetrics metrics = label.getFontMetrics(font);
+        int textWidth = metrics.stringWidth(label.getText());
+        int textHeight = metrics.getHeight();
+        java.awt.Insets insets = label.getInsets();
+        int width = textWidth + insets.left + insets.right;
+        int height = textHeight + insets.top + insets.bottom;
+
+        java.awt.Dimension size = new java.awt.Dimension(width, height);
+        label.setPreferredSize(size);
+        label.setMinimumSize(size);
+        label.revalidate();
+    }
+
+    private void resetPanelLayoutForLabel() {
+        java.awt.LayoutManager layout = jPanel1.getLayout();
+        if (!(layout instanceof javax.swing.GroupLayout)) {
+            return;
+        }
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addContainerGap(61, Short.MAX_VALUE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
+                        .addGap(6, 6, 6)
+                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(QuizButton)
+                        .addGap(18, 18, 18)
+                        .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 176, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton3))
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
+                        .addComponent(jButton2)
+                        .addGap(59, 59, 59)
+                        .addComponent(jButton4)
+                        .addGap(60, 60, 60)
+                        .addComponent(jButton5)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jButton6)
+                        .addGap(52, 52, 52)
+                        .addComponent(jButton1))
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 614, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(60, 60, 60))
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(jLabel2)
+                .addGap(0, 0, Short.MAX_VALUE))
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(38, 38, 38)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButton3)
+                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(QuizButton)
+                    .addComponent(jLabel1))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jLabel2)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 13, Short.MAX_VALUE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 400, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jButton2)
+                    .addComponent(jButton1)
+                    .addComponent(jButton4)
+                    .addComponent(jButton5)
+                    .addComponent(jButton6))
+                .addGap(27, 27, 27))
+        );
+    }
     
     private void centerAlignTable(javax.swing.JTable table) {
         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
@@ -125,6 +219,7 @@ public class Assessments extends javax.swing.JFrame {
         jComboBox1 = new javax.swing.JComboBox<>();
         jLabel1 = new javax.swing.JLabel();
         jButton6 = new javax.swing.JButton();
+        jLabel2 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -157,6 +252,10 @@ public class Assessments extends javax.swing.JFrame {
 
         jButton6.setText("Feedback");
 
+        jLabel2.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        jLabel2.setForeground(new java.awt.Color(0, 0, 0));
+        jLabel2.setText("Table");
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -187,6 +286,10 @@ public class Assessments extends javax.swing.JFrame {
                         .addComponent(jButton1))
                     .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 614, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(60, 60, 60))
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(319, 319, 319)
+                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -198,9 +301,11 @@ public class Assessments extends javax.swing.JFrame {
                     .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(QuizButton)
                     .addComponent(jLabel1))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jLabel2)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 13, Short.MAX_VALUE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 400, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 39, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton2)
                     .addComponent(jButton1)
@@ -357,6 +462,7 @@ public class Assessments extends javax.swing.JFrame {
         DefaultTableModel model = new DefaultTableModel(matchingRows.toArray(new Object[0][]), columnNames);
         jTable2.setModel(model);
         centerAlignTable(jTable2);
+        setTableLabel("Search result of: \"" + searchTerm + "\"");
     }
     
     private List<Object[]> searchInFile(String filePath, String searchTerm, boolean isQuiz) {
@@ -820,6 +926,7 @@ public class Assessments extends javax.swing.JFrame {
         DefaultTableModel model = new DefaultTableModel(rows.toArray(new Object[0][]), columnNames);
         jTable2.setModel(model);
         centerAlignTable(jTable2);
+        setTableLabel("All Questions");
     }
     
     private Map<String, String> loadQuizMarks(String projectRoot) {
@@ -992,6 +1099,12 @@ public class Assessments extends javax.swing.JFrame {
         jTable2.setModel(model);
         centerAlignTable(jTable2);
         currentDataType = "quizByModule";
+        String moduleName = lecturerModules.getOrDefault(moduleID, "");
+        if (moduleName.isEmpty()) {
+            setTableLabel("Module: " + moduleID);
+        } else {
+            setTableLabel("Module: " + moduleID + " - " + moduleName);
+        }
     }
 
     /**
@@ -1029,6 +1142,7 @@ public class Assessments extends javax.swing.JFrame {
     private javax.swing.JButton jButton6;
     private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTable jTable2;
