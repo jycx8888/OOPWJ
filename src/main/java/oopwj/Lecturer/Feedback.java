@@ -404,15 +404,17 @@ public class Feedback extends javax.swing.JFrame {
                     continue;
                 }
                 
-                String[] parts = trimmedLine.split(",", 3); // Split into max 3 parts
-                if (parts.length >= 3) {
+                String[] parts = trimmedLine.split(",", 4); // Split into max 4 parts
+                if (parts.length >= 4) {
                     String moduleIDFromFile = parts[0].trim();
                     String quizIDFromFile = parts[1].trim();
+                    String lecturerIDFromFile = parts[2].trim();
                     
-                    // Match this quiz
-                    if (moduleIDFromFile.equals(moduleID) && quizIDFromFile.equals(quizID)) {
-                        // Extract feedback (3rd column)
-                        String feedbackField = parts[2].trim();
+                    // Match this quiz and lecturer
+                    if (moduleIDFromFile.equals(moduleID) && quizIDFromFile.equals(quizID)
+                        && lecturerIDFromFile.equals(lecturerID)) {
+                        // Extract feedback (4th column)
+                        String feedbackField = parts[3].trim();
                         // Remove surrounding quotes and unescape
                         String feedback = feedbackField;
                         if (feedback.startsWith("\"") && feedback.endsWith("\"")) {
@@ -420,6 +422,21 @@ public class Feedback extends javax.swing.JFrame {
                             feedback = feedback.replace("\"\"", "\"");
                         }
                         
+                        jTextArea1.setText(feedback);
+                        System.out.println("Loaded quiz set feedback for quiz: " + quizID);
+                        return;
+                    }
+                } else if (parts.length == 3) {
+                    String moduleIDFromFile = parts[0].trim();
+                    String quizIDFromFile = parts[1].trim();
+
+                    if (moduleIDFromFile.equals(moduleID) && quizIDFromFile.equals(quizID)) {
+                        String feedbackField = parts[2].trim();
+                        String feedback = feedbackField;
+                        if (feedback.startsWith("\"") && feedback.endsWith("\"")) {
+                            feedback = feedback.substring(1, feedback.length() - 1);
+                            feedback = feedback.replace("\"\"", "\"");
+                        }
                         jTextArea1.setText(feedback);
                         System.out.println("Loaded quiz set feedback for quiz: " + quizID);
                         return;
@@ -454,16 +471,30 @@ public class Feedback extends javax.swing.JFrame {
                         continue;
                     }
                     
-                    String[] parts = trimmedLine.split(",", 3);
-                    if (parts.length >= 2) {
+                    String[] parts = trimmedLine.split(",", 4);
+                    if (parts.length >= 4) {
                         String moduleIDFromFile = parts[0].trim();
                         String quizIDFromFile = parts[1].trim();
+                        String lecturerIDFromFile = parts[2].trim();
                         
-                        // Match this quiz
-                        if (moduleIDFromFile.equals(moduleID) && quizIDFromFile.equals(quizID)) {
+                        // Match this quiz and lecturer
+                        if (moduleIDFromFile.equals(moduleID) && quizIDFromFile.equals(quizID)
+                            && lecturerIDFromFile.equals(lecturerID)) {
                             // Update with new feedback
                             String formattedFeedback = formatFeedbackField(feedback);
-                            String updatedLine = moduleID + "," + quizID + "," + formattedFeedback;
+                            String updatedLine = moduleID + "," + quizID + "," + lecturerID + "," + formattedFeedback;
+                            lines.add(updatedLine);
+                            found = true;
+                        } else {
+                            lines.add(trimmedLine);
+                        }
+                    } else if (parts.length >= 2) {
+                        String moduleIDFromFile = parts[0].trim();
+                        String quizIDFromFile = parts[1].trim();
+
+                        if (moduleIDFromFile.equals(moduleID) && quizIDFromFile.equals(quizID)) {
+                            String formattedFeedback = formatFeedbackField(feedback);
+                            String updatedLine = moduleID + "," + quizID + "," + lecturerID + "," + formattedFeedback;
                             lines.add(updatedLine);
                             found = true;
                         } else {
@@ -482,7 +513,7 @@ public class Feedback extends javax.swing.JFrame {
         // If not found, add new entry
         if (!found) {
             String formattedFeedback = formatFeedbackField(feedback);
-            String newLine = moduleID + "," + quizID + "," + formattedFeedback;
+            String newLine = moduleID + "," + quizID + "," + lecturerID + "," + formattedFeedback;
             lines.add(newLine);
         }
 
@@ -521,8 +552,8 @@ public class Feedback extends javax.swing.JFrame {
         }
 
         dataLines.sort((a, b) -> {
-            String[] partsA = a.split(",", 3);
-            String[] partsB = b.split(",", 3);
+            String[] partsA = a.split(",", 4);
+            String[] partsB = b.split(",", 4);
 
             String moduleA = partsA.length > 0 ? partsA[0].trim() : "";
             String moduleB = partsB.length > 0 ? partsB[0].trim() : "";

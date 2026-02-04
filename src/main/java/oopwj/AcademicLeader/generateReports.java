@@ -10,6 +10,17 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.common.PDRectangle;
+import org.apache.pdfbox.pdmodel.font.PDType1Font;
+import org.apache.pdfbox.pdmodel.font.PDFont;
 
 /**
  *
@@ -26,6 +37,9 @@ public class generateReports extends javax.swing.JFrame {
     private final Map<String, String> moduleNameToId = new HashMap<>();
     private final Map<String, String> quizNameToId = new HashMap<>();
     private final Map<String, String> studentIdToName = new HashMap<>();
+    private final Map<String, String> lecturerIdToName = new HashMap<>();
+    private final List<FeedbackEntry> currentFeedbackList = new ArrayList<>();
+    private int currentFeedbackIndex = -1;
 
     /**
      * Creates new form generateReports
@@ -50,10 +64,12 @@ public class generateReports extends javax.swing.JFrame {
         this.parentWindow = parentWindow;
         initComponents();
         loadStudentNamesFromFile();
+        loadLecturerNamesFromFile();
         loadModulesFromFile();
         resetQuizDropdown();
         setDefaultPlaceholders();
         resetReportLabels();
+        setupFeedbackNavigation();
     }
 
     /**
@@ -85,6 +101,14 @@ public class generateReports extends javax.swing.JFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         studentGrade = new javax.swing.JTable();
         jLabel5 = new javax.swing.JLabel();
+        jLabel6 = new javax.swing.JLabel();
+        jPanel4 = new javax.swing.JPanel();
+        LecturerID = new javax.swing.JLabel();
+        lecturerName = new javax.swing.JLabel();
+        feedback = new javax.swing.JLabel();
+        previousFeedback = new javax.swing.JButton();
+        nextFeedback = new javax.swing.JButton();
+        exportToPDF = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -128,16 +152,12 @@ public class generateReports extends javax.swing.JFrame {
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(69, 69, 69)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(69, 69, 69)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(passRate)
-                            .addComponent(jLabel2)))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(60, 60, 60)
-                        .addComponent(numberOfStudents, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(66, Short.MAX_VALUE))
+                    .addComponent(numberOfStudents, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(passRate)
+                    .addComponent(jLabel2))
+                .addContainerGap(57, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -148,7 +168,7 @@ public class generateReports extends javax.swing.JFrame {
                 .addComponent(passRate, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(numberOfStudents)
-                .addGap(19, 19, 19))
+                .addGap(21, 21, 21))
         );
 
         jPanel2.setBackground(new java.awt.Color(255, 255, 255));
@@ -178,7 +198,7 @@ public class generateReports extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                 .addGap(0, 0, Short.MAX_VALUE)
                 .addComponent(highestMark, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(92, 92, 92))
+                .addGap(89, 89, 89))
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
@@ -198,7 +218,7 @@ public class generateReports extends javax.swing.JFrame {
                                 .addGap(18, 18, 18)
                                 .addComponent(studentNameHighest, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGap(96, 96, 96)
+                        .addGap(99, 99, 99)
                         .addComponent(lowestMark, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(31, Short.MAX_VALUE))
         );
@@ -226,9 +246,6 @@ public class generateReports extends javax.swing.JFrame {
 
         studentGrade.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
                 {null, null, null, null}
             },
             new String [] {
@@ -237,8 +254,69 @@ public class generateReports extends javax.swing.JFrame {
         ));
         jScrollPane1.setViewportView(studentGrade);
 
-        jLabel5.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        jLabel5.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
         jLabel5.setText("Report");
+
+        jLabel6.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        jLabel6.setText("Feedback From Lecturer");
+
+        jPanel4.setBackground(new java.awt.Color(255, 255, 255));
+
+        LecturerID.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        LecturerID.setText("jLabel7");
+
+        lecturerName.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lecturerName.setText("jLabel8");
+
+        feedback.setText("jLabel7");
+
+        previousFeedback.setText("Previous");
+
+        nextFeedback.setText("Next");
+
+        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
+        jPanel4.setLayout(jPanel4Layout);
+        jPanel4Layout.setHorizontalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel4Layout.createSequentialGroup()
+                        .addGap(12, 12, 12)
+                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel4Layout.createSequentialGroup()
+                                .addComponent(LecturerID, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(lecturerName, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(feedback, javax.swing.GroupLayout.PREFERRED_SIZE, 513, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(jPanel4Layout.createSequentialGroup()
+                        .addGap(178, 178, 178)
+                        .addComponent(previousFeedback)
+                        .addGap(36, 36, 36)
+                        .addComponent(nextFeedback)))
+                .addContainerGap(19, Short.MAX_VALUE))
+        );
+        jPanel4Layout.setVerticalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(LecturerID)
+                    .addComponent(lecturerName))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(feedback, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(previousFeedback)
+                    .addComponent(nextFeedback))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        exportToPDF.setText("Export to PDF");
+        exportToPDF.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                exportToPDFActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -255,7 +333,8 @@ public class generateReports extends javax.swing.JFrame {
                         .addGap(44, 44, 44)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(quiz, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                            .addComponent(quiz, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(0, 64, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -268,7 +347,13 @@ public class generateReports extends javax.swing.JFrame {
                         .addGap(300, 300, 300))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(jLabel1)
-                        .addGap(230, 230, 230))))
+                        .addGap(230, 230, 230))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(jLabel6)
+                        .addGap(221, 221, 221))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(exportToPDF)
+                        .addGap(281, 281, 281))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -293,7 +378,13 @@ public class generateReports extends javax.swing.JFrame {
                 .addComponent(jLabel1)
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(334, Short.MAX_VALUE))
+                .addGap(27, 27, 27)
+                .addComponent(jLabel6)
+                .addGap(18, 18, 18)
+                .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 78, Short.MAX_VALUE)
+                .addComponent(exportToPDF)
+                .addGap(53, 53, 53))
         );
 
         pack();
@@ -342,6 +433,63 @@ public class generateReports extends javax.swing.JFrame {
             resetReportLabels();
         }
     }//GEN-LAST:event_quizActionPerformed
+
+    private void exportToPDFActionPerformed(java.awt.event.ActionEvent evt) {
+        // Validate that a module and quiz are selected
+        String selectedModuleName = (String) modules.getSelectedItem();
+        String selectedQuizName = (String) quiz.getSelectedItem();
+        
+        if (selectedModuleName == null || selectedModuleName.equals(MODULE_PLACEHOLDER)) {
+            JOptionPane.showMessageDialog(this, 
+                "Please select a module first.", 
+                "No Module Selected", 
+                JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        if (selectedQuizName == null || selectedQuizName.equals(QUIZ_PLACEHOLDER)) {
+            JOptionPane.showMessageDialog(this, 
+                "Please select a quiz first.", 
+                "No Quiz Selected", 
+                JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        // Open file chooser
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle("Save Report as PDF");
+        fileChooser.setFileFilter(new FileNameExtensionFilter("PDF Documents (*.pdf)", "pdf"));
+        
+        // Set default filename
+        String defaultFileName = "Report_" + selectedModuleName.replaceAll("[^a-zA-Z0-9]", "_") + 
+                                 "_" + selectedQuizName.replaceAll("[^a-zA-Z0-9]", "_") + ".pdf";
+        fileChooser.setSelectedFile(new File(defaultFileName));
+        
+        int userSelection = fileChooser.showSaveDialog(this);
+        
+        if (userSelection == JFileChooser.APPROVE_OPTION) {
+            File fileToSave = fileChooser.getSelectedFile();
+            
+            // Ensure .pdf extension
+            if (!fileToSave.getName().toLowerCase().endsWith(".pdf")) {
+                fileToSave = new File(fileToSave.getAbsolutePath() + ".pdf");
+            }
+            
+            try {
+                generatePDFReport(fileToSave, selectedModuleName, selectedQuizName);
+                JOptionPane.showMessageDialog(this, 
+                    "Report exported successfully to:\n" + fileToSave.getAbsolutePath(), 
+                    "Export Successful", 
+                    JOptionPane.INFORMATION_MESSAGE);
+            } catch (IOException ex) {
+                logger.log(java.util.logging.Level.SEVERE, "Error generating PDF", ex);
+                JOptionPane.showMessageDialog(this, 
+                    "Error exporting PDF: " + ex.getMessage(), 
+                    "Export Failed", 
+                    JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
 
     private void loadModulesFromFile() {
         modules.removeAllItems();
@@ -421,6 +569,26 @@ public class generateReports extends javax.swing.JFrame {
             }
         } catch (IOException e) {
             logger.log(java.util.logging.Level.WARNING, "Unable to load student list", e);
+        }
+    }
+
+    private void loadLecturerNamesFromFile() {
+        lecturerIdToName.clear();
+        try (BufferedReader reader = new BufferedReader(new FileReader("src\\main\\java\\oopwj\\lecturer.txt"))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String trimmed = line.trim();
+                if (!trimmed.isEmpty()) {
+                    String[] parts = trimmed.split(",");
+                    if (parts.length >= 2) {
+                        String lecturerId = parts[0].trim();
+                        String lecturerDisplayName = parts[1].trim();
+                        lecturerIdToName.put(lecturerId, lecturerDisplayName);
+                    }
+                }
+            }
+        } catch (IOException e) {
+            logger.log(java.util.logging.Level.WARNING, "Unable to load lecturer list", e);
         }
     }
 
@@ -506,8 +674,10 @@ public class generateReports extends javax.swing.JFrame {
             logger.log(java.util.logging.Level.WARNING, "Unable to load final grades", e);
         }
 
+        updateFeedbackForQuiz(moduleId, quizId);
+
         if (totalStudents == 0) {
-            resetReportLabels();
+            resetGradeLabelsOnly();
             return;
         }
 
@@ -539,6 +709,7 @@ public class generateReports extends javax.swing.JFrame {
             studentIDLowest.setText(lowestStudentId);
             studentNameLowest.setText(studentIdToName.getOrDefault(lowestStudentId, "Unknown"));
         }
+
     }
 
     private void setDefaultPlaceholders() {
@@ -554,6 +725,11 @@ public class generateReports extends javax.swing.JFrame {
     }
 
     private void resetReportLabels() {
+        resetGradeLabelsOnly();
+        resetFeedbackSection();
+    }
+
+    private void resetGradeLabelsOnly() {
         passRate.setText("");
         passRate.setForeground(Color.BLACK);
         numberOfStudents.setText("");
@@ -566,6 +742,135 @@ public class generateReports extends javax.swing.JFrame {
         updateGradeTable(new int[7]);
     }
 
+    private void setupFeedbackNavigation() {
+        previousFeedback.addActionListener(evt -> showPreviousFeedback());
+        nextFeedback.addActionListener(evt -> showNextFeedback());
+        resetFeedbackSection();
+    }
+
+    private void updateFeedbackForQuiz(String moduleId, String quizId) {
+        currentFeedbackList.clear();
+        currentFeedbackIndex = -1;
+
+        try (BufferedReader reader = new BufferedReader(new FileReader("src\\main\\java\\oopwj\\QuizFeedback.txt"))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String trimmed = line.trim();
+                if (trimmed.isEmpty()) {
+                    continue;
+                }
+                List<String> parts = parseCsvLine(trimmed);
+                if (parts.size() >= 4) {
+                    String moduleIdInFile = parts.get(0).trim();
+                    String quizIdInFile = parts.get(1).trim();
+                    String lecturerId = parts.get(2).trim();
+                    String feedbackText = parts.get(3).trim();
+
+                    if (moduleIdInFile.equals(moduleId) && quizIdInFile.equals(quizId)) {
+                        currentFeedbackList.add(new FeedbackEntry(moduleIdInFile, quizIdInFile, lecturerId, feedbackText));
+                    }
+                }
+            }
+        } catch (IOException e) {
+            logger.log(java.util.logging.Level.WARNING, "Unable to load quiz feedback", e);
+        }
+
+        if (currentFeedbackList.isEmpty()) {
+            resetFeedbackSection();
+            return;
+        }
+
+        currentFeedbackIndex = 0;
+        updateFeedbackDisplay();
+    }
+
+    private void updateFeedbackDisplay() {
+        if (currentFeedbackIndex < 0 || currentFeedbackIndex >= currentFeedbackList.size()) {
+            resetFeedbackSection();
+            return;
+        }
+
+        FeedbackEntry entry = currentFeedbackList.get(currentFeedbackIndex);
+        String lecturerId = entry.lecturerId;
+        LecturerID.setText(lecturerId);
+        lecturerName.setText(lecturerIdToName.getOrDefault(lecturerId, "Unknown"));
+        feedback.setText(formatMultilineLabel(entry.feedback));
+
+        previousFeedback.setEnabled(currentFeedbackIndex > 0);
+        nextFeedback.setEnabled(currentFeedbackIndex < currentFeedbackList.size() - 1);
+    }
+
+    private void showPreviousFeedback() {
+        if (currentFeedbackIndex > 0) {
+            currentFeedbackIndex--;
+            updateFeedbackDisplay();
+        }
+    }
+
+    private void showNextFeedback() {
+        if (currentFeedbackIndex < currentFeedbackList.size() - 1) {
+            currentFeedbackIndex++;
+            updateFeedbackDisplay();
+        }
+    }
+
+    private void resetFeedbackSection() {
+        LecturerID.setText("");
+        lecturerName.setText("");
+        feedback.setText("");
+        previousFeedback.setEnabled(false);
+        nextFeedback.setEnabled(false);
+    }
+
+    private String formatMultilineLabel(String text) {
+        if (text == null || text.isEmpty()) {
+            return "";
+        }
+        return "<html>" + escapeHtml(text).replace("\n", "<br>") + "</html>";
+    }
+
+    private String escapeHtml(String text) {
+        return text.replace("&", "&amp;")
+                   .replace("<", "&lt;")
+                   .replace(">", "&gt;");
+    }
+
+    private List<String> parseCsvLine(String line) {
+        List<String> parts = new ArrayList<>();
+        StringBuilder current = new StringBuilder();
+        boolean inQuotes = false;
+
+        for (int i = 0; i < line.length(); i++) {
+            char c = line.charAt(i);
+            if (c == '"') {
+                inQuotes = !inQuotes;
+                continue;
+            }
+            if (c == ',' && !inQuotes) {
+                parts.add(current.toString());
+                current.setLength(0);
+            } else {
+                current.append(c);
+            }
+        }
+        parts.add(current.toString());
+        return parts;
+    }
+
+    private static class FeedbackEntry {
+        private final String moduleId;
+        private final String quizId;
+        private final String lecturerId;
+        private final String feedback;
+
+        private FeedbackEntry(String moduleId, String quizId, String lecturerId, String feedback) {
+            this.moduleId = moduleId;
+            this.quizId = quizId;
+            this.lecturerId = lecturerId;
+            this.feedback = feedback;
+        }
+    }
+
     private void updateGradeTable(int[] gradeCounts) {
         javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) studentGrade.getModel();
         if (model.getRowCount() == 0) {
@@ -574,6 +879,226 @@ public class generateReports extends javax.swing.JFrame {
         for (int i = 0; i < 7; i++) {
             model.setValueAt(gradeCounts[i], 0, i);
         }
+    }
+
+    private void generatePDFReport(File file, String moduleName, String quizName) throws IOException {
+        try (PDDocument document = new PDDocument()) {
+            PDPage page = new PDPage(PDRectangle.A4);
+            document.addPage(page);
+            
+            PDFont fontBold = PDType1Font.HELVETICA_BOLD;
+            PDFont fontRegular = PDType1Font.HELVETICA;
+            
+            float margin = 50;
+            float yPosition = page.getMediaBox().getHeight() - margin;
+            float fontSize = 12;
+            float leading = 1.5f * fontSize;
+            
+            try (PDPageContentStream contentStream = new PDPageContentStream(document, page)) {
+                // Title
+                contentStream.setFont(fontBold, 20);
+                contentStream.beginText();
+                contentStream.newLineAtOffset(margin, yPosition);
+                contentStream.showText("Quiz Report");
+                contentStream.endText();
+                yPosition -= leading * 2;
+                
+                // Date and Time
+                contentStream.setFont(fontRegular, 10);
+                contentStream.beginText();
+                contentStream.newLineAtOffset(margin, yPosition);
+                String dateTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"));
+                contentStream.showText("Generated on: " + dateTime);
+                contentStream.endText();
+                yPosition -= leading * 2;
+                
+                // Module and Quiz Info
+                contentStream.setFont(fontBold, 14);
+                contentStream.beginText();
+                contentStream.newLineAtOffset(margin, yPosition);
+                contentStream.showText("Module: " + moduleName);
+                contentStream.endText();
+                yPosition -= leading;
+                
+                contentStream.beginText();
+                contentStream.newLineAtOffset(margin, yPosition);
+                contentStream.showText("Quiz: " + quizName);
+                contentStream.endText();
+                yPosition -= leading * 2;
+                
+                // Pass Rate Section
+                contentStream.setFont(fontBold, 12);
+                contentStream.beginText();
+                contentStream.newLineAtOffset(margin, yPosition);
+                contentStream.showText("Total Pass Rate");
+                contentStream.endText();
+                yPosition -= leading;
+                
+                contentStream.setFont(fontRegular, 12);
+                contentStream.beginText();
+                contentStream.newLineAtOffset(margin, yPosition);
+                String passRateText = passRate.getText().isEmpty() ? "N/A" : passRate.getText();
+                contentStream.showText("Pass Rate: " + passRateText);
+                contentStream.endText();
+                yPosition -= leading;
+                
+                contentStream.beginText();
+                contentStream.newLineAtOffset(margin, yPosition);
+                String studentCountText = numberOfStudents.getText().isEmpty() ? "No data" : numberOfStudents.getText();
+                contentStream.showText(studentCountText);
+                contentStream.endText();
+                yPosition -= leading * 2;
+                
+                // Highest Mark Section
+                contentStream.setFont(fontBold, 12);
+                contentStream.beginText();
+                contentStream.newLineAtOffset(margin, yPosition);
+                contentStream.showText("Highest Mark");
+                contentStream.endText();
+                yPosition -= leading;
+                
+                contentStream.setFont(fontRegular, 12);
+                contentStream.beginText();
+                contentStream.newLineAtOffset(margin, yPosition);
+                String highestMarkText = highestMark.getText().isEmpty() ? "N/A" : highestMark.getText();
+                contentStream.showText("Mark: " + highestMarkText);
+                contentStream.endText();
+                yPosition -= leading;
+                
+                contentStream.beginText();
+                contentStream.newLineAtOffset(margin, yPosition);
+                String highestStudentText = studentIDHighest.getText().isEmpty() ? "N/A" : 
+                    studentIDHighest.getText() + " - " + studentNameHighest.getText();
+                contentStream.showText("Student: " + highestStudentText);
+                contentStream.endText();
+                yPosition -= leading * 2;
+                
+                // Lowest Mark Section
+                contentStream.setFont(fontBold, 12);
+                contentStream.beginText();
+                contentStream.newLineAtOffset(margin, yPosition);
+                contentStream.showText("Lowest Mark");
+                contentStream.endText();
+                yPosition -= leading;
+                
+                contentStream.setFont(fontRegular, 12);
+                contentStream.beginText();
+                contentStream.newLineAtOffset(margin, yPosition);
+                String lowestMarkText = lowestMark.getText().isEmpty() ? "N/A" : lowestMark.getText();
+                contentStream.showText("Mark: " + lowestMarkText);
+                contentStream.endText();
+                yPosition -= leading;
+                
+                contentStream.beginText();
+                contentStream.newLineAtOffset(margin, yPosition);
+                String lowestStudentText = studentIDLowest.getText().isEmpty() ? "N/A" : 
+                    studentIDLowest.getText() + " - " + studentNameLowest.getText();
+                contentStream.showText("Student: " + lowestStudentText);
+                contentStream.endText();
+                yPosition -= leading * 2;
+                
+                // Grade Distribution
+                contentStream.setFont(fontBold, 12);
+                contentStream.beginText();
+                contentStream.newLineAtOffset(margin, yPosition);
+                contentStream.showText("Overall Students Grade Distribution");
+                contentStream.endText();
+                yPosition -= leading;
+                
+                contentStream.setFont(fontRegular, 12);
+                String[] gradeLabels = {"A+", "A", "B+", "B", "C", "D", "F"};
+                javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) studentGrade.getModel();
+                if (model.getRowCount() > 0) {
+                    for (int i = 0; i < 7; i++) {
+                        contentStream.beginText();
+                        contentStream.newLineAtOffset(margin + 20, yPosition);
+                        Object value = model.getValueAt(0, i);
+                        contentStream.showText(gradeLabels[i] + ": " + (value != null ? value.toString() : "0") + " students");
+                        contentStream.endText();
+                        yPosition -= leading;
+                    }
+                }
+                yPosition -= leading;
+                
+                // Feedback Section
+                if (!currentFeedbackList.isEmpty()) {
+                    contentStream.setFont(fontBold, 12);
+                    contentStream.beginText();
+                    contentStream.newLineAtOffset(margin, yPosition);
+                    contentStream.showText("Feedback From Lecturers");
+                    contentStream.endText();
+                    yPosition -= leading;
+                    
+                    contentStream.setFont(fontRegular, 10);
+                    for (int i = 0; i < currentFeedbackList.size(); i++) {
+                        FeedbackEntry entry = currentFeedbackList.get(i);
+                        String lecId = entry.lecturerId;
+                        String lecName = lecturerIdToName.getOrDefault(lecId, "Unknown");
+                        
+                        // Check if we need a new page
+                        if (yPosition < 100) {
+                            contentStream.close();
+                            page = new PDPage(PDRectangle.A4);
+                            document.addPage(page);
+                            PDPageContentStream newStream = new PDPageContentStream(document, page);
+                            yPosition = page.getMediaBox().getHeight() - margin;
+                            return; // Exit and use newStream (simplified for this implementation)
+                        }
+                        
+                        contentStream.beginText();
+                        contentStream.newLineAtOffset(margin + 10, yPosition);
+                        contentStream.showText((i + 1) + ". Lecturer: " + lecId + " - " + lecName);
+                        contentStream.endText();
+                        yPosition -= leading;
+                        
+                        // Split feedback text if too long
+                        String feedbackText = entry.feedback.replace("<html>", "").replace("</html>", "")
+                                                           .replace("<br>", " ").replace("&amp;", "&")
+                                                           .replace("&lt;", "<").replace("&gt;", ">");
+                        String[] feedbackLines = wrapText(feedbackText, 80);
+                        for (String line : feedbackLines) {
+                            contentStream.beginText();
+                            contentStream.newLineAtOffset(margin + 20, yPosition);
+                            contentStream.showText(line);
+                            contentStream.endText();
+                            yPosition -= leading;
+                        }
+                        yPosition -= leading / 2;
+                    }
+                }
+            }
+            
+            document.save(file);
+        }
+    }
+    
+    private String[] wrapText(String text, int maxLength) {
+        if (text == null || text.isEmpty()) {
+            return new String[]{"No feedback"};
+        }
+        
+        List<String> lines = new ArrayList<>();
+        String[] words = text.split(" ");
+        StringBuilder currentLine = new StringBuilder();
+        
+        for (String word : words) {
+            if (currentLine.length() + word.length() + 1 > maxLength) {
+                if (currentLine.length() > 0) {
+                    lines.add(currentLine.toString());
+                    currentLine = new StringBuilder();
+                }
+            }
+            if (currentLine.length() > 0) {
+                currentLine.append(" ");
+            }
+            currentLine.append(word);
+        }
+        
+        if (currentLine.length() > 0) {
+            lines.add(currentLine.toString());
+        }
+        
+        return lines.isEmpty() ? new String[]{"No feedback"} : lines.toArray(new String[0]);
     }
 
     /**
@@ -602,20 +1127,28 @@ public class generateReports extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel LecturerID;
     private javax.swing.JToggleButton exit;
+    private javax.swing.JButton exportToPDF;
+    private javax.swing.JLabel feedback;
     private javax.swing.JLabel highestMark;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel4;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JLabel lecturerName;
     private javax.swing.JLabel lowestMark;
     private javax.swing.JComboBox<String> modules;
+    private javax.swing.JButton nextFeedback;
     private javax.swing.JLabel numberOfStudents;
     private javax.swing.JLabel passRate;
+    private javax.swing.JButton previousFeedback;
     private javax.swing.JComboBox<String> quiz;
     private javax.swing.JTable studentGrade;
     private javax.swing.JLabel studentIDHighest;
