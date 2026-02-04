@@ -23,7 +23,12 @@ public class Lecturer_menu extends javax.swing.JFrame {
     public Lecturer_menu(String lecturerID) {
         this.lecturerID = lecturerID;
         initComponents();
+        centerWindow();
         setupListeners();
+    }
+
+    private void centerWindow() {
+        setLocationRelativeTo(null);
     }
     
     private void setupListeners() {
@@ -123,11 +128,6 @@ public class Lecturer_menu extends javax.swing.JFrame {
 
     private void AssessmentsbuttonActionPerformed(java.awt.event.ActionEvent evt) {
         new Assessments(lecturerID, this).setVisible(true);
-        this.setVisible(false);
-    }
-
-    private void AssessmentMarkButtonActionPerformed(java.awt.event.ActionEvent evt) {
-        new Assessment_Marks(lecturerID, this).setVisible(true);
         this.setVisible(false);
     }
 
