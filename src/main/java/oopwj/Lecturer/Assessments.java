@@ -584,13 +584,17 @@ public class Assessments extends javax.swing.JFrame {
         // Module selection
         javax.swing.JLabel moduleLabel = new javax.swing.JLabel("Select Module:");
         javax.swing.JComboBox<String> moduleComboBox = new javax.swing.JComboBox<>();
-        for (String moduleID : lecturerModules.keySet()) {
+        java.util.List<String> sortedModuleIDs = new java.util.ArrayList<>(lecturerModules.keySet());
+        java.util.Collections.sort(sortedModuleIDs, String.CASE_INSENSITIVE_ORDER);
+        for (String moduleID : sortedModuleIDs) {
             moduleComboBox.addItem(moduleID);
         }
+        moduleComboBox.setSelectedIndex(-1); // Show nothing by default
         
         // Quiz selection
         javax.swing.JLabel quizLabel = new javax.swing.JLabel("Select Quiz:");
         javax.swing.JComboBox<String> quizComboBox = new javax.swing.JComboBox<>();
+        quizComboBox.setSelectedIndex(-1); // Show nothing by default
         
         // Update quiz list when module is selected
         moduleComboBox.addActionListener(e -> {
@@ -640,13 +644,7 @@ public class Assessments extends javax.swing.JFrame {
         
         dialog.add(panel);
         
-        // Load initial quizzes if a module is available
-        if (moduleComboBox.getItemCount() > 0) {
-            String firstModule = (String) moduleComboBox.getSelectedItem();
-            if (firstModule != null) {
-                loadQuizzesForFeedback(firstModule, quizComboBox);
-            }
-        }
+        // Do not auto-load quizzes; wait for user selection
         
         dialog.setVisible(true);
     }
