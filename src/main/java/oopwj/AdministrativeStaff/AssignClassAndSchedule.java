@@ -780,14 +780,14 @@ public class AssignClassAndSchedule extends javax.swing.JFrame {
 
     private void dateChooseClassPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_dateChooseClassPropertyChange
         if ("date".equals(evt.getPropertyName())) {
-        Date selectedDate = dateChooseClass.getDate();
-        if (selectedDate != null) {
-            loadClassroomsByDate(selectedDate);
-        } else {
-            loadClassrooms();
+            Date selectedDate = dateChooseClass.getDate();
+            if (selectedDate != null) {
+                loadClassroomsByDate(selectedDate);
+            } else {
+                loadClassrooms();
+            }
+            applyClassSearch();
         }
-        applyClassSearch();
-    }
     }//GEN-LAST:event_dateChooseClassPropertyChange
 
     private void dateChooseSchedulePropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_dateChooseSchedulePropertyChange
