@@ -87,7 +87,7 @@ public class AdminMainPage extends javax.swing.JFrame {
             }
         });
 
-        btnCreateClass.setText("Create New Classes");
+        btnCreateClass.setText("Assign Classes and Scheduling");
         btnCreateClass.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnCreateClassActionPerformed(evt);
@@ -113,7 +113,7 @@ public class AdminMainPage extends javax.swing.JFrame {
                     .addComponent(btnDefineGrading)
                     .addComponent(btnAssign)
                     .addComponent(btnManage))
-                .addContainerGap(376, Short.MAX_VALUE))
+                .addContainerGap(338, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -172,7 +172,7 @@ public class AdminMainPage extends javax.swing.JFrame {
     }//GEN-LAST:event_btnAssignActionPerformed
 
     private void btnCreateClassActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCreateClassActionPerformed
-        CreateClassPage createClass = new CreateClassPage(loggedInUserID);
+        AssignClassAndSchedule createClass = new AssignClassAndSchedule(loggedInUserID);
         createClass.setVisible(true);
         this.dispose();
         
