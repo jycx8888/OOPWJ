@@ -55,6 +55,7 @@ public class Assessments extends javax.swing.JFrame {
         jButton1.addActionListener(this::jButton1ActionPerformed);
         jButton2.addActionListener(this::jButton2ActionPerformed);
         jButton4.addActionListener(this::jButton4ActionPerformed);
+        jButton6.addActionListener(this::jButton6ActionPerformed);
         jComboBox1.addActionListener(this::jComboBox1ActionPerformed);
     }
     
@@ -118,6 +119,7 @@ public class Assessments extends javax.swing.JFrame {
         jButton5 = new javax.swing.JButton();
         jComboBox1 = new javax.swing.JComboBox<>();
         jLabel1 = new javax.swing.JLabel();
+        jButton6 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -148,6 +150,8 @@ public class Assessments extends javax.swing.JFrame {
         jLabel1.setForeground(new java.awt.Color(0, 0, 0));
         jLabel1.setText("Module:");
 
+        jButton6.setText("Feedback");
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -168,11 +172,13 @@ public class Assessments extends javax.swing.JFrame {
                         .addComponent(jButton3))
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
                         .addComponent(jButton2)
-                        .addGap(133, 133, 133)
+                        .addGap(59, 59, 59)
                         .addComponent(jButton4)
-                        .addGap(70, 70, 70)
+                        .addGap(60, 60, 60)
                         .addComponent(jButton5)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jButton6)
+                        .addGap(52, 52, 52)
                         .addComponent(jButton1))
                     .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 614, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(60, 60, 60))
@@ -194,7 +200,8 @@ public class Assessments extends javax.swing.JFrame {
                     .addComponent(jButton2)
                     .addComponent(jButton1)
                     .addComponent(jButton4)
-                    .addComponent(jButton5))
+                    .addComponent(jButton5)
+                    .addComponent(jButton6))
                 .addGap(27, 27, 27))
         );
 
@@ -325,6 +332,7 @@ public class Assessments extends javax.swing.JFrame {
     }
     
     private void performSearch() {
+        jComboBox1.setSelectedIndex(-1);
         String searchTerm = jTextField1.getText().trim();
 
         if (searchTerm.isEmpty() || searchTerm.equalsIgnoreCase("Search")) {
@@ -548,8 +556,123 @@ public class Assessments extends javax.swing.JFrame {
     }
     
     private void QuizButtonActionPerformed(java.awt.event.ActionEvent evt) {
+        jComboBox1.setSelectedIndex(-1);
         currentDataType = "quiz";
         loadQuizData();
+    }
+    
+    private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {
+        showFeedbackDialog();
+    }
+    
+    private void showFeedbackDialog() {
+        // Create a dialog with module and quiz selection
+        javax.swing.JDialog dialog = new javax.swing.JDialog(this, "Provide Feedback", true);
+        dialog.setDefaultCloseOperation(javax.swing.JDialog.DISPOSE_ON_CLOSE);
+        dialog.setSize(400, 250);
+        dialog.setLocationRelativeTo(this);
+        
+        javax.swing.JPanel panel = new javax.swing.JPanel();
+        panel.setLayout(new java.awt.GridLayout(4, 2, 10, 10));
+        panel.setBorder(javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        
+        // Module selection
+        javax.swing.JLabel moduleLabel = new javax.swing.JLabel("Select Module:");
+        javax.swing.JComboBox<String> moduleComboBox = new javax.swing.JComboBox<>();
+        for (String moduleID : lecturerModules.keySet()) {
+            moduleComboBox.addItem(moduleID);
+        }
+        
+        // Quiz selection
+        javax.swing.JLabel quizLabel = new javax.swing.JLabel("Select Quiz:");
+        javax.swing.JComboBox<String> quizComboBox = new javax.swing.JComboBox<>();
+        
+        // Update quiz list when module is selected
+        moduleComboBox.addActionListener(e -> {
+            quizComboBox.removeAllItems();
+            String selectedModule = (String) moduleComboBox.getSelectedItem();
+            if (selectedModule != null && !selectedModule.isEmpty()) {
+                loadQuizzesForFeedback(selectedModule, quizComboBox);
+            }
+        });
+        
+        // Buttons
+        javax.swing.JButton submitButton = new javax.swing.JButton("Proceed");
+        javax.swing.JButton cancelButton = new javax.swing.JButton("Cancel");
+        
+        submitButton.addActionListener(e -> {
+            String selectedModule = (String) moduleComboBox.getSelectedItem();
+            String selectedQuiz = (String) quizComboBox.getSelectedItem();
+            
+            if (selectedModule == null || selectedModule.isEmpty() || 
+                selectedQuiz == null || selectedQuiz.isEmpty()) {
+                JOptionPane.showMessageDialog(dialog,
+                    "Please select both module and quiz.",
+                    "Selection Required",
+                    JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+            
+            // Open Feedback window for quiz set feedback with parent reference
+            Feedback feedbackWindow = new Feedback(selectedModule, selectedQuiz, lecturerID, true, this);
+            feedbackWindow.setVisible(true);
+            dialog.dispose();
+            // Close the Assessments window
+            Assessments.this.setVisible(false);
+        });
+        
+        cancelButton.addActionListener(e -> dialog.dispose());
+        
+        // Add components
+        panel.add(moduleLabel);
+        panel.add(moduleComboBox);
+        panel.add(quizLabel);
+        panel.add(quizComboBox);
+        panel.add(new javax.swing.JLabel()); // Empty label for spacing
+        panel.add(new javax.swing.JLabel()); // Empty label for spacing
+        panel.add(submitButton);
+        panel.add(cancelButton);
+        
+        dialog.add(panel);
+        
+        // Load initial quizzes if a module is available
+        if (moduleComboBox.getItemCount() > 0) {
+            String firstModule = (String) moduleComboBox.getSelectedItem();
+            if (firstModule != null) {
+                loadQuizzesForFeedback(firstModule, quizComboBox);
+            }
+        }
+        
+        dialog.setVisible(true);
+    }
+    
+    private void loadQuizzesForFeedback(String moduleID, javax.swing.JComboBox<String> quizComboBox) {
+        String projectRoot = System.getProperty("user.dir");
+        File quizFile = new File(projectRoot, "src\\main\\java\\oopwj\\Quiz.txt");
+        
+        quizComboBox.removeAllItems();
+        
+        if (quizFile.exists()) {
+            try (BufferedReader br = new BufferedReader(new FileReader(quizFile))) {
+                String line;
+                while ((line = br.readLine()) != null) {
+                    String[] fields = line.split(",", 3); // Split into 3 parts max
+                    if (fields.length >= 3) {
+                        String quizModuleID = fields[1].trim();
+                        if (quizModuleID.equals(moduleID)) {
+                            String quizID = fields[0].trim();
+                            quizComboBox.addItem(quizID);
+                        }
+                    }
+                }
+            } catch (IOException ex) {
+                logger.log(java.util.logging.Level.SEVERE, null, ex);
+                JOptionPane.showMessageDialog(this,
+                    "Error reading Quiz.txt: " + ex.getMessage(),
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
+            }
+        }
     }
     
     /**
@@ -786,6 +909,8 @@ public class Assessments extends javax.swing.JFrame {
         for (String moduleID : moduleIDs) {
             jComboBox1.addItem(moduleID);
         }
+        // Show nothing by default
+        jComboBox1.setSelectedIndex(-1);
     }
     
     private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {
@@ -898,6 +1023,7 @@ public class Assessments extends javax.swing.JFrame {
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
     private javax.swing.JButton jButton5;
+    private javax.swing.JButton jButton6;
     private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
