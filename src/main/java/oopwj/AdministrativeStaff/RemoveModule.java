@@ -17,98 +17,56 @@ import javax.swing.table.DefaultTableModel;
 public class RemoveModule extends javax.swing.JDialog {
 
     private final String classroom;
+    private final String classroomId;
+    private final Date date;
     /**
      * Creates new form RemoveModule
      * @param parent
      * @param modal
      * @param selectedDate
+     * @param selectedClassroomId
      * @param selectedClassroom
      */
-    public RemoveModule(java.awt.Frame parent, boolean modal, Date selectedDate, String selectedClassroom) {
+    public RemoveModule(java.awt.Frame parent, boolean modal, Date selectedDate, String selectedClassroomId, String selectedClassroom) {
         super(parent, modal);
         this.classroom = selectedClassroom;
+        this.classroomId = selectedClassroomId;
+        this.date = selectedDate;
+        
         initComponents();
         setLocationRelativeTo(null);
         
-        loadTable(selectedDate);
+        loadTable(date);
     }
     
     private void loadTable(Date selectedDate) {
-        DefaultTableModel model = (DefaultTableModel) removeTable.getModel();
-        model.setRowCount(0);
+    DefaultTableModel model = (DefaultTableModel) removeTable.getModel();
+    model.setRowCount(0);
 
-        if (selectedDate == null || classroom == null || classroom.isEmpty()) return;
+    SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+    String dateStr = sdf.format(selectedDate);
 
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-        String dateStr = sdf.format(selectedDate);
+    File scheduleFile = new File("src\\main\\java\\oopwj\\class_schedule.txt");
 
-        File scheduleFile = new File("src\\main\\java\\oopwj\\class_schedule.txt");
-        File classFile = new File("src\\main\\java\\oopwj\\class.txt");
-
-        Map<String, String> classMap = new HashMap<>();
-        try (BufferedReader br = new BufferedReader(new FileReader(classFile))) {
-            String line;
-            while ((line = br.readLine()) != null) {
-                String[] data = line.split(",");
-                if (data.length >= 2) {
-                    classMap.put(data[0], data[1]);
-                }
-            }
-        } catch (IOException e) {
-            JOptionPane.showMessageDialog(this, "Failed to load class information.");
-            return;
-        }
-
-        String classIdToLoad = null;
-        for (Map.Entry<String, String> entry : classMap.entrySet()) {
-            if (entry.getValue().equals(classroom)) {
-                classIdToLoad = entry.getKey();
-                break;
+    try (BufferedReader br = new BufferedReader(new FileReader(scheduleFile))) {
+        String line;
+        while ((line = br.readLine()) != null) {
+            String[] data = line.split(",");
+            if (data.length >= 6 && data[0].equals(classroomId) && data[2].equals(dateStr)) {
+                model.addRow(new Object[]{
+                    classroom,
+                    data[1],
+                    data[2],
+                    data[4],
+                    data[5]
+                });
             }
         }
-
-        if (classIdToLoad == null) {
-            JOptionPane.showMessageDialog(this, "Classroom not found.");
-            this.dispose();
-            return;
-        }
-
-        boolean hasModule = false;
-
-        // Load schedule for the classId and selected date
-        try (BufferedReader br = new BufferedReader(new FileReader(scheduleFile))) {
-            String line;
-            while ((line = br.readLine()) != null) {
-                String[] data = line.split(",");
-                if (data.length >= 6) {
-                    String classId = data[0];
-                    String moduleId = data[1];
-                    String date = data[2];
-                    String startTime = data[4];
-                    String endTime = data[5];
-
-                    if (classId.equals(classIdToLoad) && date.equals(dateStr)) {
-                        model.addRow(new Object[]{
-                            classroom,
-                            moduleId,
-                            date,
-                            startTime,
-                            endTime
-                        });
-                        hasModule = true;
-                    }
-                }
-            }
-        } catch (IOException e) {
-            JOptionPane.showMessageDialog(this, "Failed to load schedule.");
-            return;
-        }
-
-        if (!hasModule) {
-            JOptionPane.showMessageDialog(this, "This classroom has no assigned module on the selected date.");
-            this.dispose();
-        }
+    } catch (IOException e) {
+        JOptionPane.showMessageDialog(this, "Failed to load schedule.");
     }
+}
+
 
 
     
@@ -158,6 +116,11 @@ public class RemoveModule extends javax.swing.JDialog {
         });
 
         btnRemove.setText("Remove");
+        btnRemove.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRemoveActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -191,6 +154,57 @@ public class RemoveModule extends javax.swing.JDialog {
     private void btnBackActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBackActionPerformed
         this.dispose();
     }//GEN-LAST:event_btnBackActionPerformed
+
+    private void btnRemoveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRemoveActionPerformed
+        int row = removeTable.getSelectedRow();
+        if (row == -1) {
+            JOptionPane.showMessageDialog(this, "Please select a module to remove.");
+            return;
+        }
+
+        DefaultTableModel model = (DefaultTableModel) removeTable.getModel();
+        String moduleId = (String) model.getValueAt(row, 1);
+        String dateTable = (String) model.getValueAt(row, 2);
+
+        int confirm = JOptionPane.showConfirmDialog(
+                this,
+                "Are you sure you want to remove module " + moduleId + " on " + dateTable + "?",
+                "Confirm Remove",
+                JOptionPane.YES_NO_OPTION
+        );
+
+        if (confirm != JOptionPane.YES_OPTION) return;
+
+        File scheduleFile = new File("src\\main\\java\\oopwj\\class_schedule.txt");
+        File tempFile = new File("src\\main\\java\\oopwj\\class_schedule_temp.txt");
+
+        try (BufferedReader br = new BufferedReader(new FileReader(scheduleFile));
+             BufferedWriter bw = new BufferedWriter(new FileWriter(tempFile))) {
+
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] data = line.split(",");
+                if (data.length >= 6 && data[0].equals(classroomId) && data[1].equals(moduleId) && data[2].equals(dateTable)) {
+                    continue;
+                }
+                bw.write(line);
+                bw.newLine();
+            }
+
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(this, "Failed to remove module.");
+            return;
+        }
+
+        if (!scheduleFile.delete() || !tempFile.renameTo(scheduleFile)) {
+            JOptionPane.showMessageDialog(this, "Failed to update schedule file.");
+            return;
+        }
+
+        JOptionPane.showMessageDialog(this, "Module removed successfully.");
+
+        loadTable(this.date);
+    }//GEN-LAST:event_btnRemoveActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
