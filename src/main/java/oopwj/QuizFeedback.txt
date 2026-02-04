@@ -1,8 +1,3 @@
-<<<<<<< HEAD
-M001,QZ001,L101,"This quiz a lot of students pass"
-M001,QZ001,L101,"Second feedback test"
-=======
 M001,QZ001,L101,"This quiz should be challenging"
 M001,QZ002,L101,"This Quiz aims to show the creative side of students"
->>>>>>> f8f2b8b7efa08c5fc1d776c9849f5098c31237c6
 M002,QZ001,L101,"another one"
