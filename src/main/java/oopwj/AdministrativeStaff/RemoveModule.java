@@ -4,20 +4,114 @@
  */
 package oopwj.AdministrativeStaff;
 
+import java.io.*;
+import java.text.*;
+import java.util.*;
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author kwany
  */
 public class RemoveModule extends javax.swing.JDialog {
 
+    private final String classroom;
     /**
      * Creates new form RemoveModule
+     * @param parent
+     * @param modal
+     * @param selectedDate
+     * @param selectedClassroom
      */
-    public RemoveModule(java.awt.Frame parent, boolean modal) {
+    public RemoveModule(java.awt.Frame parent, boolean modal, Date selectedDate, String selectedClassroom) {
         super(parent, modal);
+        this.classroom = selectedClassroom;
         initComponents();
+        setLocationRelativeTo(null);
+        
+        loadTable(selectedDate);
+    }
+    
+    private void loadTable(Date selectedDate) {
+        DefaultTableModel model = (DefaultTableModel) removeTable.getModel();
+        model.setRowCount(0);
+
+        if (selectedDate == null || classroom == null || classroom.isEmpty()) return;
+
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        String dateStr = sdf.format(selectedDate);
+
+        File scheduleFile = new File("src\\main\\java\\oopwj\\class_schedule.txt");
+        File classFile = new File("src\\main\\java\\oopwj\\class.txt");
+
+        Map<String, String> classMap = new HashMap<>();
+        try (BufferedReader br = new BufferedReader(new FileReader(classFile))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] data = line.split(",");
+                if (data.length >= 2) {
+                    classMap.put(data[0], data[1]);
+                }
+            }
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(this, "Failed to load class information.");
+            return;
+        }
+
+        String classIdToLoad = null;
+        for (Map.Entry<String, String> entry : classMap.entrySet()) {
+            if (entry.getValue().equals(classroom)) {
+                classIdToLoad = entry.getKey();
+                break;
+            }
+        }
+
+        if (classIdToLoad == null) {
+            JOptionPane.showMessageDialog(this, "Classroom not found.");
+            this.dispose();
+            return;
+        }
+
+        boolean hasModule = false;
+
+        // Load schedule for the classId and selected date
+        try (BufferedReader br = new BufferedReader(new FileReader(scheduleFile))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] data = line.split(",");
+                if (data.length >= 6) {
+                    String classId = data[0];
+                    String moduleId = data[1];
+                    String date = data[2];
+                    String startTime = data[4];
+                    String endTime = data[5];
+
+                    if (classId.equals(classIdToLoad) && date.equals(dateStr)) {
+                        model.addRow(new Object[]{
+                            classroom,
+                            moduleId,
+                            date,
+                            startTime,
+                            endTime
+                        });
+                        hasModule = true;
+                    }
+                }
+            }
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(this, "Failed to load schedule.");
+            return;
+        }
+
+        if (!hasModule) {
+            JOptionPane.showMessageDialog(this, "This classroom has no assigned module on the selected date.");
+            this.dispose();
+        }
     }
 
+
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -28,22 +122,42 @@ public class RemoveModule extends javax.swing.JDialog {
     private void initComponents() {
 
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        removeTable = new javax.swing.JTable();
+        btnBack = new javax.swing.JButton();
+        btnRemove = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        removeTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null}
             },
             new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
+                "Classroom", "Module ID", "Date", "Start Time", "End Time"
             }
-        ));
-        jScrollPane1.setViewportView(jTable1);
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        removeTable.getTableHeader().setReorderingAllowed(false);
+        jScrollPane1.setViewportView(removeTable);
+
+        btnBack.setText("Back");
+        btnBack.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnBackActionPerformed(evt);
+            }
+        });
+
+        btnRemove.setText("Remove");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -51,7 +165,12 @@ public class RemoveModule extends javax.swing.JDialog {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(31, 31, 31)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 375, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(btnBack)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btnRemove))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 375, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(52, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -59,56 +178,25 @@ public class RemoveModule extends javax.swing.JDialog {
             .addGroup(layout.createSequentialGroup()
                 .addGap(33, 33, 33)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 275, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(56, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnBack)
+                    .addComponent(btnRemove))
+                .addContainerGap(15, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(RemoveModule.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(RemoveModule.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(RemoveModule.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(RemoveModule.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
+    private void btnBackActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBackActionPerformed
+        this.dispose();
+    }//GEN-LAST:event_btnBackActionPerformed
 
-        /* Create and display the dialog */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                RemoveModule dialog = new RemoveModule(new javax.swing.JFrame(), true);
-                dialog.addWindowListener(new java.awt.event.WindowAdapter() {
-                    @Override
-                    public void windowClosing(java.awt.event.WindowEvent e) {
-                        System.exit(0);
-                    }
-                });
-                dialog.setVisible(true);
-            }
-        });
-    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnBack;
+    private javax.swing.JButton btnRemove;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
+    private javax.swing.JTable removeTable;
     // End of variables declaration//GEN-END:variables
 }
