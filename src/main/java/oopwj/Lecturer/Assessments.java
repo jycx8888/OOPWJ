@@ -702,7 +702,40 @@ public class Assessments extends javax.swing.JFrame {
         }
 
         if ("question".equals(currentDataType) || "quizSets".equals(currentDataType)) {
-            new Quiz(lecturerID, this).setVisible(true);
+            int selectedRow = jTable2.getSelectedRow();
+            String moduleId = null;
+            String quizId = null;
+            String quizName = "";
+
+            if (selectedRow >= 0) {
+                Object quizNameValue = jTable2.getValueAt(selectedRow, 1);
+                if (quizNameValue != null) {
+                    quizName = quizNameValue.toString().trim();
+                }
+
+                if ("question".equals(currentDataType)) {
+                    String[] ids = getQuestionIdentifiersFromRow(selectedRow);
+                    if (ids != null) {
+                        moduleId = ids[0];
+                        quizId = ids[1];
+                    }
+                } else if ("quizSets".equals(currentDataType)) {
+                    if (selectedRow < displayedQuizSetKeys.size()) {
+                        String key = displayedQuizSetKeys.get(selectedRow);
+                        String[] parts = key.split("\\|");
+                        if (parts.length >= 2) {
+                            quizId = parts[0];
+                            moduleId = parts[1];
+                        }
+                    }
+                }
+            }
+
+            Quiz quizForm = new Quiz(lecturerID, this);
+            if (moduleId != null && !moduleId.isEmpty() && quizId != null && !quizId.isEmpty()) {
+                quizForm.preselectQuizSet(moduleId, quizId, quizName);
+            }
+            quizForm.setVisible(true);
             this.dispose();
         } else {
             JOptionPane.showMessageDialog(this, "Please load questions or quiz sets before adding.", "Add", JOptionPane.INFORMATION_MESSAGE);

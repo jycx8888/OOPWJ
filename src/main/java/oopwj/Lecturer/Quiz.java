@@ -318,6 +318,40 @@ public class Quiz extends javax.swing.JFrame {
         }
     }
 
+    public void preselectQuizSet(String moduleId, String quizId, String quizTitle) {
+        if (moduleId == null || moduleId.isEmpty()) {
+            return;
+        }
+
+        selectModuleById(moduleId);
+        populateQuizDropdown(moduleId);
+
+        String resolvedQuizId = quizId;
+        if (resolvedQuizId == null || resolvedQuizId.isEmpty()) {
+            resolvedQuizId = resolveQuizIdFromTitle(moduleId, quizTitle);
+        }
+
+        if (resolvedQuizId != null && !resolvedQuizId.isEmpty()) {
+            selectQuizById(resolvedQuizId);
+            currentQuizID = resolvedQuizId;
+        }
+
+        String titleToShow = quizTitle != null ? quizTitle.trim() : "";
+        if (titleToShow.isEmpty() && resolvedQuizId != null && !resolvedQuizId.isEmpty()) {
+            titleToShow = getQuizTitle(resolvedQuizId);
+        }
+
+        if (titleToShow != null && !titleToShow.isEmpty()) {
+            jTextField9.setText(titleToShow);
+            currentQuizTitle = titleToShow;
+            jTextField9.setEditable(false);
+        }
+
+        if (resolvedQuizId != null && !resolvedQuizId.isEmpty()) {
+            updateQuestionCountLabels(moduleId, resolvedQuizId);
+        }
+    }
+
     private String getSelectedQuizId() {
         int selectedIndex = jComboBox2.getSelectedIndex();
         if (selectedIndex >= 0 && selectedIndex < quizIdsForDropdown.size()) {
