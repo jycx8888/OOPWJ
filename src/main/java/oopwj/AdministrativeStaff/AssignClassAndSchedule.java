@@ -336,6 +336,16 @@ public class AssignClassAndSchedule extends javax.swing.JFrame {
         jLabel6 = new javax.swing.JLabel();
         dateChooseClass = new com.toedter.calendar.JDateChooser();
         dateChooseSchedule = new com.toedter.calendar.JDateChooser();
+        spinnerMin = new JSpinner(new SpinnerDateModel())
+        ;
+        JSpinner.DateEditor startEditor = new JSpinner.DateEditor(spinnerMin, "HH:mm");
+        spinnerMin.setEditor(startEditor);
+        spinnerMax = new JSpinner(new SpinnerDateModel())
+        ;
+        JSpinner.DateEditor endEditor = new JSpinner.DateEditor(spinnerMax, "HH:mm");
+        spinnerMax.setEditor(endEditor);
+        jLabel1 = new javax.swing.JLabel();
+        jLabel7 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -468,14 +478,18 @@ public class AssignClassAndSchedule extends javax.swing.JFrame {
             }
         });
 
+        jLabel1.setText("Start Time:");
+
+        jLabel7.setText("End Time:");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(15, 15, 15)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                         .addComponent(jLabel4)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(searchSchedule, javax.swing.GroupLayout.PREFERRED_SIZE, 414, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -483,37 +497,45 @@ public class AssignClassAndSchedule extends javax.swing.JFrame {
                         .addComponent(jLabel5)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(boxDay, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGap(18, 18, 18)
                         .addComponent(dateChooseSchedule, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                        .addComponent(jScrollPane3, javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(btnBack, javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(btnBack)
                             .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                                        .addComponent(jLabel2)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(searchModule))
-                                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 229, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(33, 33, 33)
+                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 402, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addComponent(jLabel6)
-                                .addGap(28, 28, 28)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 399, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addComponent(jLabel3)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(searchClassroom, javax.swing.GroupLayout.PREFERRED_SIZE, 186, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(dateChooseClass, javax.swing.GroupLayout.PREFERRED_SIZE, 163, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addComponent(btnRemove)
-                                        .addGap(18, 18, 18)
-                                        .addComponent(btnUpdate)
-                                        .addGap(18, 18, 18)
-                                        .addComponent(btnAssign)))))))
-                .addContainerGap(12, Short.MAX_VALUE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel2)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(searchModule, javax.swing.GroupLayout.PREFERRED_SIZE, 185, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(spinnerMin, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jLabel7)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(spinnerMax, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 399, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel3)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(searchClassroom, javax.swing.GroupLayout.PREFERRED_SIZE, 186, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(dateChooseClass, javax.swing.GroupLayout.PREFERRED_SIZE, 163, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(btnRemove)
+                                .addGap(18, 18, 18)
+                                .addComponent(btnUpdate)
+                                .addGap(18, 18, 18)
+                                .addComponent(btnAssign)))))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -533,7 +555,11 @@ public class AssignClassAndSchedule extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel2)
-                            .addComponent(searchModule, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(searchModule, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(spinnerMax, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(spinnerMin, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel1)
+                            .addComponent(jLabel7))
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -541,7 +567,7 @@ public class AssignClassAndSchedule extends javax.swing.JFrame {
                             .addGroup(layout.createSequentialGroup()
                                 .addGap(109, 109, 109)
                                 .addComponent(jLabel6)))))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 18, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnAssign)
                     .addComponent(btnUpdate)
@@ -556,7 +582,7 @@ public class AssignClassAndSchedule extends javax.swing.JFrame {
                     .addComponent(dateChooseSchedule, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 221, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(12, Short.MAX_VALUE))
+                .addContainerGap(21, Short.MAX_VALUE))
         );
 
         pack();
@@ -587,48 +613,82 @@ public class AssignClassAndSchedule extends javax.swing.JFrame {
         String moduleId = mModel.getValueAt(mRow, 0).toString();
         String classroomId = cModel.getValueAt(cRow, 0).toString();
         String classroomName = cModel.getValueAt(cRow, 1).toString();
-        String currentModule = cModel.getValueAt(cRow, 2).toString();
 
-        if (!currentModule.equals("None")) {
+        Date selectedDate = dateChooseClass.getDate();
+        if (selectedDate == null) {
+            JOptionPane.showMessageDialog(this, "Please select a date first.");
+            return;
+        }
+
+        Date startTime = (Date) spinnerMin.getValue();
+        Date endTime = (Date) spinnerMax.getValue();
+
+        if (!startTime.before(endTime)) {
+            JOptionPane.showMessageDialog(this, "Start time must be before end time.");
+            return;
+        }
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
+        String dateStr = dateFormat.format(selectedDate);
+        String startStr = timeFormat.format(startTime);
+        String endStr = timeFormat.format(endTime);
+
+        File scheduleFile = new File("src\\main\\java\\oopwj\\class_schedule.txt");
+        boolean conflictFound = false;
+
+        try (BufferedReader br = new BufferedReader(new FileReader(scheduleFile))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] data = line.split(",");
+                if (data.length >= 6) {
+                    String sClassId = data[0];
+                    String sModuleId = data[1];
+                    String sDate = data[2];
+                    String sStart = data[4];
+                    String sEnd = data[5];
+
+                    if (sClassId.equals(classroomId) && sDate.equals(dateStr)) {
+                        Date existingStart = timeFormat.parse(sStart);
+                        Date existingEnd = timeFormat.parse(sEnd);
+
+                        if (!endTime.before(existingStart) && !startTime.after(existingEnd)) {
+                            conflictFound = true;
+                            break;
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Failed to read schedule file.");
+            return;
+        }
+
+        if (conflictFound) {
             JOptionPane.showMessageDialog(this,
-                    "This classroom is already assigned.\nUse Update instead.");
+                    "There is a time conflict with another module for this classroom.\nPlease choose a different time or use Update.");
             return;
         }
 
         int confirm = JOptionPane.showConfirmDialog(this,
-                "Assign module " + moduleId + " to " + classroomName + "?",
+                "Assign module " + moduleId + " to " + classroomName + "\non " + dateStr +
+                " from " + startStr + " to " + endStr + "?",
                 "Confirm Assignment",
                 JOptionPane.YES_NO_OPTION);
 
         if (confirm != JOptionPane.YES_OPTION) return;
 
-        File inputFile = new File("src\\main\\java\\oopwj\\class.txt");
-        File tempFile = new File("src\\main\\java\\oopwj\\class_temp.txt");
-
-        try (BufferedReader br = new BufferedReader(new FileReader(inputFile));
-             BufferedWriter bw = new BufferedWriter(new FileWriter(tempFile))) {
-
-            String line;
-            while ((line = br.readLine()) != null) {
-                String[] data = line.split(",");
-
-                if (data[0].equals(classroomId)) {
-                    bw.write(classroomId + "," + classroomName + "," + moduleId);
-                } else {
-                    bw.write(line);
-                }
-                bw.newLine();
-            }
-
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(scheduleFile, true))) {
+            String dayOfWeek = new SimpleDateFormat("EEEE").format(selectedDate);
+            bw.write(classroomId + "," + moduleId + "," + dateStr + "," + dayOfWeek + "," + startStr + "," + endStr);
+            bw.newLine();
         } catch (IOException e) {
-            JOptionPane.showMessageDialog(this, "Assignment failed.");
+            JOptionPane.showMessageDialog(this, "Failed to save assignment.");
             return;
         }
 
-        inputFile.delete();
-        tempFile.renameTo(inputFile);
-
         loadClassrooms();
+        loadSchedule();
         moduleTable.clearSelection();
 
         JOptionPane.showMessageDialog(this,
@@ -834,11 +894,13 @@ public class AssignClassAndSchedule extends javax.swing.JFrame {
     private com.toedter.calendar.JDateChooser dateChooseClass;
     private com.toedter.calendar.JDateChooser dateChooseSchedule;
     private com.toedter.calendar.JDateChooserBeanInfo jDateChooserBeanInfo1;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
@@ -847,5 +909,7 @@ public class AssignClassAndSchedule extends javax.swing.JFrame {
     private javax.swing.JTextField searchClassroom;
     private javax.swing.JTextField searchModule;
     private javax.swing.JTextField searchSchedule;
+    private javax.swing.JSpinner spinnerMax;
+    private javax.swing.JSpinner spinnerMin;
     // End of variables declaration//GEN-END:variables
 }
