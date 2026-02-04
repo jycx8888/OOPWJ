@@ -645,17 +645,68 @@ public class AssignClassAndSchedule extends javax.swing.JFrame {
         
         int modelRow = classroomTable.convertRowIndexToModel(row);
         DefaultTableModel list = (DefaultTableModel) classroomTable.getModel();
-
+        
+        String classroomId = (String) list.getValueAt(modelRow, 0);
         String classroom = (String) list.getValueAt(modelRow, 1);
+        
 
         Date selectedDate = dateChooseClass.getDate();
         if (selectedDate == null) {
             JOptionPane.showMessageDialog(this, "Please select a date first.");
             return;
         }
+        
+        String classIdToLoad = null;
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        String dateStr = sdf.format(selectedDate);
 
-        RemoveModule removeDialog = new RemoveModule(this, true, selectedDate, classroom);
+        File scheduleFile = new File("src\\main\\java\\oopwj\\class_schedule.txt");
+        File classFile = new File("src\\main\\java\\oopwj\\class.txt");
+
+        try (BufferedReader br = new BufferedReader(new FileReader(classFile))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] data = line.split(",");
+                if (data.length >= 2 && data[1].equals(classroom)) {
+                    classIdToLoad = data[0];
+                    break;
+                }
+            }
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(this, "Failed to load class info.");
+            return;
+        }
+
+        if (classIdToLoad == null) {
+            JOptionPane.showMessageDialog(this, "Classroom not found.");
+            return;
+        }
+
+        boolean hasModule = false;
+        try (BufferedReader br = new BufferedReader(new FileReader(scheduleFile))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] data = line.split(",");
+                if (data.length >= 6 && data[0].equals(classIdToLoad) && data[2].equals(dateStr)) {
+                    hasModule = true;
+                    break;
+                }
+            }
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(this, "Failed to load schedule.");
+            return;
+        }
+
+        if (!hasModule) {
+            JOptionPane.showMessageDialog(this, "No module assigned for this classroom on the selected date.");
+            return;
+        }
+
+        RemoveModule removeDialog = new RemoveModule(this, true, selectedDate, classroomId,classroom);
         removeDialog.setVisible(true);
+        
+        loadClassrooms();
+        loadSchedule();
     }//GEN-LAST:event_btnRemoveActionPerformed
 
     private void btnUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUpdateActionPerformed
