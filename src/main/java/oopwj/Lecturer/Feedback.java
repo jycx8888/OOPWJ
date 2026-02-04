@@ -485,6 +485,8 @@ public class Feedback extends javax.swing.JFrame {
             String newLine = moduleID + "," + quizID + "," + formattedFeedback;
             lines.add(newLine);
         }
+
+        sortQuizFeedbackLines(lines);
         
         // Write back to file
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(quizFeedbackFile))) {
@@ -503,6 +505,40 @@ public class Feedback extends javax.swing.JFrame {
         }
         
         return true;
+    }
+
+    private void sortQuizFeedbackLines(java.util.List<String> lines) {
+        java.util.List<String> dataLines = new java.util.ArrayList<>();
+        java.util.List<String> otherLines = new java.util.ArrayList<>();
+
+        for (String line : lines) {
+            String trimmedLine = line == null ? "" : line.trim();
+            if (trimmedLine.isEmpty() || trimmedLine.startsWith("#")) {
+                otherLines.add(line);
+                continue;
+            }
+            dataLines.add(trimmedLine);
+        }
+
+        dataLines.sort((a, b) -> {
+            String[] partsA = a.split(",", 3);
+            String[] partsB = b.split(",", 3);
+
+            String moduleA = partsA.length > 0 ? partsA[0].trim() : "";
+            String moduleB = partsB.length > 0 ? partsB[0].trim() : "";
+            int moduleCompare = moduleA.compareToIgnoreCase(moduleB);
+            if (moduleCompare != 0) {
+                return moduleCompare;
+            }
+
+            String quizA = partsA.length > 1 ? partsA[1].trim() : "";
+            String quizB = partsB.length > 1 ? partsB[1].trim() : "";
+            return quizA.compareToIgnoreCase(quizB);
+        });
+
+        lines.clear();
+        lines.addAll(otherLines);
+        lines.addAll(dataLines);
     }
 
     /**

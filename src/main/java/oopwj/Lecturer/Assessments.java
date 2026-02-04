@@ -45,6 +45,7 @@ public class Assessments extends javax.swing.JFrame {
         this.parentWindow = parentWindow;
         loadLecturerModules(); // Load modules assigned to this lecturer
         initComponents();
+        centerWindow();
         setupTable();
         setupSearchField();
         loadModuleIDsToComboBox(); // Populate jComboBox1 with ModuleIDs from Quiz.txt
@@ -57,6 +58,10 @@ public class Assessments extends javax.swing.JFrame {
         jButton4.addActionListener(this::jButton4ActionPerformed);
         jButton6.addActionListener(this::jButton6ActionPerformed);
         jComboBox1.addActionListener(this::jComboBox1ActionPerformed);
+    }
+
+    private void centerWindow() {
+        setLocationRelativeTo(null);
     }
     
     private void setupSearchField() {
