@@ -22,6 +22,7 @@ public class Feedback extends javax.swing.JFrame {
     private String quizID;
     private String studentID;
     private String lecturerID;
+    private boolean isQuizSetFeedback = false;
 
     /**
      * Creates new form Feedback
@@ -31,19 +32,44 @@ public class Feedback extends javax.swing.JFrame {
     }
     
     /**
-     * Creates new form Feedback with parameters
+     * Creates new form Feedback with parameters (for student feedback)
      */
     public Feedback(String moduleID, String quizID, String studentID, String lecturerID) {
         this.moduleID = moduleID;
         this.quizID = quizID;
         this.studentID = studentID;
         this.lecturerID = lecturerID;
+        this.isQuizSetFeedback = false;
         
         initComponents();
         setLocationRelativeTo(null);
         
         // Load existing feedback if available
         loadExistingFeedback();
+        
+        // Attach action listener to Save button
+        jButton1.addActionListener(evt -> jButton1ActionPerformed(evt));
+        // Attach action listener to Back button
+        jButton2.addActionListener(evt -> jButton2ActionPerformed(evt));
+    }
+    
+    /**
+     * Creates new form Feedback for quiz set feedback (no specific student)
+     */
+    public Feedback(String moduleID, String quizID, String lecturerID, boolean isQuizSetFeedback) {
+        this.moduleID = moduleID;
+        this.quizID = quizID;
+        this.lecturerID = lecturerID;
+        this.isQuizSetFeedback = isQuizSetFeedback;
+        this.studentID = null;
+        
+        initComponents();
+        setLocationRelativeTo(null);
+        
+        // Load existing quiz-set feedback if available
+        if (isQuizSetFeedback) {
+            loadExistingQuizSetFeedback();
+        }
         
         // Attach action listener to Save button
         jButton1.addActionListener(evt -> jButton1ActionPerformed(evt));
@@ -143,16 +169,28 @@ public class Feedback extends javax.swing.JFrame {
             return;
         }
         
-        // Update feedback in FinalGrade.txt
-        String projectRoot = System.getProperty("user.dir");
-        String finalGradeFilePath = projectRoot + "/src/main/java/oopwj/FinalGrade.txt";
-        
-        if (!updateFeedbackInFile(finalGradeFilePath, feedback)) {
-            javax.swing.JOptionPane.showMessageDialog(this,
-                "Could not find grade record for this student.",
-                "Error",
-                javax.swing.JOptionPane.ERROR_MESSAGE);
-            return;
+        // Handle based on feedback type
+        if (isQuizSetFeedback) {
+            // Save quiz set feedback
+            if (!saveQuizSetFeedback(feedback)) {
+                javax.swing.JOptionPane.showMessageDialog(this,
+                    "Could not save quiz set feedback.",
+                    "Error",
+                    javax.swing.JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+        } else {
+            // Save student feedback
+            String projectRoot = System.getProperty("user.dir");
+            String finalGradeFilePath = projectRoot + "/src/main/java/oopwj/FinalGrade.txt";
+            
+            if (!updateFeedbackInFile(finalGradeFilePath, feedback)) {
+                javax.swing.JOptionPane.showMessageDialog(this,
+                    "Could not find grade record for this student.",
+                    "Error",
+                    javax.swing.JOptionPane.ERROR_MESSAGE);
+                return;
+            }
         }
         
         javax.swing.JOptionPane.showMessageDialog(this,
@@ -309,6 +347,128 @@ public class Feedback extends javax.swing.JFrame {
             System.err.println("Error reading FinalGrade.txt: " + e.getMessage());
             logger.log(java.util.logging.Level.WARNING, "Error loading feedback: " + e.getMessage());
         }
+    }
+    
+    /**
+     * Loads existing quiz set feedback from QuizFeedback.txt
+     */
+    private void loadExistingQuizSetFeedback() {
+        String projectRoot = System.getProperty("user.dir");
+        String quizFeedbackFilePath = projectRoot + "/src/main/java/oopwj/QuizFeedback.txt";
+        
+        java.io.File quizFeedbackFile = new java.io.File(quizFeedbackFilePath);
+        if (!quizFeedbackFile.exists()) {
+            logger.log(java.util.logging.Level.WARNING, "QuizFeedback.txt not found");
+            return;
+        }
+        
+        try (BufferedReader br = new BufferedReader(new FileReader(quizFeedbackFile))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                String trimmedLine = line.trim();
+                if (trimmedLine.isEmpty() || trimmedLine.startsWith("#")) {
+                    continue;
+                }
+                
+                String[] parts = trimmedLine.split(",", 3); // Split into max 3 parts
+                if (parts.length >= 3) {
+                    String moduleIDFromFile = parts[0].trim();
+                    String quizIDFromFile = parts[1].trim();
+                    
+                    // Match this quiz
+                    if (moduleIDFromFile.equals(moduleID) && quizIDFromFile.equals(quizID)) {
+                        // Extract feedback (3rd column)
+                        String feedbackField = parts[2].trim();
+                        // Remove surrounding quotes and unescape
+                        String feedback = feedbackField;
+                        if (feedback.startsWith("\"") && feedback.endsWith("\"")) {
+                            feedback = feedback.substring(1, feedback.length() - 1);
+                            feedback = feedback.replace("\"\"", "\"");
+                        }
+                        
+                        jTextArea1.setText(feedback);
+                        System.out.println("Loaded quiz set feedback for quiz: " + quizID);
+                        return;
+                    }
+                }
+            }
+        } catch (IOException e) {
+            System.err.println("Error reading QuizFeedback.txt: " + e.getMessage());
+            logger.log(java.util.logging.Level.WARNING, "Error loading quiz feedback: " + e.getMessage());
+        }
+    }
+    
+    /**
+     * Saves quiz set feedback to QuizFeedback.txt
+     */
+    private boolean saveQuizSetFeedback(String feedback) {
+        String projectRoot = System.getProperty("user.dir");
+        String quizFeedbackFilePath = projectRoot + "/src/main/java/oopwj/QuizFeedback.txt";
+        
+        java.io.File quizFeedbackFile = new java.io.File(quizFeedbackFilePath);
+        java.util.List<String> lines = new java.util.ArrayList<>();
+        boolean found = false;
+        
+        // Read existing content
+        if (quizFeedbackFile.exists()) {
+            try (BufferedReader br = new BufferedReader(new FileReader(quizFeedbackFile))) {
+                String line;
+                while ((line = br.readLine()) != null) {
+                    String trimmedLine = line.trim();
+                    if (trimmedLine.isEmpty() || trimmedLine.startsWith("#")) {
+                        lines.add(line);
+                        continue;
+                    }
+                    
+                    String[] parts = trimmedLine.split(",", 3);
+                    if (parts.length >= 2) {
+                        String moduleIDFromFile = parts[0].trim();
+                        String quizIDFromFile = parts[1].trim();
+                        
+                        // Match this quiz
+                        if (moduleIDFromFile.equals(moduleID) && quizIDFromFile.equals(quizID)) {
+                            // Update with new feedback
+                            String formattedFeedback = formatFeedbackField(feedback);
+                            String updatedLine = moduleID + "," + quizID + "," + formattedFeedback;
+                            lines.add(updatedLine);
+                            found = true;
+                        } else {
+                            lines.add(trimmedLine);
+                        }
+                    } else {
+                        lines.add(trimmedLine);
+                    }
+                }
+            } catch (IOException e) {
+                System.err.println("Error reading QuizFeedback.txt: " + e.getMessage());
+                return false;
+            }
+        }
+        
+        // If not found, add new entry
+        if (!found) {
+            String formattedFeedback = formatFeedbackField(feedback);
+            String newLine = moduleID + "," + quizID + "," + formattedFeedback;
+            lines.add(newLine);
+        }
+        
+        // Write back to file
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(quizFeedbackFile))) {
+            for (String line : lines) {
+                bw.write(line);
+                bw.newLine();
+            }
+            System.out.println("Saved quiz set feedback to QuizFeedback.txt");
+        } catch (IOException e) {
+            System.err.println("Error writing to QuizFeedback.txt: " + e.getMessage());
+            javax.swing.JOptionPane.showMessageDialog(this,
+                "Error saving feedback: " + e.getMessage(),
+                "File Error",
+                javax.swing.JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+        
+        return true;
     }
 
     /**

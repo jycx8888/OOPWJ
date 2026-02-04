@@ -325,6 +325,7 @@ public class Assessments extends javax.swing.JFrame {
     }
     
     private void performSearch() {
+        jComboBox1.setSelectedIndex(-1);
         String searchTerm = jTextField1.getText().trim();
 
         if (searchTerm.isEmpty() || searchTerm.equalsIgnoreCase("Search")) {
@@ -548,6 +549,7 @@ public class Assessments extends javax.swing.JFrame {
     }
     
     private void QuizButtonActionPerformed(java.awt.event.ActionEvent evt) {
+        jComboBox1.setSelectedIndex(-1);
         currentDataType = "quiz";
         loadQuizData();
     }
@@ -786,6 +788,8 @@ public class Assessments extends javax.swing.JFrame {
         for (String moduleID : moduleIDs) {
             jComboBox1.addItem(moduleID);
         }
+        // Show nothing by default
+        jComboBox1.setSelectedIndex(-1);
     }
     
     private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {
