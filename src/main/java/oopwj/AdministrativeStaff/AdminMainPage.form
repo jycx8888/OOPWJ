@@ -33,7 +33,7 @@
                   <Component id="btnAssign" min="-2" max="-2" attributes="0"/>
                   <Component id="btnManage" min="-2" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace pref="376" max="32767" attributes="0"/>
+              <EmptySpace pref="338" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -82,7 +82,7 @@
     </Component>
     <Component class="javax.swing.JButton" name="btnCreateClass">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Create New Classes"/>
+        <Property name="text" type="java.lang.String" value="Assign Classes and Scheduling"/>
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnCreateClassActionPerformed"/>
