@@ -122,6 +122,12 @@ public class Lecturer_schedule extends javax.swing.JFrame {
         applyScheduleRow(jLabel1, jLabel2, jLabel3, jLabel4, scheduleRows.get(0), classMap, moduleMap);
         jLabel1.setAlignmentX(java.awt.Component.LEFT_ALIGNMENT);
         jPanel2.setAlignmentX(java.awt.Component.LEFT_ALIGNMENT);
+        java.awt.Dimension basePanelSize = jPanel2.getPreferredSize();
+        if (basePanelSize != null) {
+            jPanel2.setPreferredSize(basePanelSize);
+            jPanel2.setMinimumSize(basePanelSize);
+            jPanel2.setMaximumSize(new java.awt.Dimension(Integer.MAX_VALUE, basePanelSize.height));
+        }
         scheduleListPanel.add(jLabel1);
         scheduleListPanel.add(javax.swing.Box.createVerticalStrut(8));
         scheduleListPanel.add(jPanel2);
@@ -236,22 +242,33 @@ public class Lecturer_schedule extends javax.swing.JFrame {
         jPanel1.add(jComboBox1);
         jPanel1.add(javax.swing.Box.createVerticalStrut(12));
 
-        jPanel1.add(javax.swing.Box.createVerticalGlue());
         String message = "No timetable available";
         if (selectedDay != null && !selectedDay.isEmpty()) {
             message += " for " + selectedDay;
         }
         message += ".";
         javax.swing.JLabel emptyLabel = new javax.swing.JLabel(message);
-        emptyLabel.setAlignmentX(java.awt.Component.CENTER_ALIGNMENT);
         emptyLabel.setFont(emptyLabel.getFont().deriveFont(java.awt.Font.BOLD, 18f));
-        jPanel1.add(emptyLabel);
+        emptyLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+
+        jPanel2.removeAll();
+        jPanel2.setLayout(new java.awt.BorderLayout());
+        jPanel2.setBackground(jPanel1.getBackground());
+        jPanel2.add(emptyLabel, java.awt.BorderLayout.CENTER);
+        jPanel2.setAlignmentX(java.awt.Component.LEFT_ALIGNMENT);
+        jPanel1.add(jPanel2);
 
         jPanel1.add(javax.swing.Box.createVerticalStrut(16));
-        javax.swing.JPanel buttonPanel = new javax.swing.JPanel(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER, 0, 0));
+        javax.swing.JPanel buttonPanel = new javax.swing.JPanel(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT, 18, 0));
         buttonPanel.setBackground(jPanel1.getBackground());
-        buttonPanel.setAlignmentX(java.awt.Component.CENTER_ALIGNMENT);
+        buttonPanel.setAlignmentX(java.awt.Component.LEFT_ALIGNMENT);
         buttonPanel.add(jButton1);
+        java.awt.Dimension panelBaseSize = jPanel2.getPreferredSize();
+        java.awt.Dimension buttonSize = jButton1.getPreferredSize();
+        if (panelBaseSize != null && buttonSize != null) {
+            buttonPanel.setPreferredSize(new java.awt.Dimension(panelBaseSize.width, buttonSize.height));
+            buttonPanel.setMinimumSize(new java.awt.Dimension(panelBaseSize.width, buttonSize.height));
+        }
         jPanel1.add(buttonPanel);
         jPanel1.add(javax.swing.Box.createVerticalGlue());
 
