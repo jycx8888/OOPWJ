@@ -15,6 +15,7 @@ public class Lecturer_schedule extends javax.swing.JFrame {
     private static final java.nio.file.Path DATA_DIR_FALLBACK = java.nio.file.Paths.get("target", "classes", "oopwj", "Data");
     private final String lecturerID;
     private final Lecturer_menu parentWindow;
+    private boolean suppressDayFilterEvent = false;
 
     /**
      * Creates new form Lecturer_schedule
@@ -28,6 +29,7 @@ public class Lecturer_schedule extends javax.swing.JFrame {
         this.parentWindow = parentWindow;
         initComponents();
         setupListeners();
+        setupDayFilter();
         configureScrollPane();
         buildScheduleView();
         centerWindow();
@@ -39,6 +41,23 @@ public class Lecturer_schedule extends javax.swing.JFrame {
 
     private void setupListeners() {
         jButton1.addActionListener(evt -> handleExit());
+    }
+
+    private void setupDayFilter() {
+        String[] days = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday"};
+        suppressDayFilterEvent = true;
+        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(days));
+        jComboBox1.setSelectedIndex(0);
+        java.awt.Dimension comboSize = jComboBox1.getPreferredSize();
+        jComboBox1.setMinimumSize(comboSize);
+        jComboBox1.setMaximumSize(comboSize);
+        suppressDayFilterEvent = false;
+        jComboBox1.addActionListener(evt -> {
+            if (suppressDayFilterEvent) {
+                return;
+            }
+            buildScheduleView();
+        });
     }
 
     private void handleExit() {
@@ -75,8 +94,12 @@ public class Lecturer_schedule extends javax.swing.JFrame {
                 scheduleRows = new java.util.ArrayList<>();
             }
         }
+        String selectedDay = getSelectedDay();
+        if (selectedDay != null && !selectedDay.isEmpty()) {
+            scheduleRows = filterScheduleRowsByDay(scheduleRows, selectedDay);
+        }
         if (scheduleRows.isEmpty()) {
-            showEmptySchedule();
+            showEmptySchedule(selectedDay);
             return;
         }
 
@@ -184,13 +207,42 @@ public class Lecturer_schedule extends javax.swing.JFrame {
         return filtered;
     }
 
-    private void showEmptySchedule() {
+    private java.util.List<String[]> filterScheduleRowsByDay(
+            java.util.List<String[]> scheduleRows,
+            String day) {
+        java.util.List<String[]> filtered = new java.util.ArrayList<>();
+        for (String[] row : scheduleRows) {
+            if (row.length > 3 && day.equalsIgnoreCase(row[3].trim())) {
+                filtered.add(row);
+            }
+        }
+        return filtered;
+    }
+
+    private String getSelectedDay() {
+        Object selected = jComboBox1.getSelectedItem();
+        if (selected == null) {
+            return null;
+        }
+        return selected.toString().trim();
+    }
+
+    private void showEmptySchedule(String selectedDay) {
         jPanel1.removeAll();
         jPanel1.setLayout(new javax.swing.BoxLayout(jPanel1, javax.swing.BoxLayout.Y_AXIS));
         jPanel1.setBorder(javax.swing.BorderFactory.createEmptyBorder(20, 41, 20, 41));
 
+        jComboBox1.setAlignmentX(java.awt.Component.LEFT_ALIGNMENT);
+        jPanel1.add(jComboBox1);
+        jPanel1.add(javax.swing.Box.createVerticalStrut(12));
+
         jPanel1.add(javax.swing.Box.createVerticalGlue());
-        javax.swing.JLabel emptyLabel = new javax.swing.JLabel("No timetable available.");
+        String message = "No timetable available";
+        if (selectedDay != null && !selectedDay.isEmpty()) {
+            message += " for " + selectedDay;
+        }
+        message += ".";
+        javax.swing.JLabel emptyLabel = new javax.swing.JLabel(message);
         emptyLabel.setAlignmentX(java.awt.Component.CENTER_ALIGNMENT);
         emptyLabel.setFont(emptyLabel.getFont().deriveFont(java.awt.Font.BOLD, 18f));
         jPanel1.add(emptyLabel);
@@ -213,6 +265,12 @@ public class Lecturer_schedule extends javax.swing.JFrame {
         panel.setBackground(jPanel2.getBackground());
         panel.setBorder(javax.swing.BorderFactory.createEmptyBorder(10, 15, 10, 0));
         panel.setAlignmentX(java.awt.Component.LEFT_ALIGNMENT);
+        java.awt.Dimension panelSize = jPanel2.getPreferredSize();
+        if (panelSize != null) {
+            panel.setPreferredSize(panelSize);
+            panel.setMinimumSize(panelSize);
+            panel.setMaximumSize(new java.awt.Dimension(Integer.MAX_VALUE, panelSize.height));
+        }
 
         javax.swing.JLabel classLabel = new javax.swing.JLabel();
         javax.swing.JLabel moduleLabel = new javax.swing.JLabel();
