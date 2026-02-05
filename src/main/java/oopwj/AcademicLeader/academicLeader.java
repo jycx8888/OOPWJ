@@ -59,9 +59,10 @@ public class academicLeader extends javax.swing.JFrame {
 
         modules = new javax.swing.JToggleButton();
         generateReports = new javax.swing.JToggleButton();
-        jLabel1 = new javax.swing.JLabel();
+        welcome = new javax.swing.JLabel();
         logOut = new javax.swing.JToggleButton();
         profile = new javax.swing.JToggleButton();
+        lecturerReview = new javax.swing.JToggleButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -79,8 +80,8 @@ public class academicLeader extends javax.swing.JFrame {
             }
         });
 
-        jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
-        jLabel1.setText("Welcome, Academic Leader");
+        welcome.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        welcome.setText("Welcome, Academic Leader");
 
         logOut.setText("Log Out");
         logOut.addActionListener(new java.awt.event.ActionListener() {
@@ -96,40 +97,49 @@ public class academicLeader extends javax.swing.JFrame {
             }
         });
 
+        lecturerReview.setText("Lecturer Review");
+        lecturerReview.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                lecturerReviewActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap(177, Short.MAX_VALUE)
-                .addComponent(jLabel1)
+                .addComponent(welcome)
                 .addGap(171, 171, 171))
             .addGroup(layout.createSequentialGroup()
-                .addGap(283, 283, 283)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(modules)
-                    .addComponent(generateReports)
-                    .addComponent(logOut))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(profile)
+                .addGap(265, 265, 265)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(modules, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(generateReports, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(logOut, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(lecturerReview)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(profile, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(89, 89, 89)
-                .addComponent(jLabel1)
-                .addGap(18, 18, 18)
-                .addComponent(profile)
+                .addComponent(welcome)
                 .addGap(36, 36, 36)
+                .addComponent(profile)
+                .addGap(28, 28, 28)
                 .addComponent(modules)
-                .addGap(37, 37, 37)
+                .addGap(27, 27, 27)
                 .addComponent(generateReports)
-                .addGap(40, 40, 40)
+                .addGap(27, 27, 27)
+                .addComponent(lecturerReview)
+                .addGap(26, 26, 26)
                 .addComponent(logOut)
-                .addContainerGap(85, Short.MAX_VALUE))
+                .addContainerGap(49, Short.MAX_VALUE))
         );
 
         pack();
@@ -173,6 +183,13 @@ public class academicLeader extends javax.swing.JFrame {
         this.setVisible(false);
     }//GEN-LAST:event_profileActionPerformed
 
+    private void lecturerReviewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_lecturerReviewActionPerformed
+        // TODO add your handling code here:
+        lecturerReview lr = new lecturerReview(this.loggedInUserID, this);
+        lr.setVisible(true);
+        this.setVisible(false);
+    }//GEN-LAST:event_lecturerReviewActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -200,9 +217,10 @@ public class academicLeader extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JToggleButton generateReports;
-    private javax.swing.JLabel jLabel1;
+    private javax.swing.JToggleButton lecturerReview;
     private javax.swing.JToggleButton logOut;
     private javax.swing.JToggleButton modules;
     private javax.swing.JToggleButton profile;
+    private javax.swing.JLabel welcome;
     // End of variables declaration//GEN-END:variables
 }
