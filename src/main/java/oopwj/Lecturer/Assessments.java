@@ -408,8 +408,8 @@ public class Assessments extends javax.swing.JFrame {
 
     private void deleteQuizSets(java.util.Set<String> quizSetKeysToDelete) {
         String projectRoot = System.getProperty("user.dir");
-        File quizFile = new File(projectRoot, "src\\main\\java\\oopwj\\Quiz.txt");
-        File questionFile = new File(projectRoot, "src\\main\\java\\oopwj\\question.txt");
+        File quizFile = new File(projectRoot, "src\\main\\java\\oopwj\\data\\Quiz.txt");
+        File questionFile = new File(projectRoot, "src\\main\\java\\oopwj\\data\\question.txt");
 
         // Update Quiz.txt
         if (quizFile.exists()) {
@@ -498,7 +498,7 @@ public class Assessments extends javax.swing.JFrame {
     
     private void updateQuizFile(java.util.Set<Integer> linesToDelete) {
         String projectRoot = System.getProperty("user.dir");
-        File quizFile = new File(projectRoot, "src\\main\\java\\oopwj\\question.txt");
+        File quizFile = new File(projectRoot, "src\\main\\java\\oopwj\\data\\question.txt");
         
         try {
             // First, collect remaining lines and renumber them
@@ -560,7 +560,7 @@ public class Assessments extends javax.swing.JFrame {
         }
 
         String projectRoot = System.getProperty("user.dir");
-        File questionFile = new File(projectRoot, "src\\main\\java\\oopwj\\question.txt");
+        File questionFile = new File(projectRoot, "src\\main\\java\\oopwj\\data\\question.txt");
 
         String[] columnNames = {"Module Name", "Quiz Name", "Question ID", "Question", "Total Marks"};
         List<Object[]> matchingRows = new ArrayList<>();
@@ -829,7 +829,7 @@ public class Assessments extends javax.swing.JFrame {
 
     private QuizQuestionData loadQuestionData(String moduleId, String quizId, String questionId) {
         String projectRoot = System.getProperty("user.dir");
-        File quizFile = new File(projectRoot, "src\\main\\java\\oopwj\\question.txt");
+        File quizFile = new File(projectRoot, "src\\main\\java\\oopwj\\data\\question.txt");
 
         if (!quizFile.exists()) {
             return null;
@@ -977,7 +977,7 @@ public class Assessments extends javax.swing.JFrame {
     
     private void loadQuizzesForFeedback(String moduleID, javax.swing.JComboBox<String> quizComboBox) {
         String projectRoot = System.getProperty("user.dir");
-        File quizFile = new File(projectRoot, "src\\main\\java\\oopwj\\Quiz.txt");
+        File quizFile = new File(projectRoot, "src\\main\\java\\oopwj\\data\\Quiz.txt");
         
         quizComboBox.removeAllItems();
         
@@ -1020,7 +1020,7 @@ public class Assessments extends javax.swing.JFrame {
         allModuleNames.clear();
         
         String projectRoot = System.getProperty("user.dir");
-        File modulesFile = new File(projectRoot, "src\\main\\java\\oopwj\\modules.txt");
+        File modulesFile = new File(projectRoot, "src\\main\\java\\oopwj\\data\\modules.txt");
         
         if (!modulesFile.exists()) {
             logger.log(java.util.logging.Level.WARNING, "modules.txt not found");
@@ -1095,7 +1095,7 @@ public class Assessments extends javax.swing.JFrame {
 
     private void loadQuizData() {
         String projectRoot = System.getProperty("user.dir");
-        File quizFile = new File(projectRoot, "src\\main\\java\\oopwj\\question.txt");
+        File quizFile = new File(projectRoot, "src\\main\\java\\oopwj\\data\\question.txt");
 
         // Load total marks per question (ModuleID|QuizID|QuestionID)
         Map<String, String> quizMarks = loadQuizMarks(projectRoot);
@@ -1156,7 +1156,7 @@ public class Assessments extends javax.swing.JFrame {
 
     private Map<String, String> loadQuizNames(String projectRoot) {
         Map<String, String> quizNames = new HashMap<>();
-        File quizFile = new File(projectRoot, "src\\main\\java\\oopwj\\Quiz.txt");
+        File quizFile = new File(projectRoot, "src\\main\\java\\oopwj\\data\\Quiz.txt");
 
         if (quizFile.exists()) {
             try (BufferedReader br = new BufferedReader(new FileReader(quizFile))) {
@@ -1182,7 +1182,7 @@ public class Assessments extends javax.swing.JFrame {
     
     private Map<String, String> loadQuizMarks(String projectRoot) {
         Map<String, String> quizMarks = new HashMap<>();
-        File marksFile = new File(projectRoot, "src\\main\\java\\oopwj\\TotalQuizMark.txt");
+        File marksFile = new File(projectRoot, "src\\main\\java\\oopwj\\data\\TotalQuizMark.txt");
         
         if (marksFile.exists()) {
             try (BufferedReader br = new BufferedReader(new FileReader(marksFile))) {
@@ -1259,8 +1259,8 @@ public class Assessments extends javax.swing.JFrame {
 
     private void loadQuizSetsData() {
         String projectRoot = System.getProperty("user.dir");
-        File quizFile = new File(projectRoot, "src\\main\\java\\oopwj\\Quiz.txt");
-        File questionFile = new File(projectRoot, "src\\main\\java\\oopwj\\question.txt");
+        File quizFile = new File(projectRoot, "src\\main\\java\\oopwj\\data\\Quiz.txt");
+        File questionFile = new File(projectRoot, "src\\main\\java\\oopwj\\data\\question.txt");
 
         // Count questions per QuizID and ModuleID combination
         Map<String, Integer> questionCounts = new HashMap<>();
@@ -1330,8 +1330,8 @@ public class Assessments extends javax.swing.JFrame {
     
     private void loadQuizzesByModuleID(String moduleID) {
         String projectRoot = System.getProperty("user.dir");
-        File quizFile = new File(projectRoot, "src\\main\\java\\oopwj\\Quiz.txt");
-        File questionFile = new File(projectRoot, "src\\main\\java\\oopwj\\question.txt");
+        File quizFile = new File(projectRoot, "src\\main\\java\\oopwj\\data\\Quiz.txt");
+        File questionFile = new File(projectRoot, "src\\main\\java\\oopwj\\data\\question.txt");
 
         displayedQuizSetKeys.clear();
         

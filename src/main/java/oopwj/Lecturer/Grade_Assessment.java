@@ -350,10 +350,10 @@ public class Grade_Assessment extends javax.swing.JFrame {
         
         // Use absolute paths based on project root
         String projectRoot = System.getProperty("user.dir");
-        String modulesFilePath = projectRoot + "/src/main/java/oopwj/modules.txt";
-        String answersFilePath = projectRoot + "/src/main/java/oopwj/answers.txt";
-        String quizFilePath = projectRoot + "/src/main/java/oopwj/Quiz.txt";
-        String finalGradeFilePath = projectRoot + "/src/main/java/oopwj/FinalGrade.txt";
+        String modulesFilePath = projectRoot + "\\src\\main\\java\\oopwj\\data\\modules.txt";
+        String answersFilePath = projectRoot + "\\src\\main\\java\\oopwj\\data\\answers.txt";
+        String quizFilePath = projectRoot + "\\src\\main\\java\\oopwj\\data\\Quiz.txt";
+        String finalGradeFilePath = projectRoot + "\\src\\main\\java\\oopwj\\data\\FinalGrade.txt";
         Set<String> allowedModuleIDs = new HashSet<>();
         Map<String, List<String>> quizByModule = new HashMap<>();
         Map<String, String[]> finalGrades = loadFinalGrades(finalGradeFilePath);
@@ -612,10 +612,10 @@ public class Grade_Assessment extends javax.swing.JFrame {
         System.out.println("StudentID: " + studentID + ", ModuleID: " + moduleID + ", QuizID: " + quizID);
         
         String projectRoot = System.getProperty("user.dir");
-        String questionFilePath = projectRoot + "/src/main/java/oopwj/question.txt";
-        String answersFilePath = projectRoot + "/src/main/java/oopwj/answers.txt";
-        String totalQuizMarkPath = projectRoot + "/src/main/java/oopwj/TotalQuizMark.txt";
-        String gradeFilePath = projectRoot + "/src/main/java/oopwj/Grade.txt";
+        String questionFilePath = projectRoot + "\\src\\main\\java\\oopwj\\data\\question.txt";
+        String answersFilePath = projectRoot + "\\src\\main\\java\\oopwj\\data\\answers.txt";
+        String totalQuizMarkPath = projectRoot + "\\src\\main\\java\\oopwj\\data\\TotalQuizMark.txt";
+        String gradeFilePath = projectRoot + "\\src\\main\\java\\oopwj\\data\\Grade.txt";
         
         // Load question data (map of questionID -> [correctAnswer, questionType])
         Map<String, String[]> questionData = loadQuestionData(questionFilePath, moduleID, quizID);

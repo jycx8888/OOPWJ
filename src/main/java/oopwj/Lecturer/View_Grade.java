@@ -63,7 +63,7 @@ public class View_Grade extends javax.swing.JFrame {
      */
     private void loadMaxMarks(String moduleID, String quizID) {
         String projectRoot = System.getProperty("user.dir");
-        String totalQuizMarkPath = projectRoot + "/src/main/java/oopwj/TotalQuizMark.txt";
+        String totalQuizMarkPath = projectRoot + "\\src\\main\\java\\oopwj\\data\\TotalQuizMark.txt";
         
         java.io.File totalQuizMarkFile = new java.io.File(totalQuizMarkPath);
         if (!totalQuizMarkFile.exists()) {
@@ -150,7 +150,7 @@ public class View_Grade extends javax.swing.JFrame {
      */
     private void loadExistingGrades() {
         String projectRoot = System.getProperty("user.dir");
-        String gradeFilePath = projectRoot + "/src/main/java/oopwj/Grade.txt";
+        String gradeFilePath = projectRoot + "\\src\\main\\java\\oopwj\\data\\Grade.txt";
         
         java.io.File gradeFile = new java.io.File(gradeFilePath);
         if (!gradeFile.exists()) {
@@ -200,7 +200,7 @@ public class View_Grade extends javax.swing.JFrame {
      */
     private void loadQuestionIDs(String moduleID, String quizID) {
         String projectRoot = System.getProperty("user.dir");
-        String quizFilePath = projectRoot + "/src/main/java/oopwj/question.txt";
+        String quizFilePath = projectRoot + "\\src\\main\\java\\oopwj\\data\\question.txt";
         
         java.io.File quizFile = new java.io.File(quizFilePath);
         if (!quizFile.exists()) {
@@ -517,7 +517,7 @@ public class View_Grade extends javax.swing.JFrame {
      */
     private void loadQuestionData(String questionID) {
         String projectRoot = System.getProperty("user.dir");
-        String questionFilePath = projectRoot + "/src/main/java/oopwj/question.txt";
+        String questionFilePath = projectRoot + "\\src\\main\\java\\oopwj\\data\\question.txt";
         
         java.io.File questionFile = new java.io.File(questionFilePath);
         if (!questionFile.exists()) {
@@ -613,7 +613,7 @@ public class View_Grade extends javax.swing.JFrame {
      */
     private void loadStudentAnswer(String questionID) {
         String projectRoot = System.getProperty("user.dir");
-        String answersFilePath = projectRoot + "/src/main/java/oopwj/answers.txt";
+        String answersFilePath = projectRoot + "\\src\\main\\java\\oopwj\\data\\answers.txt";
         
         java.io.File answersFile = new java.io.File(answersFilePath);
         if (!answersFile.exists()) {
@@ -797,7 +797,7 @@ public class View_Grade extends javax.swing.JFrame {
      */
     private boolean isSubjectiveQuestion(String questionID) {
         String projectRoot = System.getProperty("user.dir");
-        String questionFilePath = projectRoot + "/src/main/java/oopwj/question.txt";
+        String questionFilePath = projectRoot + "\\src\\main\\java\\oopwj\\data\\question.txt";
         
         java.io.File questionFile = new java.io.File(questionFilePath);
         if (!questionFile.exists()) {
@@ -836,7 +836,7 @@ public class View_Grade extends javax.swing.JFrame {
      */
     private int countSubjectiveQuestions() {
         String projectRoot = System.getProperty("user.dir");
-        String questionFilePath = projectRoot + "/src/main/java/oopwj/question.txt";
+        String questionFilePath = projectRoot + "\\src\\main\\java\\oopwj\\data\\question.txt";
         
         int count = 0;
         java.io.File questionFile = new java.io.File(questionFilePath);
@@ -876,7 +876,7 @@ public class View_Grade extends javax.swing.JFrame {
      */
     private int countObjectiveQuestions() {
         String projectRoot = System.getProperty("user.dir");
-        String questionFilePath = projectRoot + "/src/main/java/oopwj/question.txt";
+        String questionFilePath = projectRoot + "\\src\\main\\java\\oopwj\\data\\question.txt";
         
         int count = 0;
         java.io.File questionFile = new java.io.File(questionFilePath);
@@ -919,7 +919,7 @@ public class View_Grade extends javax.swing.JFrame {
         java.util.Map<String, Integer> objectiveGrades = new java.util.LinkedHashMap<>();
         
         String projectRoot = System.getProperty("user.dir");
-        String gradeFilePath = projectRoot + "/src/main/java/oopwj/Grade.txt";
+        String gradeFilePath = projectRoot + "\\src\\main\\java\\oopwj\\data\\Grade.txt";
         
         java.io.File gradeFile = new java.io.File(gradeFilePath);
         if (!gradeFile.exists()) {
@@ -986,7 +986,7 @@ public class View_Grade extends javax.swing.JFrame {
     private java.util.Map<String, String> loadSubjectiveAnswers() {
         java.util.Map<String, String> answers = new java.util.HashMap<>();
         String projectRoot = System.getProperty("user.dir");
-        String answersFilePath = projectRoot + "/src/main/java/oopwj/answers.txt";
+        String answersFilePath = projectRoot + "\\src\\main\\java\\oopwj\\data\\answers.txt";
         
         java.io.File answersFile = new java.io.File(answersFilePath);
         if (!answersFile.exists()) {
@@ -1033,7 +1033,7 @@ public class View_Grade extends javax.swing.JFrame {
      */
     private void saveAllSubjectiveGrades() {
         String projectRoot = System.getProperty("user.dir");
-        String gradeFilePath = projectRoot + "/src/main/java/oopwj/Grade.txt";
+        String gradeFilePath = projectRoot + "\\src\\main\\java\\oopwj\\data\\Grade.txt";
         
         java.io.File gradeFile = new java.io.File(gradeFilePath);
         
@@ -1161,10 +1161,10 @@ public class View_Grade extends javax.swing.JFrame {
         System.out.println("StudentID: " + studentID + ", ModuleID: " + moduleID + ", QuizID: " + quizID);
         
         String projectRoot = System.getProperty("user.dir");
-        String questionFilePath = projectRoot + "/src/main/java/oopwj/question.txt";
-        String answersFilePath = projectRoot + "/src/main/java/oopwj/answers.txt";
-        String totalQuizMarkPath = projectRoot + "/src/main/java/oopwj/TotalQuizMark.txt";
-        String gradeFilePath = projectRoot + "/src/main/java/oopwj/Grade.txt";
+        String questionFilePath = projectRoot + "\\src\\main\\java\\oopwj\\data\\question.txt";
+        String answersFilePath = projectRoot + "\\src\\main\\java\\oopwj\\data\\answers.txt";
+        String totalQuizMarkPath = projectRoot + "\\src\\main\\java\\oopwj\\data\\TotalQuizMark.txt";
+        String gradeFilePath = projectRoot + "\\src\\main\\java\\oopwj\\data\\Grade.txt";
         
         // Load question data (map of questionID -> [correctAnswer, questionType])
         java.util.Map<String, String[]> questionData = loadQuestionData(questionFilePath, moduleID, quizID);
@@ -1374,9 +1374,9 @@ public class View_Grade extends javax.swing.JFrame {
      */
     private void calculateAndSaveFinalGrade() {
         String projectRoot = System.getProperty("user.dir");
-        String totalQuizMarkPath = projectRoot + "/src/main/java/oopwj/TotalQuizMark.txt";
-        String gradeFilePath = projectRoot + "/src/main/java/oopwj/Grade.txt";
-        String finalGradeFilePath = projectRoot + "/src/main/java/oopwj/FinalGrade.txt";
+        String totalQuizMarkPath = projectRoot + "\\src\\main\\java\\oopwj\\data\\TotalQuizMark.txt";
+        String gradeFilePath = projectRoot + "\\src\\main\\java\\oopwj\\data\\Grade.txt";
+        String finalGradeFilePath = projectRoot + "\\src\\main\\java\\oopwj\\data\\FinalGrade.txt";
         
         // Step 1: Calculate total possible marks for this quiz from TotalQuizMark.txt
         int totalPossibleMarks = 0;
@@ -1550,7 +1550,7 @@ public class View_Grade extends javax.swing.JFrame {
      */
     private String determineLetterGrade(double percentage) {
         String projectRoot = System.getProperty("user.dir");
-        String gradingFilePath = projectRoot + "/src/main/java/oopwj/grading.txt";
+        String gradingFilePath = projectRoot + "\\src\\main\\java\\oopwj\\data\\grading.txt";
         
         java.io.File gradingFile = new java.io.File(gradingFilePath);
         if (!gradingFile.exists()) {

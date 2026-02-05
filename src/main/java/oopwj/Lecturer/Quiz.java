@@ -268,7 +268,7 @@ public class Quiz extends javax.swing.JFrame {
 
     private void populateModulesDropdown() {
         String projectRoot = System.getProperty("user.dir");
-        File modulesFile = new File(projectRoot, "src\\main\\java\\oopwj\\modules.txt");
+        File modulesFile = new File(projectRoot, "src\\main\\java\\oopwj\\data\\modules.txt");
 
         if (!modulesFile.exists()) {
             JOptionPane.showMessageDialog(this, "Modules file not found.", "Error", JOptionPane.ERROR_MESSAGE);
@@ -376,7 +376,7 @@ public class Quiz extends javax.swing.JFrame {
 
     private String getModuleNameById(String moduleId) {
         String projectRoot = System.getProperty("user.dir");
-        File modulesFile = new File(projectRoot, "src\\main\\java\\oopwj\\modules.txt");
+        File modulesFile = new File(projectRoot, "src\\main\\java\\oopwj\\data\\modules.txt");
 
         if (!modulesFile.exists()) {
             return null;
@@ -434,7 +434,7 @@ public class Quiz extends javax.swing.JFrame {
 
     private void loadQuizQuestions() {
         String projectRoot = System.getProperty("user.dir");
-        File quizFile = new File(projectRoot, "src\\main\\java\\oopwj\\question.txt");
+        File quizFile = new File(projectRoot, "src\\main\\java\\oopwj\\data\\question.txt");
 
         if (!quizFile.exists()) {
             JOptionPane.showMessageDialog(this, "Quiz file not found.", "Error", JOptionPane.ERROR_MESSAGE);
@@ -482,7 +482,7 @@ public class Quiz extends javax.swing.JFrame {
 
     private void loadQuizQuestionsToTable(javax.swing.JTable table) {
         String projectRoot = System.getProperty("user.dir");
-        File quizFile = new File(projectRoot, "src\\main\\java\\oopwj\\question.txt");
+        File quizFile = new File(projectRoot, "src\\main\\java\\oopwj\\data\\question.txt");
 
         if (!quizFile.exists()) {
             JOptionPane.showMessageDialog(this, "Quiz file not found.", "Error", JOptionPane.ERROR_MESSAGE);
@@ -532,7 +532,7 @@ public class Quiz extends javax.swing.JFrame {
 
     private void saveQuestionMarks(String moduleId, String quizId, String questionId, String marks) {
         String projectRoot = System.getProperty("user.dir");
-        File marksFile = new File(projectRoot, "src\\main\\java\\oopwj\\TotalQuizMark.txt");
+        File marksFile = new File(projectRoot, "src\\main\\java\\oopwj\\data\\TotalQuizMark.txt");
 
         // Read all existing marks
         java.util.List<String> allLines = new java.util.ArrayList<>();
@@ -1102,8 +1102,8 @@ public class Quiz extends javax.swing.JFrame {
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {
         // Save: check if in edit mode or add mode
         String projectRoot = System.getProperty("user.dir");
-        File temp = new File(projectRoot, "src\\main\\java\\oopwj\\TempQues.txt");
-        File quizFile = new File(projectRoot, "src\\main\\java\\oopwj\\question.txt");
+        File temp = new File(projectRoot, "src\\main\\java\\oopwj\\data\\TempQues.txt");
+        File quizFile = new File(projectRoot, "src\\main\\java\\oopwj\\data\\question.txt");
 
         // Check which tab is selected
         int selectedTabIndex = jTabbedPane1.getSelectedIndex();
@@ -1299,7 +1299,7 @@ public class Quiz extends javax.swing.JFrame {
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {
         // Check if there's anything to discard
         String projectRoot = System.getProperty("user.dir");
-        File temp = new File(projectRoot, "src\\main\\java\\oopwj\\TempQues.txt");
+        File temp = new File(projectRoot, "src\\main\\java\\oopwj\\data\\TempQues.txt");
         
         String question = jTextArea1.getText().trim();
         String a1 = a.getText().trim();
@@ -1629,7 +1629,7 @@ public class Quiz extends javax.swing.JFrame {
      */
     private String generateNextQuizId(String moduleId) {
         String projectRoot = System.getProperty("user.dir");
-        File quizFile = new File(projectRoot, "src\\main\\java\\oopwj\\Quiz.txt");
+        File quizFile = new File(projectRoot, "src\\main\\java\\oopwj\\data\\Quiz.txt");
         int maxId = 0;
         
         if (quizFile.exists()) {
@@ -1669,7 +1669,7 @@ public class Quiz extends javax.swing.JFrame {
      */
     private boolean saveQuizToFile(String quizId, String moduleId, String title) {
         String projectRoot = System.getProperty("user.dir");
-        File quizFile = new File(projectRoot, "src\\main\\java\\oopwj\\Quiz.txt");
+        File quizFile = new File(projectRoot, "src\\main\\java\\oopwj\\data\\Quiz.txt");
         
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(quizFile, true))) {
             bw.write(quizId + "," + moduleId + "," + csvEscape(title));
@@ -1686,7 +1686,7 @@ public class Quiz extends javax.swing.JFrame {
      */
     private void populateQuizDropdown(String moduleId) {
         String projectRoot = System.getProperty("user.dir");
-        File quizFile = new File(projectRoot, "src\\main\\java\\oopwj\\Quiz.txt");
+        File quizFile = new File(projectRoot, "src\\main\\java\\oopwj\\data\\Quiz.txt");
         
         // Clear existing items
         jComboBox2.removeAllItems();
@@ -1723,7 +1723,7 @@ public class Quiz extends javax.swing.JFrame {
      */
     private String getQuizTitle(String quizId) {
         String projectRoot = System.getProperty("user.dir");
-        File quizFile = new File(projectRoot, "src\\main\\java\\oopwj\\Quiz.txt");
+        File quizFile = new File(projectRoot, "src\\main\\java\\oopwj\\data\\Quiz.txt");
         
         if (!quizFile.exists()) {
             return null;
@@ -1756,7 +1756,7 @@ public class Quiz extends javax.swing.JFrame {
         }
 
         String projectRoot = System.getProperty("user.dir");
-        File quizFile = new File(projectRoot, "src\\main\\java\\oopwj\\Quiz.txt");
+        File quizFile = new File(projectRoot, "src\\main\\java\\oopwj\\data\\Quiz.txt");
 
         if (!quizFile.exists()) {
             return "";
@@ -1791,7 +1791,7 @@ public class Quiz extends javax.swing.JFrame {
         }
 
         String projectRoot = System.getProperty("user.dir");
-        File questionFile = new File(projectRoot, "src\\main\\java\\oopwj\\question.txt");
+        File questionFile = new File(projectRoot, "src\\main\\java\\oopwj\\data\\question.txt");
 
         if (!questionFile.exists()) {
             return 0;
@@ -1837,7 +1837,7 @@ public class Quiz extends javax.swing.JFrame {
      */
     private String getNextQuestionID(String moduleId, String quizId) {
         String projectRoot = System.getProperty("user.dir");
-        File questionFile = new File(projectRoot, "src\\main\\java\\oopwj\\question.txt");
+        File questionFile = new File(projectRoot, "src\\main\\java\\oopwj\\data\\question.txt");
         
         int maxId = 0;
         

@@ -209,7 +209,7 @@ public class Feedback extends javax.swing.JFrame {
         } else {
             // Save student feedback
             String projectRoot = System.getProperty("user.dir");
-            String finalGradeFilePath = projectRoot + "/src/main/java/oopwj/FinalGrade.txt";
+            String finalGradeFilePath = projectRoot + "\\src\\main\\java\\oopwj\\data\\FinalGrade.txt";
             
             if (!updateFeedbackInFile(finalGradeFilePath, feedback)) {
                 javax.swing.JOptionPane.showMessageDialog(this,
@@ -335,7 +335,7 @@ public class Feedback extends javax.swing.JFrame {
      */
     private void loadExistingFeedback() {
         String projectRoot = System.getProperty("user.dir");
-        String finalGradeFilePath = projectRoot + "/src/main/java/oopwj/FinalGrade.txt";
+        String finalGradeFilePath = projectRoot + "\\src\\main\\java\\oopwj\\data\\FinalGrade.txt";
         
         java.io.File finalGradeFile = new java.io.File(finalGradeFilePath);
         if (!finalGradeFile.exists()) {
@@ -388,7 +388,7 @@ public class Feedback extends javax.swing.JFrame {
      */
     private void loadExistingQuizSetFeedback() {
         String projectRoot = System.getProperty("user.dir");
-        String quizFeedbackFilePath = projectRoot + "/src/main/java/oopwj/QuizFeedback.txt";
+        String quizFeedbackFilePath = projectRoot + "\\src\\main\\java\\oopwj\\data\\QuizFeedback.txt";
         
         java.io.File quizFeedbackFile = new java.io.File(quizFeedbackFilePath);
         if (!quizFeedbackFile.exists()) {
@@ -454,7 +454,7 @@ public class Feedback extends javax.swing.JFrame {
      */
     private boolean saveQuizSetFeedback(String feedback) {
         String projectRoot = System.getProperty("user.dir");
-        String quizFeedbackFilePath = projectRoot + "/src/main/java/oopwj/QuizFeedback.txt";
+        String quizFeedbackFilePath = projectRoot + "\\src\\main\\java\\oopwj\\data\\QuizFeedback.txt";
         
         java.io.File quizFeedbackFile = new java.io.File(quizFeedbackFilePath);
         java.util.List<String> lines = new java.util.ArrayList<>();
