@@ -15,10 +15,13 @@ public class Lecturer_schedule extends javax.swing.JFrame {
     private static final java.nio.file.Path DATA_DIR_FALLBACK = java.nio.file.Paths.get("target", "classes", "oopwj", "Data");
     private static final java.time.format.DateTimeFormatter DATE_FORMATTER = java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy");
     private static final String WEEK_PREFIX = "Week of ";
+    private static final String[] DEFAULT_DAYS = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday"};
+    private static final String EMPTY_DAY_OPTION = "";
     private final String lecturerID;
     private final Lecturer_menu parentWindow;
     private boolean suppressDayFilterEvent = false;
     private boolean suppressWeekFilterEvent = false;
+    private java.time.LocalDate lastSelectedWeekStart;
 
     /**
      * Creates new form Lecturer_schedule
@@ -48,9 +51,8 @@ public class Lecturer_schedule extends javax.swing.JFrame {
     }
 
     private void setupDayFilter() {
-        String[] days = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday"};
         suppressDayFilterEvent = true;
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(days));
+        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(DEFAULT_DAYS));
         jComboBox1.setSelectedIndex(0);
         java.awt.Dimension comboSize = jComboBox1.getPreferredSize();
         jComboBox1.setMinimumSize(comboSize);
@@ -115,13 +117,13 @@ public class Lecturer_schedule extends javax.swing.JFrame {
         }
         updateWeekFilterOptions(scheduleRows);
         java.time.LocalDate selectedWeekStart = getSelectedWeekStart();
+        updateDayFilterOptions(scheduleRows, selectedWeekStart);
         if (selectedWeekStart != null) {
             scheduleRows = filterScheduleRowsByWeek(scheduleRows, selectedWeekStart);
-        } else {
-            String selectedDay = getSelectedDay();
-            if (selectedDay != null && !selectedDay.isEmpty()) {
-                scheduleRows = filterScheduleRowsByDay(scheduleRows, selectedDay);
-            }
+        }
+        String selectedDay = getSelectedDay();
+        if (selectedDay != null && !selectedDay.isEmpty()) {
+            scheduleRows = filterScheduleRowsByDay(scheduleRows, selectedDay);
         }
         if (scheduleRows.isEmpty()) {
             String emptyDay = selectedWeekStart == null ? getSelectedDay() : null;
@@ -276,7 +278,8 @@ public class Lecturer_schedule extends javax.swing.JFrame {
         if (selected == null) {
             return null;
         }
-        return selected.toString().trim();
+        String value = selected.toString().trim();
+        return value.isEmpty() ? null : value;
     }
 
     private void showEmptySchedule(String selectedDay) {
@@ -484,6 +487,60 @@ public class Lecturer_schedule extends javax.swing.JFrame {
             jComboBox2.setSelectedIndex(0);
         }
         suppressWeekFilterEvent = false;
+    }
+
+    private void updateDayFilterOptions(java.util.List<String[]> scheduleRows, java.time.LocalDate weekStart) {
+        java.util.List<String> days = new java.util.ArrayList<>();
+        boolean weekChanged = false;
+        if (weekStart != null) {
+            weekChanged = lastSelectedWeekStart == null || !lastSelectedWeekStart.equals(weekStart);
+        } else if (lastSelectedWeekStart != null) {
+            weekChanged = true;
+        }
+        if (weekStart != null) {
+            java.util.Set<String> availableDays = new java.util.HashSet<>();
+            java.time.LocalDate weekEnd = weekStart.plusDays(6);
+            for (String[] row : scheduleRows) {
+                if (row.length > 3) {
+                    java.time.LocalDate date = parseDate(row[2]);
+                    if (date != null && !date.isBefore(weekStart) && !date.isAfter(weekEnd)) {
+                        String day = row[3].trim();
+                        if (!day.isEmpty()) {
+                            availableDays.add(day);
+                        }
+                    }
+                }
+            }
+            for (String defaultDay : DEFAULT_DAYS) {
+                if (availableDays.contains(defaultDay)) {
+                    days.add(defaultDay);
+                    availableDays.remove(defaultDay);
+                }
+            }
+            if (!availableDays.isEmpty()) {
+                days.addAll(availableDays);
+            }
+            if (days.isEmpty()) {
+                java.util.Collections.addAll(days, DEFAULT_DAYS);
+            }
+            days.add(0, EMPTY_DAY_OPTION);
+        } else {
+            java.util.Collections.addAll(days, DEFAULT_DAYS);
+        }
+
+        Object selected = jComboBox1.getSelectedItem();
+        String selectedDay = selected == null ? null : selected.toString();
+        suppressDayFilterEvent = true;
+        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(days.toArray(new String[0])));
+        if (weekStart != null && weekChanged) {
+            jComboBox1.setSelectedItem(EMPTY_DAY_OPTION);
+        } else if (selectedDay != null && days.contains(selectedDay)) {
+            jComboBox1.setSelectedItem(selectedDay);
+        } else if (!days.isEmpty()) {
+            jComboBox1.setSelectedIndex(0);
+        }
+        suppressDayFilterEvent = false;
+        lastSelectedWeekStart = weekStart;
     }
 
     private java.time.LocalDate getSelectedWeekStart() {
