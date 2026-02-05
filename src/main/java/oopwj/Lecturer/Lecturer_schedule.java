@@ -13,9 +13,12 @@ public class Lecturer_schedule extends javax.swing.JFrame {
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(Lecturer_schedule.class.getName());
     private static final java.nio.file.Path DATA_DIR = java.nio.file.Paths.get("src", "main", "java", "oopwj", "Data");
     private static final java.nio.file.Path DATA_DIR_FALLBACK = java.nio.file.Paths.get("target", "classes", "oopwj", "Data");
+    private static final java.time.format.DateTimeFormatter DATE_FORMATTER = java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy");
+    private static final String WEEK_PREFIX = "Week of ";
     private final String lecturerID;
     private final Lecturer_menu parentWindow;
     private boolean suppressDayFilterEvent = false;
+    private boolean suppressWeekFilterEvent = false;
 
     /**
      * Creates new form Lecturer_schedule
@@ -30,6 +33,7 @@ public class Lecturer_schedule extends javax.swing.JFrame {
         initComponents();
         setupListeners();
         setupDayFilter();
+        setupWeekFilter();
         configureScrollPane();
         buildScheduleView();
         centerWindow();
@@ -54,6 +58,21 @@ public class Lecturer_schedule extends javax.swing.JFrame {
         suppressDayFilterEvent = false;
         jComboBox1.addActionListener(evt -> {
             if (suppressDayFilterEvent) {
+                return;
+            }
+            buildScheduleView();
+        });
+    }
+
+    private void setupWeekFilter() {
+        suppressWeekFilterEvent = true;
+        jComboBox2.setModel(new javax.swing.DefaultComboBoxModel<>(new String[0]));
+        java.awt.Dimension comboSize = jComboBox2.getPreferredSize();
+        jComboBox2.setMinimumSize(comboSize);
+        jComboBox2.setMaximumSize(comboSize);
+        suppressWeekFilterEvent = false;
+        jComboBox2.addActionListener(evt -> {
+            if (suppressWeekFilterEvent) {
                 return;
             }
             buildScheduleView();
@@ -94,12 +113,19 @@ public class Lecturer_schedule extends javax.swing.JFrame {
                 scheduleRows = new java.util.ArrayList<>();
             }
         }
-        String selectedDay = getSelectedDay();
-        if (selectedDay != null && !selectedDay.isEmpty()) {
-            scheduleRows = filterScheduleRowsByDay(scheduleRows, selectedDay);
+        updateWeekFilterOptions(scheduleRows);
+        java.time.LocalDate selectedWeekStart = getSelectedWeekStart();
+        if (selectedWeekStart != null) {
+            scheduleRows = filterScheduleRowsByWeek(scheduleRows, selectedWeekStart);
+        } else {
+            String selectedDay = getSelectedDay();
+            if (selectedDay != null && !selectedDay.isEmpty()) {
+                scheduleRows = filterScheduleRowsByDay(scheduleRows, selectedDay);
+            }
         }
         if (scheduleRows.isEmpty()) {
-            showEmptySchedule(selectedDay);
+            String emptyDay = selectedWeekStart == null ? getSelectedDay() : null;
+            showEmptySchedule(emptyDay);
             return;
         }
 
@@ -110,8 +136,12 @@ public class Lecturer_schedule extends javax.swing.JFrame {
         jPanel1.setLayout(new javax.swing.BoxLayout(jPanel1, javax.swing.BoxLayout.Y_AXIS));
         jPanel1.setBorder(javax.swing.BorderFactory.createEmptyBorder(20, 41, 20, 41));
 
-        jComboBox1.setAlignmentX(java.awt.Component.LEFT_ALIGNMENT);
-        jPanel1.add(jComboBox1);
+        javax.swing.JPanel filterPanel = new javax.swing.JPanel(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 10, 0));
+        filterPanel.setBackground(jPanel1.getBackground());
+        filterPanel.setAlignmentX(java.awt.Component.LEFT_ALIGNMENT);
+        filterPanel.add(jComboBox2);
+        filterPanel.add(jComboBox1);
+        jPanel1.add(filterPanel);
         jPanel1.add(javax.swing.Box.createVerticalStrut(12));
 
         javax.swing.JPanel scheduleListPanel = new javax.swing.JPanel();
@@ -225,6 +255,22 @@ public class Lecturer_schedule extends javax.swing.JFrame {
         return filtered;
     }
 
+    private java.util.List<String[]> filterScheduleRowsByWeek(
+            java.util.List<String[]> scheduleRows,
+            java.time.LocalDate weekStart) {
+        java.util.List<String[]> filtered = new java.util.ArrayList<>();
+        java.time.LocalDate weekEnd = weekStart.plusDays(6);
+        for (String[] row : scheduleRows) {
+            if (row.length > 2) {
+                java.time.LocalDate date = parseDate(row[2]);
+                if (date != null && !date.isBefore(weekStart) && !date.isAfter(weekEnd)) {
+                    filtered.add(row);
+                }
+            }
+        }
+        return filtered;
+    }
+
     private String getSelectedDay() {
         Object selected = jComboBox1.getSelectedItem();
         if (selected == null) {
@@ -238,8 +284,12 @@ public class Lecturer_schedule extends javax.swing.JFrame {
         jPanel1.setLayout(new javax.swing.BoxLayout(jPanel1, javax.swing.BoxLayout.Y_AXIS));
         jPanel1.setBorder(javax.swing.BorderFactory.createEmptyBorder(20, 41, 20, 41));
 
-        jComboBox1.setAlignmentX(java.awt.Component.LEFT_ALIGNMENT);
-        jPanel1.add(jComboBox1);
+        javax.swing.JPanel filterPanel = new javax.swing.JPanel(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 10, 0));
+        filterPanel.setBackground(jPanel1.getBackground());
+        filterPanel.setAlignmentX(java.awt.Component.LEFT_ALIGNMENT);
+        filterPanel.add(jComboBox2);
+        filterPanel.add(jComboBox1);
+        jPanel1.add(filterPanel);
         jPanel1.add(javax.swing.Box.createVerticalStrut(12));
 
         String message = "No timetable available";
@@ -404,6 +454,62 @@ public class Lecturer_schedule extends javax.swing.JFrame {
         return map;
     }
 
+    private void updateWeekFilterOptions(java.util.List<String[]> scheduleRows) {
+        java.util.Set<java.time.LocalDate> weekStarts = new java.util.HashSet<>();
+        for (String[] row : scheduleRows) {
+            if (row.length > 2) {
+                java.time.LocalDate date = parseDate(row[2]);
+                if (date != null) {
+                    java.time.LocalDate weekStart = date.with(java.time.temporal.TemporalAdjusters.previousOrSame(java.time.DayOfWeek.MONDAY));
+                    weekStarts.add(weekStart);
+                }
+            }
+        }
+
+        java.util.List<java.time.LocalDate> sortedWeekStarts = new java.util.ArrayList<>(weekStarts);
+        java.util.Collections.sort(sortedWeekStarts);
+
+        java.util.List<String> labels = new java.util.ArrayList<>();
+        for (java.time.LocalDate weekStart : sortedWeekStarts) {
+            labels.add(WEEK_PREFIX + weekStart.format(DATE_FORMATTER));
+        }
+
+        Object selected = jComboBox2.getSelectedItem();
+        String selectedLabel = selected == null ? null : selected.toString();
+        suppressWeekFilterEvent = true;
+        jComboBox2.setModel(new javax.swing.DefaultComboBoxModel<>(labels.toArray(new String[0])));
+        if (selectedLabel != null && labels.contains(selectedLabel)) {
+            jComboBox2.setSelectedItem(selectedLabel);
+        } else if (!labels.isEmpty()) {
+            jComboBox2.setSelectedIndex(0);
+        }
+        suppressWeekFilterEvent = false;
+    }
+
+    private java.time.LocalDate getSelectedWeekStart() {
+        Object selected = jComboBox2.getSelectedItem();
+        if (selected == null) {
+            return null;
+        }
+        String label = selected.toString().trim();
+        if (label.isEmpty()) {
+            return null;
+        }
+        if (label.startsWith(WEEK_PREFIX)) {
+            String dateText = label.substring(WEEK_PREFIX.length()).trim();
+            return parseDate(dateText);
+        }
+        return null;
+    }
+
+    private java.time.LocalDate parseDate(String value) {
+        try {
+            return java.time.LocalDate.parse(value.trim(), DATE_FORMATTER);
+        } catch (java.time.format.DateTimeParseException ex) {
+            return null;
+        }
+    }
+
     private java.nio.file.Path resolveDataDir() {
         if (java.nio.file.Files.exists(DATA_DIR)) {
             return DATA_DIR;
@@ -431,6 +537,7 @@ public class Lecturer_schedule extends javax.swing.JFrame {
         jButton2 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
         jScrollBar1 = new javax.swing.JScrollBar();
+        jComboBox2 = new javax.swing.JComboBox<>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -478,6 +585,8 @@ public class Lecturer_schedule extends javax.swing.JFrame {
 
         jButton3.setText("Next");
 
+        jComboBox2.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -492,7 +601,10 @@ public class Lecturer_schedule extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jButton1))
                     .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                        .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(jPanel1Layout.createSequentialGroup()
+                            .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                            .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 198, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(41, Short.MAX_VALUE))
@@ -505,7 +617,9 @@ public class Lecturer_schedule extends javax.swing.JFrame {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(26, 26, 26)
-                .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(12, 12, 12)
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -566,6 +680,7 @@ public class Lecturer_schedule extends javax.swing.JFrame {
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JComboBox<String> jComboBox1;
+    private javax.swing.JComboBox<String> jComboBox2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
