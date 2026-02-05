@@ -11,12 +11,329 @@ package oopwj.Lecturer;
 public class Lecturer_schedule extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(Lecturer_schedule.class.getName());
+    private static final java.nio.file.Path DATA_DIR = java.nio.file.Paths.get("src", "main", "java", "oopwj", "Data");
+    private static final java.nio.file.Path DATA_DIR_FALLBACK = java.nio.file.Paths.get("target", "classes", "oopwj", "Data");
+    private final String lecturerID;
+    private final Lecturer_menu parentWindow;
 
     /**
      * Creates new form Lecturer_schedule
      */
     public Lecturer_schedule() {
+        this(null, null);
+    }
+
+    public Lecturer_schedule(String lecturerID, Lecturer_menu parentWindow) {
+        this.lecturerID = lecturerID;
+        this.parentWindow = parentWindow;
         initComponents();
+        setupListeners();
+        configureScrollPane();
+        buildScheduleView();
+        centerWindow();
+    }
+
+    private void centerWindow() {
+        setLocationRelativeTo(null);
+    }
+
+    private void setupListeners() {
+        jButton1.addActionListener(evt -> handleExit());
+    }
+
+    private void handleExit() {
+        if (parentWindow != null) {
+            parentWindow.setVisible(true);
+        } else {
+            new Lecturer_menu(lecturerID).setVisible(true);
+        }
+        this.dispose();
+    }
+
+    private void configureScrollPane() {
+        javax.swing.JScrollPane scrollPane = new javax.swing.JScrollPane(jPanel1);
+        scrollPane.setBorder(null);
+        scrollPane.getVerticalScrollBar().setUnitIncrement(16);
+        scrollPane.getVerticalScrollBar().setBlockIncrement(64);
+        setContentPane(scrollPane);
+        if (jScrollBar1 != null) {
+            jScrollBar1.setVisible(false);
+        }
+        pack();
+    }
+
+    private void buildScheduleView() {
+        java.nio.file.Path dataDir = resolveDataDir();
+        java.util.List<String[]> scheduleRows = readCsvLines(dataDir.resolve("class_schedule.txt"));
+        if (lecturerID != null && !lecturerID.isEmpty()) {
+            java.util.Set<String> lecturerModuleIds = readLecturerModuleIds(
+                    dataDir.resolve("modules.txt"),
+                    lecturerID);
+            if (!lecturerModuleIds.isEmpty()) {
+                scheduleRows = filterScheduleRows(scheduleRows, lecturerModuleIds);
+            } else {
+                scheduleRows = new java.util.ArrayList<>();
+            }
+        }
+        if (scheduleRows.isEmpty()) {
+            showEmptySchedule();
+            return;
+        }
+
+        java.util.Map<String, String> classMap = readClassMap(dataDir.resolve("class.txt"));
+        java.util.Map<String, String> moduleMap = readModuleMap(dataDir.resolve("modules.txt"));
+
+        jPanel1.removeAll();
+        jPanel1.setLayout(new javax.swing.BoxLayout(jPanel1, javax.swing.BoxLayout.Y_AXIS));
+        jPanel1.setBorder(javax.swing.BorderFactory.createEmptyBorder(20, 41, 20, 41));
+
+        jComboBox1.setAlignmentX(java.awt.Component.LEFT_ALIGNMENT);
+        jPanel1.add(jComboBox1);
+        jPanel1.add(javax.swing.Box.createVerticalStrut(12));
+
+        javax.swing.JPanel scheduleListPanel = new javax.swing.JPanel();
+        scheduleListPanel.setLayout(new javax.swing.BoxLayout(scheduleListPanel, javax.swing.BoxLayout.Y_AXIS));
+        scheduleListPanel.setBackground(jPanel1.getBackground());
+        scheduleListPanel.setAlignmentX(java.awt.Component.LEFT_ALIGNMENT);
+
+        applyScheduleRow(jLabel1, jLabel2, jLabel3, jLabel4, scheduleRows.get(0), classMap, moduleMap);
+        jLabel1.setAlignmentX(java.awt.Component.LEFT_ALIGNMENT);
+        jPanel2.setAlignmentX(java.awt.Component.LEFT_ALIGNMENT);
+        scheduleListPanel.add(jLabel1);
+        scheduleListPanel.add(javax.swing.Box.createVerticalStrut(8));
+        scheduleListPanel.add(jPanel2);
+
+        for (int i = 1; i < scheduleRows.size(); i++) {
+            javax.swing.JLabel dayDateLabel = new javax.swing.JLabel();
+            dayDateLabel.setFont(jLabel1.getFont());
+            dayDateLabel.setForeground(jLabel1.getForeground());
+            dayDateLabel.setAlignmentX(java.awt.Component.LEFT_ALIGNMENT);
+
+                ScheduleRowComponents rowComponents = createScheduleDetailPanel();
+                rowComponents.classLabel.setFont(jLabel2.getFont());
+                rowComponents.classLabel.setForeground(jLabel2.getForeground());
+                rowComponents.moduleLabel.setFont(jLabel3.getFont());
+                rowComponents.moduleLabel.setForeground(jLabel3.getForeground());
+                rowComponents.timeLabel.setFont(jLabel4.getFont());
+                rowComponents.timeLabel.setForeground(jLabel4.getForeground());
+            applyScheduleRow(
+                    dayDateLabel,
+                    rowComponents.classLabel,
+                    rowComponents.moduleLabel,
+                    rowComponents.timeLabel,
+                    scheduleRows.get(i),
+                    classMap,
+                    moduleMap);
+
+            scheduleListPanel.add(javax.swing.Box.createVerticalStrut(12));
+            scheduleListPanel.add(dayDateLabel);
+            scheduleListPanel.add(javax.swing.Box.createVerticalStrut(8));
+            scheduleListPanel.add(rowComponents.panel);
+        }
+
+        jPanel1.add(scheduleListPanel);
+        jPanel1.add(javax.swing.Box.createVerticalGlue());
+
+        javax.swing.JPanel buttonPanel = new javax.swing.JPanel(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT, 18, 0));
+        buttonPanel.setBackground(jPanel1.getBackground());
+        buttonPanel.setAlignmentX(java.awt.Component.LEFT_ALIGNMENT);
+        buttonPanel.add(jButton2);
+        buttonPanel.add(jButton3);
+        buttonPanel.add(jButton1);
+
+        jPanel1.add(javax.swing.Box.createVerticalStrut(16));
+        jPanel1.add(buttonPanel);
+
+        jPanel1.revalidate();
+        jPanel1.repaint();
+    }
+
+    private java.util.Set<String> readLecturerModuleIds(java.nio.file.Path path, String lecturerID) {
+        java.util.Set<String> moduleIds = new java.util.HashSet<>();
+        try {
+            java.util.List<String> lines = java.nio.file.Files.readAllLines(path, java.nio.charset.StandardCharsets.UTF_8);
+            for (String line : lines) {
+                String trimmed = line.trim();
+                if (trimmed.isEmpty()) {
+                    continue;
+                }
+                String[] parts = trimmed.split("\\s*,\\s*");
+                if (parts.length > 3) {
+                    String moduleId = parts[0];
+                    String assignedLecturerId = parts[3];
+                    if (assignedLecturerId.equalsIgnoreCase(lecturerID)) {
+                        moduleIds.add(moduleId);
+                    }
+                }
+            }
+        } catch (java.io.IOException ex) {
+            logger.log(java.util.logging.Level.SEVERE, "Failed to read modules file: " + path, ex);
+        }
+        return moduleIds;
+    }
+
+    private java.util.List<String[]> filterScheduleRows(
+            java.util.List<String[]> scheduleRows,
+            java.util.Set<String> lecturerModuleIds) {
+        java.util.List<String[]> filtered = new java.util.ArrayList<>();
+        for (String[] row : scheduleRows) {
+            if (row.length > 1 && lecturerModuleIds.contains(row[1])) {
+                filtered.add(row);
+            }
+        }
+        return filtered;
+    }
+
+    private void showEmptySchedule() {
+        jPanel1.removeAll();
+        jPanel1.setLayout(new javax.swing.BoxLayout(jPanel1, javax.swing.BoxLayout.Y_AXIS));
+        jPanel1.setBorder(javax.swing.BorderFactory.createEmptyBorder(20, 41, 20, 41));
+
+        jPanel1.add(javax.swing.Box.createVerticalGlue());
+        javax.swing.JLabel emptyLabel = new javax.swing.JLabel("No timetable available.");
+        emptyLabel.setAlignmentX(java.awt.Component.CENTER_ALIGNMENT);
+        emptyLabel.setFont(emptyLabel.getFont().deriveFont(java.awt.Font.BOLD, 18f));
+        jPanel1.add(emptyLabel);
+
+        jPanel1.add(javax.swing.Box.createVerticalStrut(16));
+        javax.swing.JPanel buttonPanel = new javax.swing.JPanel(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER, 0, 0));
+        buttonPanel.setBackground(jPanel1.getBackground());
+        buttonPanel.setAlignmentX(java.awt.Component.CENTER_ALIGNMENT);
+        buttonPanel.add(jButton1);
+        jPanel1.add(buttonPanel);
+        jPanel1.add(javax.swing.Box.createVerticalGlue());
+
+        jPanel1.revalidate();
+        jPanel1.repaint();
+    }
+
+    private ScheduleRowComponents createScheduleDetailPanel() {
+        javax.swing.JPanel panel = new javax.swing.JPanel();
+        panel.setLayout(new javax.swing.BoxLayout(panel, javax.swing.BoxLayout.Y_AXIS));
+        panel.setBackground(jPanel2.getBackground());
+        panel.setBorder(javax.swing.BorderFactory.createEmptyBorder(10, 15, 10, 0));
+        panel.setAlignmentX(java.awt.Component.LEFT_ALIGNMENT);
+
+        javax.swing.JLabel classLabel = new javax.swing.JLabel();
+        javax.swing.JLabel moduleLabel = new javax.swing.JLabel();
+        javax.swing.JLabel timeLabel = new javax.swing.JLabel();
+
+        panel.add(classLabel);
+        panel.add(javax.swing.Box.createVerticalStrut(8));
+        panel.add(moduleLabel);
+        panel.add(javax.swing.Box.createVerticalStrut(8));
+        panel.add(timeLabel);
+
+        return new ScheduleRowComponents(panel, classLabel, moduleLabel, timeLabel);
+    }
+
+    private static final class ScheduleRowComponents {
+        private final javax.swing.JPanel panel;
+        private final javax.swing.JLabel classLabel;
+        private final javax.swing.JLabel moduleLabel;
+        private final javax.swing.JLabel timeLabel;
+
+        private ScheduleRowComponents(
+                javax.swing.JPanel panel,
+                javax.swing.JLabel classLabel,
+                javax.swing.JLabel moduleLabel,
+                javax.swing.JLabel timeLabel) {
+            this.panel = panel;
+            this.classLabel = classLabel;
+            this.moduleLabel = moduleLabel;
+            this.timeLabel = timeLabel;
+        }
+    }
+
+    private void applyScheduleRow(
+            javax.swing.JLabel dayDateLabel,
+            javax.swing.JLabel classLabel,
+            javax.swing.JLabel moduleLabel,
+            javax.swing.JLabel timeLabel,
+            String[] row,
+            java.util.Map<String, String> classMap,
+            java.util.Map<String, String> moduleMap) {
+        if (row.length < 6) {
+            return;
+        }
+
+        String classId = row[0];
+        String moduleId = row[1];
+        String date = row[2];
+        String day = row[3];
+        String start = row[4];
+        String end = row[5];
+
+        dayDateLabel.setText(day + ", " + date);
+        String classLine = classMap.getOrDefault(classId, classId);
+        classLabel.setText("Class: " + classLine);
+        String moduleName = moduleMap.getOrDefault(moduleId, moduleId);
+        moduleLabel.setText("Module: " + moduleName);
+        timeLabel.setText("Time: " + start + " - " + end);
+    }
+
+    private java.util.List<String[]> readCsvLines(java.nio.file.Path path) {
+        java.util.List<String[]> rows = new java.util.ArrayList<>();
+        try {
+            java.util.List<String> lines = java.nio.file.Files.readAllLines(path, java.nio.charset.StandardCharsets.UTF_8);
+            for (String line : lines) {
+                String trimmed = line.trim();
+                if (trimmed.isEmpty()) {
+                    continue;
+                }
+                rows.add(trimmed.split("\\s*,\\s*"));
+            }
+        } catch (java.io.IOException ex) {
+            logger.log(java.util.logging.Level.SEVERE, "Failed to read schedule file: " + path, ex);
+        }
+        return rows;
+    }
+
+    private java.util.Map<String, String> readClassMap(java.nio.file.Path path) {
+        java.util.Map<String, String> map = new java.util.HashMap<>();
+        try {
+            java.util.List<String> lines = java.nio.file.Files.readAllLines(path, java.nio.charset.StandardCharsets.UTF_8);
+            for (String line : lines) {
+                String trimmed = line.trim();
+                if (trimmed.isEmpty()) {
+                    continue;
+                }
+                String[] parts = trimmed.split("\\s*,\\s*");
+                if (parts.length > 0) {
+                    map.put(parts[0], trimmed);
+                }
+            }
+        } catch (java.io.IOException ex) {
+            logger.log(java.util.logging.Level.SEVERE, "Failed to read class file: " + path, ex);
+        }
+        return map;
+    }
+
+    private java.util.Map<String, String> readModuleMap(java.nio.file.Path path) {
+        java.util.Map<String, String> map = new java.util.HashMap<>();
+        try {
+            java.util.List<String> lines = java.nio.file.Files.readAllLines(path, java.nio.charset.StandardCharsets.UTF_8);
+            for (String line : lines) {
+                String trimmed = line.trim();
+                if (trimmed.isEmpty()) {
+                    continue;
+                }
+                String[] parts = trimmed.split("\\s*,\\s*");
+                if (parts.length > 1) {
+                    map.put(parts[0], parts[1]);
+                }
+            }
+        } catch (java.io.IOException ex) {
+            logger.log(java.util.logging.Level.SEVERE, "Failed to read modules file: " + path, ex);
+        }
+        return map;
+    }
+
+    private java.nio.file.Path resolveDataDir() {
+        if (java.nio.file.Files.exists(DATA_DIR)) {
+            return DATA_DIR;
+        }
+        return DATA_DIR_FALLBACK;
     }
 
     /**
@@ -38,6 +355,7 @@ public class Lecturer_schedule extends javax.swing.JFrame {
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
+        jScrollBar1 = new javax.swing.JScrollBar();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -60,10 +378,10 @@ public class Lecturer_schedule extends javax.swing.JFrame {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(15, 15, 15)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(372, Short.MAX_VALUE))
+                    .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 391, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 263, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 255, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(60, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -103,6 +421,10 @@ public class Lecturer_schedule extends javax.swing.JFrame {
                         .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 198, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(41, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jScrollBar1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(21, 21, 21))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -113,7 +435,9 @@ public class Lecturer_schedule extends javax.swing.JFrame {
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 248, Short.MAX_VALUE)
+                .addGap(28, 28, 28)
+                .addComponent(jScrollBar1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 302, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton1)
                     .addComponent(jButton2)
@@ -173,5 +497,6 @@ public class Lecturer_schedule extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel4;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JScrollBar jScrollBar1;
     // End of variables declaration//GEN-END:variables
 }
