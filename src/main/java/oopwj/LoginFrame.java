@@ -23,6 +23,7 @@ import oopwj.AdministrativeStaff.AdminMainPage;
 import oopwj.Lecturer.Lecturer_menu;
 import oopwj.Model.AuthService;
 import oopwj.Model.User;
+import oopwj.Student.StudentFrame;
 
 public class LoginFrame extends JFrame {
     
@@ -44,7 +45,7 @@ public class LoginFrame extends JFrame {
         
         panel.add(Box.createRigidArea(new Dimension(0, 20)));
         
-        ImageIcon Logo = new ImageIcon("Image/APU_Logo.png");
+        ImageIcon Logo = new ImageIcon(getClass().getResource("/oopwj/image/APU_Logo.png"));
         JLabel logolabel = new JLabel(Logo);
         logolabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         panel.add(logolabel);
@@ -116,8 +117,7 @@ public class LoginFrame extends JFrame {
                     
                     switch (role) {
                         case "Student":
-                            // new StudentFrame(userID);
-                            System.out.println("Redirecting to Student Menu...");
+                            new StudentFrame(user);
                             break;
                         case "Lecturer":
                             Lecturer_menu menu = new Lecturer_menu(userID);

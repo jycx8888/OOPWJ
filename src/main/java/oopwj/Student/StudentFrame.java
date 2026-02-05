@@ -1,12 +1,13 @@
-package GUI;
+package oopwj.Student;
 
-import Model.User;
+import oopwj.Model.User;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import oopwj.LoginFrame;
 
 public class StudentFrame extends JFrame {
 

@@ -1,5 +1,0 @@
-S002,M001,Data Management
-S002,M002,Object Oriented Programming with Java
-S002,M003,System Development Methods
-S002,M004,System and Network Administration
-S123,M001,Data Management

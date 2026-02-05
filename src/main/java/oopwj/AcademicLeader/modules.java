@@ -42,7 +42,7 @@ public class modules extends javax.swing.JFrame {
         try{
         model.setColumnIdentifiers(columnNames);
         loadLecturersFromFile();
-        FileReader fr = new FileReader("src\\main\\java\\oopwj\\modules.txt");
+        FileReader fr = new FileReader("src\\main\\java\\oopwj\\Data\\modules.txt");
         BufferedReader br = new BufferedReader(fr);
         
         String line = null;
@@ -338,7 +338,7 @@ public class modules extends javax.swing.JFrame {
             List<String> allLines = new ArrayList<>();
             Map<String, int[]> currentModuleMap = new HashMap<>();  // moduleId -> [modelRowIndex, exists]
             
-            try (BufferedReader reader = new BufferedReader(new FileReader("src\\main\\java\\oopwj\\modules.txt"))) {
+            try (BufferedReader reader = new BufferedReader(new FileReader("src\\main\\java\\oopwj\\Data\\modules.txt"))) {
                 String line;
                 while ((line = reader.readLine()) != null) {
                     String trimmed = line.trim();
@@ -357,7 +357,7 @@ public class modules extends javax.swing.JFrame {
             }
             
             // Now write back in original order, updating current academic leader's modules
-            try (BufferedWriter writer = new BufferedWriter(new FileWriter("src\\main\\java\\oopwj\\modules.txt"))) {
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter("src\\main\\java\\oopwj\\Data\\modules.txt"))) {
                 // Process existing lines in order
                 for (String line : allLines) {
                     String[] parts = line.split(",");
@@ -409,7 +409,7 @@ public class modules extends javax.swing.JFrame {
         lecturers.clear();
         lecturerIdToName.clear();
         lecturerNameToId.clear();
-        try (BufferedReader reader = new BufferedReader(new FileReader("src\\main\\java\\oopwj\\lecturer.txt"))) {
+        try (BufferedReader reader = new BufferedReader(new FileReader("src\\main\\java\\oopwj\\Data\\lecturer.txt"))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 String trimmed = line.trim();
@@ -449,7 +449,7 @@ public class modules extends javax.swing.JFrame {
         int maxId = 0;
         
         // First, check all modules in the file (not just the current model)
-        try (BufferedReader reader = new BufferedReader(new FileReader("src\\main\\java\\oopwj\\modules.txt"))) {
+        try (BufferedReader reader = new BufferedReader(new FileReader("src\\main\\java\\oopwj\\Data\\modules.txt"))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 String trimmed = line.trim();

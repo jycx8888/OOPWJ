@@ -1,7 +1,7 @@
-package GUI;
+package oopwj.Student;
 
-import Model.User;
-import Services.StudentService;
+import oopwj.Model.User;
+import oopwj.Model.StudentService;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;

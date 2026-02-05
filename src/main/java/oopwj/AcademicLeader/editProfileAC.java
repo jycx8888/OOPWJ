@@ -42,7 +42,7 @@ public class editProfileAC extends javax.swing.JFrame {
      * Load user data from academicLeader.txt
      */
     private void loadUserData() {
-        try (BufferedReader br = new BufferedReader(new FileReader("src/main/java/oopwj/academicLeader.txt"))) {
+        try (BufferedReader br = new BufferedReader(new FileReader("src/main/java/oopwj/Data/academicLeader.txt"))) {
             String line;
             while ((line = br.readLine()) != null) {
                 String[] parts = line.split(",");
@@ -121,7 +121,7 @@ public class editProfileAC extends javax.swing.JFrame {
         List<String> lines = new ArrayList<>();
         boolean updated = false;
         
-        try (BufferedReader br = new BufferedReader(new FileReader("src/main/java/oopwj/academicLeader.txt"))) {
+        try (BufferedReader br = new BufferedReader(new FileReader("src/main/java/oopwj/Data/academicLeader.txt"))) {
             String line;
             while ((line = br.readLine()) != null) {
                 String[] parts = line.split(",");
@@ -138,7 +138,7 @@ public class editProfileAC extends javax.swing.JFrame {
         }
         
         if (updated) {
-            try (BufferedWriter bw = new BufferedWriter(new FileWriter("src/main/java/oopwj/academicLeader.txt"))) {
+            try (BufferedWriter bw = new BufferedWriter(new FileWriter("src/main/java/oopwj/Data/academicLeader.txt"))) {
                 for (String line : lines) {
                     bw.write(line);
                     bw.newLine();
@@ -162,7 +162,7 @@ public class editProfileAC extends javax.swing.JFrame {
         List<String> lines = new ArrayList<>();
         boolean updated = false;
         
-        try (BufferedReader br = new BufferedReader(new FileReader("src/main/java/oopwj/academicLeader.txt"))) {
+        try (BufferedReader br = new BufferedReader(new FileReader("src/main/java/oopwj/Data/academicLeader.txt"))) {
             String line;
             while ((line = br.readLine()) != null) {
                 String[] parts = line.split(",");
@@ -179,7 +179,7 @@ public class editProfileAC extends javax.swing.JFrame {
         }
         
         if (updated) {
-            try (BufferedWriter bw = new BufferedWriter(new FileWriter("src/main/java/oopwj/academicLeader.txt"))) {
+            try (BufferedWriter bw = new BufferedWriter(new FileWriter("src/main/java/oopwj/Data/academicLeader.txt"))) {
                 for (String line : lines) {
                     bw.write(line);
                     bw.newLine();

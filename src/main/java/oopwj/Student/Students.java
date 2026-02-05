@@ -1,4 +1,6 @@
-package Model;
+package oopwj.Student;
+
+import oopwj.Model.User;
 
 public class Students extends User{
     

@@ -109,6 +109,7 @@ public class generateReports extends javax.swing.JFrame {
         previousFeedback = new javax.swing.JButton();
         nextFeedback = new javax.swing.JButton();
         exportToPDF = new javax.swing.JButton();
+        viewStudents = new javax.swing.JToggleButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -318,6 +319,13 @@ public class generateReports extends javax.swing.JFrame {
             }
         });
 
+        viewStudents.setText("View");
+        viewStudents.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                viewStudentsActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -349,11 +357,14 @@ public class generateReports extends javax.swing.JFrame {
                         .addComponent(jLabel1)
                         .addGap(230, 230, 230))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(jLabel6)
-                        .addGap(221, 221, 221))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(exportToPDF)
-                        .addGap(281, 281, 281))))
+                        .addGap(281, 281, 281))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(jLabel6)
+                        .addGap(222, 222, 222))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(viewStudents)
+                        .addGap(297, 297, 297))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -378,11 +389,13 @@ public class generateReports extends javax.swing.JFrame {
                 .addComponent(jLabel1)
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(27, 27, 27)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(viewStudents)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 31, Short.MAX_VALUE)
                 .addComponent(jLabel6)
                 .addGap(18, 18, 18)
                 .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 78, Short.MAX_VALUE)
+                .addGap(45, 45, 45)
                 .addComponent(exportToPDF)
                 .addGap(53, 53, 53))
         );
@@ -433,6 +446,30 @@ public class generateReports extends javax.swing.JFrame {
             resetReportLabels();
         }
     }//GEN-LAST:event_quizActionPerformed
+
+    private void viewStudentsActionPerformed(java.awt.event.ActionEvent evt) {
+        // Validate that a module and quiz are selected
+        String selectedModuleName = (String) modules.getSelectedItem();
+        String selectedQuizName = (String) quiz.getSelectedItem();
+        
+        if (selectedModuleName == null || selectedModuleName.equals(MODULE_PLACEHOLDER)) {
+            JOptionPane.showMessageDialog(this, 
+                "Please select a module first.", 
+                "No Module Selected", 
+                JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        if (selectedQuizName == null || selectedQuizName.equals(QUIZ_PLACEHOLDER)) {
+            JOptionPane.showMessageDialog(this, 
+                "Please select a quiz first.", 
+                "No Quiz Selected", 
+                JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        showStudentsByGradeDialog();
+    }
 
     private void exportToPDFActionPerformed(java.awt.event.ActionEvent evt) {
         // Validate that a module and quiz are selected
@@ -495,7 +532,7 @@ public class generateReports extends javax.swing.JFrame {
         modules.removeAllItems();
         moduleNameToId.clear();
         modules.addItem(MODULE_PLACEHOLDER);  // Always add placeholder as first item
-        try (BufferedReader reader = new BufferedReader(new FileReader("src\\main\\java\\oopwj\\modules.txt"))) {
+        try (BufferedReader reader = new BufferedReader(new FileReader("src\\main\\java\\oopwj\\Data\\modules.txt"))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 String trimmed = line.trim();
@@ -527,7 +564,7 @@ public class generateReports extends javax.swing.JFrame {
         quiz.removeAllItems();
         quizNameToId.clear();
         quiz.addItem(QUIZ_PLACEHOLDER);  // Always add placeholder as first item
-        try (BufferedReader reader = new BufferedReader(new FileReader("src\\main\\java\\oopwj\\Quiz.txt"))) {
+        try (BufferedReader reader = new BufferedReader(new FileReader("src\\main\\java\\oopwj\\Data\\Quiz.txt"))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 String trimmed = line.trim();
@@ -554,7 +591,7 @@ public class generateReports extends javax.swing.JFrame {
 
     private void loadStudentNamesFromFile() {
         studentIdToName.clear();
-        try (BufferedReader reader = new BufferedReader(new FileReader("src\\main\\java\\oopwj\\student.txt"))) {
+        try (BufferedReader reader = new BufferedReader(new FileReader("src\\main\\java\\oopwj\\Data\\student.txt"))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 String trimmed = line.trim();
@@ -574,7 +611,7 @@ public class generateReports extends javax.swing.JFrame {
 
     private void loadLecturerNamesFromFile() {
         lecturerIdToName.clear();
-        try (BufferedReader reader = new BufferedReader(new FileReader("src\\main\\java\\oopwj\\lecturer.txt"))) {
+        try (BufferedReader reader = new BufferedReader(new FileReader("src\\main\\java\\oopwj\\Data\\lecturer.txt"))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 String trimmed = line.trim();
@@ -601,7 +638,7 @@ public class generateReports extends javax.swing.JFrame {
         String lowestStudentId = "";
         int[] gradeCounts = new int[7]; // A+, A, B+, B, C, D, F
 
-        try (BufferedReader reader = new BufferedReader(new FileReader("src\\main\\java\\oopwj\\FinalGrade.txt"))) {
+        try (BufferedReader reader = new BufferedReader(new FileReader("src\\main\\java\\oopwj\\Data\\FinalGrade.txt"))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 String trimmed = line.trim();
@@ -752,7 +789,7 @@ public class generateReports extends javax.swing.JFrame {
         currentFeedbackList.clear();
         currentFeedbackIndex = -1;
 
-        try (BufferedReader reader = new BufferedReader(new FileReader("src\\main\\java\\oopwj\\QuizFeedback.txt"))) {
+        try (BufferedReader reader = new BufferedReader(new FileReader("src\\main\\java\\oopwj\\Data\\QuizFeedback.txt"))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 String trimmed = line.trim();
@@ -1100,6 +1137,125 @@ public class generateReports extends javax.swing.JFrame {
         
         return lines.isEmpty() ? new String[]{"No feedback"} : lines.toArray(new String[0]);
     }
+    
+    private void showStudentsByGradeDialog() {
+        // Create dialog
+        javax.swing.JDialog dialog = new javax.swing.JDialog(this, "View Students by Grade", true);
+        dialog.setSize(600, 500);
+        dialog.setLocationRelativeTo(this);
+        dialog.setLayout(new java.awt.BorderLayout(10, 10));
+        
+        // Top panel with grade selection
+        javax.swing.JPanel topPanel = new javax.swing.JPanel(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
+        topPanel.setBorder(javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        
+        javax.swing.JLabel gradeLabel = new javax.swing.JLabel("Select Grade: ");
+        gradeLabel.setFont(new java.awt.Font("Segoe UI", java.awt.Font.BOLD, 14));
+        
+        String[] grades = {"A+", "A", "B+", "B", "C", "D", "F"};
+        javax.swing.JComboBox<String> gradeComboBox = new javax.swing.JComboBox<>(grades);
+        gradeComboBox.setPreferredSize(new java.awt.Dimension(100, 25));
+        
+        topPanel.add(gradeLabel);
+        topPanel.add(gradeComboBox);
+        
+        // Table panel
+        String[] columnNames = {"Student ID", "Student Name", "Marks"};
+        javax.swing.table.DefaultTableModel tableModel = new javax.swing.table.DefaultTableModel(columnNames, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+        
+        javax.swing.JTable studentTable = new javax.swing.JTable(tableModel);
+        studentTable.getTableHeader().setFont(new java.awt.Font("Segoe UI", java.awt.Font.BOLD, 12));
+        studentTable.setFont(new java.awt.Font("Segoe UI", java.awt.Font.PLAIN, 12));
+        studentTable.setRowHeight(25);
+        
+        javax.swing.JScrollPane scrollPane = new javax.swing.JScrollPane(studentTable);
+        scrollPane.setBorder(javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        
+        // Bottom panel with close button
+        javax.swing.JPanel bottomPanel = new javax.swing.JPanel(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER));
+        javax.swing.JButton closeButton = new javax.swing.JButton("Close");
+        closeButton.addActionListener(e -> dialog.dispose());
+        bottomPanel.add(closeButton);
+        
+        // Add components to dialog
+        dialog.add(topPanel, java.awt.BorderLayout.NORTH);
+        dialog.add(scrollPane, java.awt.BorderLayout.CENTER);
+        dialog.add(bottomPanel, java.awt.BorderLayout.SOUTH);
+        
+        // Action listener for grade combo box
+        gradeComboBox.addActionListener(e -> {
+            String selectedGrade = (String) gradeComboBox.getSelectedItem();
+            loadStudentsByGrade(tableModel, selectedGrade);
+        });
+        
+        // Load initial data for first grade
+        loadStudentsByGrade(tableModel, grades[0]);
+        
+        dialog.setVisible(true);
+    }
+    
+    private void loadStudentsByGrade(javax.swing.table.DefaultTableModel tableModel, String grade) {
+        // Clear existing rows
+        tableModel.setRowCount(0);
+        
+        if (selectedModuleId == null) {
+            return;
+        }
+        
+        String selectedQuizName = (String) quiz.getSelectedItem();
+        if (selectedQuizName == null || selectedQuizName.equals(QUIZ_PLACEHOLDER)) {
+            return;
+        }
+        
+        String quizId = quizNameToId.get(selectedQuizName);
+        if (quizId == null) {
+            return;
+        }
+        
+        // Read FinalGrade.txt and filter by grade
+        try (BufferedReader reader = new BufferedReader(new FileReader("src\\main\\java\\oopwj\\Data\\FinalGrade.txt"))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String trimmed = line.trim();
+                if (trimmed.isEmpty()) {
+                    continue;
+                }
+                String[] parts = trimmed.split(",");
+                if (parts.length >= 5) {
+                    String studentId = parts[0].trim();
+                    String moduleIdInFile = parts[1].trim();
+                    String quizIdInFile = parts[2].trim();
+                    String markStr = parts[3].trim();
+                    String gradeInFile = parts[4].trim();
+                    
+                    // Check if this record matches module, quiz, and grade
+                    if (moduleIdInFile.equals(selectedModuleId) && 
+                        quizIdInFile.equals(quizId) && 
+                        gradeInFile.equalsIgnoreCase(grade)) {
+                        
+                        String studentName = studentIdToName.getOrDefault(studentId, "Unknown");
+                        tableModel.addRow(new Object[]{studentId, studentName, markStr});
+                    }
+                }
+            }
+        } catch (IOException e) {
+            logger.log(java.util.logging.Level.WARNING, "Unable to load student grades", e);
+            JOptionPane.showMessageDialog(this, 
+                "Error loading student data: " + e.getMessage(), 
+                "Error", 
+                JOptionPane.ERROR_MESSAGE);
+        }
+        
+        // Show message if no students found
+        if (tableModel.getRowCount() == 0) {
+            tableModel.addRow(new Object[]{"No students", "found with", "grade " + grade});
+        }
+    }
 
     /**
      * @param args the command line arguments
@@ -1155,5 +1311,6 @@ public class generateReports extends javax.swing.JFrame {
     private javax.swing.JLabel studentIDLowest;
     private javax.swing.JLabel studentNameHighest;
     private javax.swing.JLabel studentNameLowest;
+    private javax.swing.JToggleButton viewStudents;
     // End of variables declaration//GEN-END:variables
 }
