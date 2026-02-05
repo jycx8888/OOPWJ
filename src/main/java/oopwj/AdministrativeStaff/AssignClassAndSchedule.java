@@ -56,7 +56,7 @@ public class AssignClassAndSchedule extends javax.swing.JFrame {
     DefaultTableModel model = (DefaultTableModel) moduleTable.getModel();
     model.setRowCount(0);
 
-    try (BufferedReader br = new BufferedReader(new FileReader("src\\main\\java\\oopwj\\modules.txt"))) {
+    try (BufferedReader br = new BufferedReader(new FileReader("src\\main\\java\\oopwj\\Data\\modules.txt"))) {
         String line;
         while ((line = br.readLine()) != null) {
             String[] data = line.split(",");
@@ -76,7 +76,7 @@ public class AssignClassAndSchedule extends javax.swing.JFrame {
         Map<String, Set<String>> scheduleMap = loadScheduleMap();
 
         try (BufferedReader br = new BufferedReader(
-                new FileReader("src\\main\\java\\oopwj\\class.txt"))) {
+                new FileReader("src\\main\\java\\oopwj\\Data\\class.txt"))) {
 
             String line;
             while ((line = br.readLine()) != null) {
@@ -112,7 +112,7 @@ public class AssignClassAndSchedule extends javax.swing.JFrame {
 
     Map<String, Set<String>> scheduleMap = new HashMap<>();
 
-    File file = new File("src\\main\\java\\oopwj\\class_schedule.txt");
+    File file = new File("src\\main\\java\\oopwj\\Data\\class_schedule.txt");
 
     try (BufferedReader br = new BufferedReader(new FileReader(file))) {
         String line;
@@ -135,7 +135,7 @@ public class AssignClassAndSchedule extends javax.swing.JFrame {
     }
 
     try (BufferedReader br = new BufferedReader(
-            new FileReader("src\\main\\java\\oopwj\\class.txt"))) {
+            new FileReader("src\\main\\java\\oopwj\\Data\\class.txt"))) {
 
         String line;
         while ((line = br.readLine()) != null) {
@@ -165,7 +165,7 @@ public class AssignClassAndSchedule extends javax.swing.JFrame {
         model.setRowCount(0);
 
         try (BufferedReader br = new BufferedReader(
-                new FileReader("src\\main\\java\\oopwj\\class_schedule.txt"))) {
+                new FileReader("src\\main\\java\\oopwj\\Data\\class_schedule.txt"))) {
 
             String line;
             while ((line = br.readLine()) != null) {
@@ -279,7 +279,7 @@ public class AssignClassAndSchedule extends javax.swing.JFrame {
     private Map<String, Set<String>> loadScheduleMap() {
         Map<String, Set<String>> scheduleMap = new HashMap<>();
 
-        File file = new File("src\\main\\java\\oopwj\\class_schedule.txt");
+        File file = new File("src\\main\\java\\oopwj\\Data\\class_schedule.txt");
         if (!file.exists()) return scheduleMap;
 
         try (BufferedReader br = new BufferedReader(new FileReader(file))) {
@@ -637,7 +637,7 @@ public class AssignClassAndSchedule extends javax.swing.JFrame {
         String startStr = timeFormat.format(startTime);
         String endStr = timeFormat.format(endTime);
 
-        File scheduleFile = new File("src\\main\\java\\oopwj\\class_schedule.txt");
+        File scheduleFile = new File("src\\main\\java\\oopwj\\Data\\class_schedule.txt");
         boolean conflictFound = false;
 
         try (BufferedReader br = new BufferedReader(new FileReader(scheduleFile))) {
@@ -723,8 +723,8 @@ public class AssignClassAndSchedule extends javax.swing.JFrame {
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
         String dateStr = sdf.format(selectedDate);
 
-        File scheduleFile = new File("src\\main\\java\\oopwj\\class_schedule.txt");
-        File classFile = new File("src\\main\\java\\oopwj\\class.txt");
+        File scheduleFile = new File("src\\main\\java\\oopwj\\Data\\class_schedule.txt");
+        File classFile = new File("src\\main\\java\\oopwj\\Data\\class.txt");
 
         try (BufferedReader br = new BufferedReader(new FileReader(classFile))) {
             String line;

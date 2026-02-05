@@ -85,16 +85,16 @@ public class UpdateUserPage extends javax.swing.JDialog {
     private String getFileByRole(String role) {
     switch (role) {
         case "Student" -> {
-            return "src\\main\\java\\oopwj\\student.txt";
+            return "src\\main\\java\\oopwj\\Data\\student.txt";
             }
         case "Admin" -> {
-            return "src\\main\\java\\oopwj\\admin.txt";
+            return "src\\main\\java\\oopwj\\Data\\admin.txt";
             }
         case "Lecturer" -> {
-            return "src\\main\\java\\oopwj\\lecturer.txt";
+            return "src\\main\\java\\oopwj\\Data\\lecturer.txt";
             }
         case "Academic Leader" -> {
-            return "src\\main\\java\\oopwj\\academicLeader.txt";
+            return "src\\main\\java\\oopwj\\Data\\academicLeader.txt";
             }
         default -> throw new IllegalArgumentException("Unknown role");
     }

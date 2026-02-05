@@ -117,10 +117,10 @@ public void loadUsers() {
     DefaultTableModel table = (DefaultTableModel) UserList.getModel();
     table.setRowCount(0);
 
-    loadFromFile("src\\main\\java\\oopwj\\student.txt", "Student", table);
-    loadFromFile("src\\main\\java\\oopwj\\admin.txt", "Admin", table);
-    loadFromFile("src\\main\\java\\oopwj\\lecturer.txt", "Lecturer", table);
-    loadFromFile("src\\main\\java\\oopwj\\academicLeader.txt", "Academic Leader", table);
+    loadFromFile("src\\main\\java\\oopwj\\Data\\student.txt", "Student", table);
+    loadFromFile("src\\main\\java\\oopwj\\Data\\admin.txt", "Admin", table);
+    loadFromFile("src\\main\\java\\oopwj\\Data\\lecturer.txt", "Lecturer", table);
+    loadFromFile("src\\main\\java\\oopwj\\Data\\academicLeader.txt", "Academic Leader", table);
 }
 
 private void loadFromFile(String fileName, String role, DefaultTableModel model) {
@@ -152,16 +152,16 @@ private void loadFromFile(String fileName, String role, DefaultTableModel model)
 private String getFileByRole(String role) {
     switch (role) {
         case "Student" -> {
-            return "src\\main\\java\\oopwj\\student.txt";
+            return "src\\main\\java\\oopwj\\Data\\student.txt";
             }
         case "Admin" -> {
-            return "src\\main\\java\\oopwj\\admin.txt";
+            return "src\\main\\java\\oopwj\\Data\\admin.txt";
             }
         case "Lecturer" -> {
-            return "src\\main\\java\\oopwj\\lecturer.txt";
+            return "src\\main\\java\\oopwj\\Data\\lecturer.txt";
             }
         case "Academic Leader" -> {
-            return "src\\main\\java\\oopwj\\academicLeader.txt";
+            return "src\\main\\java\\oopwj\\Data\\academicLeader.txt";
             }
         default -> throw new IllegalArgumentException("Unknown role");
     }

@@ -46,7 +46,7 @@ public class RemoveModule extends javax.swing.JDialog {
     SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
     String dateStr = sdf.format(selectedDate);
 
-    File scheduleFile = new File("src\\main\\java\\oopwj\\class_schedule.txt");
+    File scheduleFile = new File("src\\main\\java\\oopwj\\Data\\class_schedule.txt");
 
     try (BufferedReader br = new BufferedReader(new FileReader(scheduleFile))) {
         String line;
@@ -175,8 +175,8 @@ public class RemoveModule extends javax.swing.JDialog {
 
         if (confirm != JOptionPane.YES_OPTION) return;
 
-        File scheduleFile = new File("src\\main\\java\\oopwj\\class_schedule.txt");
-        File tempFile = new File("src\\main\\java\\oopwj\\class_schedule_temp.txt");
+        File scheduleFile = new File("src\\main\\java\\oopwj\\Data\\class_schedule.txt");
+        File tempFile = new File("src\\main\\java\\oopwj\\Data\\class_schedule_temp.txt");
 
         try (BufferedReader br = new BufferedReader(new FileReader(scheduleFile));
              BufferedWriter bw = new BufferedWriter(new FileWriter(tempFile))) {

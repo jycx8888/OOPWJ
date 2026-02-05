@@ -70,7 +70,7 @@ public class UpdateSchedule extends javax.swing.JDialog {
     private void loadClassrooms(String currentClassId) {
     cboClassroom.removeAllItems();
 
-    File classFile = new File("src\\main\\java\\oopwj\\class.txt");
+    File classFile = new File("src\\main\\java\\oopwj\\Data\\class.txt");
 
     try (BufferedReader br = new BufferedReader(new FileReader(classFile))) {
         String line;
@@ -265,8 +265,8 @@ public class UpdateSchedule extends javax.swing.JDialog {
         String newStartStr = timeFmt.format(newStart);
         String newEndStr = timeFmt.format(newEnd);
 
-        File inputFile = new File("src\\main\\java\\oopwj\\class_schedule.txt");
-        File tempFile = new File("src\\main\\java\\oopwj\\class_schedule_temp.txt");
+        File inputFile = new File("src\\main\\java\\oopwj\\Data\\class_schedule.txt");
+        File tempFile = new File("src\\main\\java\\oopwj\\Data\\class_schedule_temp.txt");
 
         boolean conflictFound = false;
 

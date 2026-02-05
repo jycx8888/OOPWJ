@@ -88,7 +88,7 @@ public class DefineGradingPage extends javax.swing.JFrame {
     DefaultTableModel list = (DefaultTableModel) tableGrade.getModel();
     list.setRowCount(0);
 
-    try (BufferedReader br = new BufferedReader(new FileReader("src\\main\\java\\oopwj\\grading.txt"))) {
+    try (BufferedReader br = new BufferedReader(new FileReader("src\\main\\java\\oopwj\\Data\\grading.txt"))) {
         String line;
         while ((line = br.readLine()) != null) {
             String[] values = line.split(",");
@@ -308,8 +308,8 @@ public class DefineGradingPage extends javax.swing.JFrame {
 
         String oldGrade = (String) model.getValueAt(modelRow, 0);
 
-        File inputFile = new File("src\\main\\java\\oopwj\\grading.txt");
-        File tempFile = new File("src\\main\\java\\oopwj\\grading_temp.txt");
+        File inputFile = new File("src\\main\\java\\oopwj\\Data\\grading.txt");
+        File tempFile = new File("src\\main\\java\\oopwj\\Data\\grading_temp.txt");
 
         try (BufferedReader reader = new BufferedReader(new FileReader(inputFile));
              BufferedWriter writer = new BufferedWriter(new FileWriter(tempFile))) {
@@ -409,7 +409,7 @@ public class DefineGradingPage extends javax.swing.JFrame {
             return;
         }
 
-        try (BufferedReader br = new BufferedReader(new FileReader("src\\main\\java\\oopwj\\grading.txt"))) {
+        try (BufferedReader br = new BufferedReader(new FileReader("src\\main\\java\\oopwj\\Data\\grading.txt"))) {
 
             String line;
             while ((line = br.readLine()) != null) {
@@ -442,7 +442,7 @@ public class DefineGradingPage extends javax.swing.JFrame {
             return;
         }
         
-        try (PrintWriter out = new PrintWriter(new FileWriter("src\\main\\java\\oopwj\\grading.txt", true))) {
+        try (PrintWriter out = new PrintWriter(new FileWriter("src\\main\\java\\oopwj\\Data\\grading.txt", true))) {
             out.println(grade + "," + min + "," + max);
             
 
@@ -493,8 +493,8 @@ public class DefineGradingPage extends javax.swing.JFrame {
         
         if (option == JOptionPane.YES_OPTION) {
             try {
-                File inputFile = new File("src\\main\\java\\oopwj\\grading.txt");
-                File tempFile = new File("src\\main\\java\\oopwj\\grading_temp.txt");
+                File inputFile = new File("src\\main\\java\\oopwj\\Data\\grading.txt");
+                File tempFile = new File("src\\main\\java\\oopwj\\Data\\grading_temp.txt");
 
                 try (BufferedReader reader = new BufferedReader(new FileReader(inputFile));
                      BufferedWriter writer = new BufferedWriter(new FileWriter(tempFile))) {
