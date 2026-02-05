@@ -11,27 +11,27 @@ import java.util.Map;
 public class StudentService {
 
     // --- File Paths ---
-    private final String MODULES_FILE = "Data/modules.txt";
-    private final String ENROLLMENT_FILE = "Data/enrollment.txt";
+    private final String MODULES_FILE = "src\\main\\java\\oopwj\\Data\\modules.txt";
+    private final String ENROLLMENT_FILE = "src\\main\\java\\oopwj\\Data\\enrollment.txt";
     
     // [CHANGE] Modified to save into studentFeedback.txt
-    private final String FEEDBACK_FILE = "Data/studentFeedback.txt";
+    private final String FEEDBACK_FILE = "src\\main\\java\\oopwj\\Data\\studentFeedback.txt";
     
-    private final String USERS_FILE = "Data/users.txt";
+    private final String USERS_FILE = "src\\main\\java\\oopwj\\Data\\users.txt";
     
     // [Updated] Read from student.txt instead of users.txt
-    private final String STUDENT_FILE = "Data/student.txt"; 
+    private final String STUDENT_FILE = "src\\main\\java\\oopwj\\Data\\student.txt"; 
     
     // Quiz & Result Files
-    private final String QUIZ_FILE = "Data/Quiz.txt";
-    private final String QUESTION_FILE = "Data/question.txt";
-    private final String ANSWER_FILE = "Data/student_answers.txt";
-    private final String GRADE_FILE = "Data/Grade.txt";
-    private final String FINAL_GRADE_FILE = "Data/FinalGrade.txt";
+    private final String QUIZ_FILE = "src\\main\\java\\oopwj\\Data\\Quiz.txt";
+    private final String QUESTION_FILE = "src\\main\\java\\oopwj\\Data\\question.txt";
+    private final String ANSWER_FILE = "src\\main\\java\\oopwj\\Data\\student_answers.txt";
+    private final String GRADE_FILE = "src\\main\\java\\oopwj\\Data\\Grade.txt";
+    private final String FINAL_GRADE_FILE = "src\\main\\java\\oopwj\\Data\\FinalGrade.txt";
     
     // Timetable Files
-    private final String SCHEDULE_FILE = "Data/class_schedule.txt";
-    private final String VENUE_FILE = "Data/class.txt";
+    private final String SCHEDULE_FILE = "src\\main\\java\\oopwj\\Data\\class_schedule.txt";
+    private final String VENUE_FILE = "src\\main\\java\\oopwj\\Data\\class.txt";
 
     // =========================================================
     // 1. General Helper Methods

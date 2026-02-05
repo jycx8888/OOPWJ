@@ -165,6 +165,8 @@ public class RemoveModule extends javax.swing.JDialog {
         DefaultTableModel model = (DefaultTableModel) removeTable.getModel();
         String moduleId = (String) model.getValueAt(row, 1);
         String dateTable = (String) model.getValueAt(row, 2);
+        String startTime = (String) model.getValueAt(row,3);
+        String endTime = (String) model.getValueAt(row,4);
 
         int confirm = JOptionPane.showConfirmDialog(
                 this,
@@ -184,7 +186,7 @@ public class RemoveModule extends javax.swing.JDialog {
             String line;
             while ((line = br.readLine()) != null) {
                 String[] data = line.split(",");
-                if (data.length >= 6 && data[0].equals(classroomId) && data[1].equals(moduleId) && data[2].equals(dateTable)) {
+                if (data.length >= 6 && data[0].equals(classroomId) && data[1].equals(moduleId) && data[2].equals(dateTable) && data[4].equals(startTime) && data[5].equals(endTime)) {
                     continue;
                 }
                 bw.write(line);
