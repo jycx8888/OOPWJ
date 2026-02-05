@@ -1,4 +1,5 @@
 S111,stup,sup,S111@mail.apu.edu.my
+S122,kum,kumkum,S122@mail.apu.edu.my
 S123,student,stu,S123@mail.apu.edu.my
 S124,Alex Johnson,pass124,S124@mail.apu.edu.my
 S125,Bella Smith,pass125,S125@mail.apu.edu.my

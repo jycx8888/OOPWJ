@@ -10,10 +10,10 @@ import java.util.List;
 
 public class AuthService {
     
-    private final String STUDENT_FILE = "src/main/java/oopwj/student.txt";
-    private final String LECTURER_FILE = "src/main/java/oopwj/lecturer.txt";
-    private final String ACADEMIC_LEADER_FILE = "src/main/java/oopwj/academicLeader.txt";
-    private final String ADMIN_FILE = "src/main/java/oopwj/admin.txt";
+    private final String STUDENT_FILE = "src/main/java/oopwj/Data/student.txt";
+    private final String LECTURER_FILE = "src/main/java/oopwj/Data/lecturer.txt";
+    private final String ACADEMIC_LEADER_FILE = "src/main/java/oopwj/Data/academicLeader.txt";
+    private final String ADMIN_FILE = "src/main/java/oopwj/Data/admin.txt";
 
     /**
      * Authenticate user based on ID prefix and read from corresponding file

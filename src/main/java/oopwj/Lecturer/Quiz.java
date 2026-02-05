@@ -51,6 +51,7 @@ public class Quiz extends javax.swing.JFrame {
     private Assessments parentWindow;
     private String currentQuizID = ""; // Track the current quiz ID
     private String currentQuizTitle = ""; // Track the current quiz title
+    private java.util.List<String> quizIdsForDropdown = new java.util.ArrayList<>(); // Match dropdown index to quiz ID
 
     /**
      * Creates new form Quiz
@@ -200,7 +201,7 @@ public class Quiz extends javax.swing.JFrame {
         selectModuleById(moduleId);
         populateQuizDropdown(moduleId);
         if (quizId != null && !quizId.isEmpty()) {
-            jComboBox2.setSelectedItem(quizId);
+            selectQuizById(quizId);
             currentQuizID = quizId;
             String quizTitle = getQuizTitle(quizId);
             if (quizTitle != null && !quizTitle.isEmpty()) {
@@ -314,6 +315,62 @@ public class Quiz extends javax.swing.JFrame {
             String display = moduleId + " - " + moduleName;
             jComboBox1.addItem(display);
             jComboBox1.setSelectedItem(display);
+        }
+    }
+
+    public void preselectQuizSet(String moduleId, String quizId, String quizTitle) {
+        if (moduleId == null || moduleId.isEmpty()) {
+            return;
+        }
+
+        selectModuleById(moduleId);
+        populateQuizDropdown(moduleId);
+
+        String resolvedQuizId = quizId;
+        if (resolvedQuizId == null || resolvedQuizId.isEmpty()) {
+            resolvedQuizId = resolveQuizIdFromTitle(moduleId, quizTitle);
+        }
+
+        if (resolvedQuizId != null && !resolvedQuizId.isEmpty()) {
+            selectQuizById(resolvedQuizId);
+            currentQuizID = resolvedQuizId;
+        }
+
+        String titleToShow = quizTitle != null ? quizTitle.trim() : "";
+        if (titleToShow.isEmpty() && resolvedQuizId != null && !resolvedQuizId.isEmpty()) {
+            titleToShow = getQuizTitle(resolvedQuizId);
+        }
+
+        if (titleToShow != null && !titleToShow.isEmpty()) {
+            jTextField9.setText(titleToShow);
+            currentQuizTitle = titleToShow;
+            jTextField9.setEditable(false);
+        }
+
+        if (resolvedQuizId != null && !resolvedQuizId.isEmpty()) {
+            updateQuestionCountLabels(moduleId, resolvedQuizId);
+        }
+    }
+
+    private String getSelectedQuizId() {
+        int selectedIndex = jComboBox2.getSelectedIndex();
+        if (selectedIndex >= 0 && selectedIndex < quizIdsForDropdown.size()) {
+            return quizIdsForDropdown.get(selectedIndex);
+        }
+        Object selected = jComboBox2.getSelectedItem();
+        return selected != null ? selected.toString().trim() : "";
+    }
+
+    private void selectQuizById(String quizId) {
+        if (quizId == null || quizId.isEmpty()) {
+            return;
+        }
+
+        for (int i = 0; i < quizIdsForDropdown.size(); i++) {
+            if (quizId.equals(quizIdsForDropdown.get(i))) {
+                jComboBox2.setSelectedIndex(i);
+                return;
+            }
         }
     }
 
@@ -943,12 +1000,22 @@ public class Quiz extends javax.swing.JFrame {
 
     private void jComboBox2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox2ActionPerformed
         // Update currentQuizID when a quiz is selected from the dropdown
-        String selectedQuiz = (String) jComboBox2.getSelectedItem();
-        if (selectedQuiz != null && !selectedQuiz.isEmpty()) {
-            currentQuizID = selectedQuiz;
-            
-            // Fetch and display the quiz title
-            String quizTitle = getQuizTitle(selectedQuiz);
+        String selectedQuizTitle = (String) jComboBox2.getSelectedItem();
+        String selectedQuizId = getSelectedQuizId();
+        String selectedModule = (String) jComboBox1.getSelectedItem();
+        if ((selectedQuizId == null || selectedQuizId.isEmpty()) && selectedModule != null && !selectedModule.isEmpty()) {
+            String[] moduleParts = selectedModule.split(" - ", 2);
+            String moduleId = moduleParts[0].trim();
+            selectedQuizId = resolveQuizIdFromTitle(moduleId, selectedQuizTitle);
+        }
+        if (selectedQuizId != null && !selectedQuizId.isEmpty()) {
+            currentQuizID = selectedQuizId;
+
+            // Use displayed title when available, fallback to file lookup
+            String quizTitle = selectedQuizTitle != null ? selectedQuizTitle.trim() : "";
+            if (quizTitle.isEmpty()) {
+                quizTitle = getQuizTitle(selectedQuizId);
+            }
             if (quizTitle != null && !quizTitle.isEmpty()) {
                 jTextField9.setText(quizTitle);
                 currentQuizTitle = quizTitle;
@@ -958,14 +1025,10 @@ public class Quiz extends javax.swing.JFrame {
             jTextField9.setEditable(false);
             
             // Display the next QuestionID on jLabel1 and jLabel7
-            String selectedModule = (String) jComboBox1.getSelectedItem();
             if (selectedModule != null && !selectedModule.isEmpty()) {
                 String[] moduleParts = selectedModule.split(" - ", 2);
                 String moduleId = moduleParts[0].trim();
-                String nextQuestionID = getNextQuestionID(moduleId, selectedQuiz);
-                String questionNumber = String.valueOf(Integer.parseInt(nextQuestionID.substring(1))); // Remove "Q" and leading zeros
-                jLabel1.setText("Question: " + questionNumber);
-                jLabel7.setText("Question: " + questionNumber);
+                updateQuestionCountLabels(moduleId, selectedQuizId);
             }
         }
     }//GEN-LAST:event_jComboBox2ActionPerformed
@@ -986,6 +1049,7 @@ public class Quiz extends javax.swing.JFrame {
         currentQuizID = "";
         currentQuizTitle = "";
         jComboBox2.removeAllItems();
+        quizIdsForDropdown.clear();
     }//GEN-LAST:event_jButton5ActionPerformed
 
     private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {
@@ -1022,13 +1086,10 @@ public class Quiz extends javax.swing.JFrame {
             
             // Refresh the quiz dropdown and select the new quiz
             populateQuizDropdown(moduleId);
-            jComboBox2.setSelectedItem(newQuizId);
+            selectQuizById(newQuizId);
             
-            // Display the next QuestionID on jLabel1 and jLabel7
-            String nextQuestionID = getNextQuestionID(moduleId, newQuizId);
-            String questionNumber = String.valueOf(Integer.parseInt(nextQuestionID.substring(1))); // Remove "Q" and leading zeros
-            jLabel1.setText("Question: " + questionNumber);
-            jLabel7.setText("Question: " + questionNumber);
+            // Display the latest question count on jLabel1 and jLabel7
+            updateQuestionCountLabels(moduleId, newQuizId);
         } else {
             JOptionPane.showMessageDialog(this, "Failed to create quiz.", "Error", JOptionPane.ERROR_MESSAGE);
         }
@@ -1330,6 +1391,11 @@ public class Quiz extends javax.swing.JFrame {
             String[] moduleParts = selectedModule.split(" - ", 2);
             String moduleId = moduleParts[0].trim();
             populateQuizDropdown(moduleId);
+            // Update question count if a quiz is already selected
+            String selectedQuizId = getSelectedQuizId();
+            if (selectedQuizId != null && !selectedQuizId.isEmpty()) {
+                updateQuestionCountLabels(moduleId, selectedQuizId);
+            }
         }
     }
 
@@ -1624,6 +1690,7 @@ public class Quiz extends javax.swing.JFrame {
         
         // Clear existing items
         jComboBox2.removeAllItems();
+        quizIdsForDropdown.clear();
         
         if (!quizFile.exists()) {
             return;
@@ -1632,14 +1699,17 @@ public class Quiz extends javax.swing.JFrame {
         try (BufferedReader br = new BufferedReader(new FileReader(quizFile))) {
             String line;
             while ((line = br.readLine()) != null) {
-                String[] parts = line.split(",");
+                String[] parts = line.split(",", 3); // QuizID, ModuleID, Title
                 if (parts.length >= 2) {
                     String quizId = parts[0].trim();
                     String quizModuleId = parts[1].trim();
+                    String quizTitle = parts.length >= 3 ? parts[2].trim() : "";
                     
                     // Add quiz to dropdown if it matches the selected module
                     if (quizModuleId.equals(moduleId)) {
-                        jComboBox2.addItem(quizId);
+                        String displayTitle = (quizTitle == null || quizTitle.isEmpty()) ? quizId : quizTitle;
+                        jComboBox2.addItem(displayTitle);
+                        quizIdsForDropdown.add(quizId);
                     }
                 }
             }
@@ -1678,6 +1748,86 @@ public class Quiz extends javax.swing.JFrame {
         }
         
         return null;
+    }
+
+    private String resolveQuizIdFromTitle(String moduleId, String quizTitle) {
+        if (moduleId == null || moduleId.isEmpty() || quizTitle == null || quizTitle.trim().isEmpty()) {
+            return "";
+        }
+
+        String projectRoot = System.getProperty("user.dir");
+        File quizFile = new File(projectRoot, "src\\main\\java\\oopwj\\Quiz.txt");
+
+        if (!quizFile.exists()) {
+            return "";
+        }
+
+        String targetTitle = quizTitle.trim();
+
+        try (BufferedReader br = new BufferedReader(new FileReader(quizFile))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] parts = line.split(",", 3); // QuizID, ModuleID, Title
+                if (parts.length >= 2) {
+                    String quizId = parts[0].trim();
+                    String quizModuleId = parts[1].trim();
+                    String title = parts.length >= 3 ? parts[2].trim() : "";
+
+                    if (quizModuleId.equals(moduleId) && (targetTitle.equals(title) || targetTitle.equals(quizId))) {
+                        return quizId;
+                    }
+                }
+            }
+        } catch (IOException ex) {
+            logger.log(java.util.logging.Level.SEVERE, "Error reading Quiz.txt", ex);
+        }
+
+        return "";
+    }
+
+    private int countQuestionsFor(String moduleId, String quizId) {
+        if (moduleId == null || moduleId.isEmpty() || quizId == null || quizId.isEmpty()) {
+            return 0;
+        }
+
+        String projectRoot = System.getProperty("user.dir");
+        File questionFile = new File(projectRoot, "src\\main\\java\\oopwj\\question.txt");
+
+        if (!questionFile.exists()) {
+            return 0;
+        }
+
+        int count = 0;
+        try (BufferedReader br = new BufferedReader(new FileReader(questionFile))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] fields = line.split(",", -1);
+                if (fields.length >= 3) {
+                    String qQuizId = fields[1].trim();
+                    String qModuleId = fields[2].trim();
+                    if (qModuleId.equals(moduleId) && qQuizId.equals(quizId)) {
+                        count++;
+                    }
+                }
+            }
+        } catch (IOException ex) {
+            logger.log(java.util.logging.Level.SEVERE, "Error reading question.txt", ex);
+        }
+
+        return count;
+    }
+
+    private void updateQuestionCountLabels(String moduleId, String quizId) {
+        if (moduleId == null || moduleId.isEmpty() || quizId == null || quizId.isEmpty()) {
+            jLabel1.setText("Question:");
+            jLabel7.setText("Question:");
+            return;
+        }
+
+        int count = countQuestionsFor(moduleId, quizId);
+        String labelText = "Question: " + count;
+        jLabel1.setText(labelText);
+        jLabel7.setText(labelText);
     }
     
     /**
