@@ -4,3 +4,5 @@ S002,M003,System Development Methods
 S002,M004,System and Network Administration
 S123,M001,Data Management
 S111,M001,Data Management
+S111,M003,System Development Methods
+S111,M004,System and Network Administration
