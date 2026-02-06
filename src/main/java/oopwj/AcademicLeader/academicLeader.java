@@ -13,6 +13,7 @@ package oopwj.AcademicLeader;
 public class academicLeader extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(academicLeader.class.getName());
+    private static final String ACADEMIC_LEADER_FILE = "src/main/java/oopwj/Data/academicLeader.txt";
     private String loggedInUserID;  // Store logged-in user ID
 
     /**
@@ -20,6 +21,7 @@ public class academicLeader extends javax.swing.JFrame {
      */
     public academicLeader() {
         initComponents();
+        updateAcNameLabel();
     }
     
     /**
@@ -29,6 +31,7 @@ public class academicLeader extends javax.swing.JFrame {
     public academicLeader(String userID) {
         this.loggedInUserID = userID;
         initComponents();
+        updateAcNameLabel();
         logger.info("Academic Leader logged in: " + userID);
     }
     
@@ -48,6 +51,40 @@ public class academicLeader extends javax.swing.JFrame {
         logger.info("Academic Leader session cleared");
     }
 
+    private void updateAcNameLabel() {
+        String name = getAcademicLeaderNameById(loggedInUserID);
+        if (name == null || name.isEmpty()) {
+            acName.setText("Academic Leader");
+        } else {
+            acName.setText(name);
+        }
+    }
+
+    private String getAcademicLeaderNameById(String userID) {
+        if (userID == null || userID.isEmpty()) {
+            return null;
+        }
+
+        try (java.io.BufferedReader reader = new java.io.BufferedReader(new java.io.FileReader(ACADEMIC_LEADER_FILE))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                if (line.trim().isEmpty()) {
+                    continue;
+                }
+                String[] parts = line.split(",");
+                if (parts.length < 2) {
+                    continue;
+                }
+                if (parts[0].trim().equalsIgnoreCase(userID.trim())) {
+                    return parts[1].trim();
+                }
+            }
+        } catch (java.io.IOException e) {
+            logger.warning("Failed to read academic leader data: " + e.getMessage());
+        }
+        return null;
+    }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -63,6 +100,7 @@ public class academicLeader extends javax.swing.JFrame {
         logOut = new javax.swing.JToggleButton();
         profile = new javax.swing.JToggleButton();
         lecturerReview = new javax.swing.JToggleButton();
+        acName = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -104,32 +142,43 @@ public class academicLeader extends javax.swing.JFrame {
             }
         });
 
+        acName.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        acName.setText("jLabel1");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(177, Short.MAX_VALUE)
-                .addComponent(welcome)
-                .addGap(171, 171, 171))
             .addGroup(layout.createSequentialGroup()
-                .addGap(265, 265, 265)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(modules, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(generateReports, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(logOut, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(lecturerReview)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(profile, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(265, 265, 265)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(modules, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(generateReports, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(logOut, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(lecturerReview)
+                                .addGap(0, 0, Short.MAX_VALUE))
+                            .addComponent(profile, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(174, 174, 174)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(welcome, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(117, 117, 117)
+                                .addComponent(acName)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 104, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                .addContainerGap(174, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(89, 89, 89)
+                .addGap(66, 66, 66)
                 .addComponent(welcome)
-                .addGap(36, 36, 36)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(acName)
+                .addGap(31, 31, 31)
                 .addComponent(profile)
                 .addGap(28, 28, 28)
                 .addComponent(modules)
@@ -139,7 +188,7 @@ public class academicLeader extends javax.swing.JFrame {
                 .addComponent(lecturerReview)
                 .addGap(26, 26, 26)
                 .addComponent(logOut)
-                .addContainerGap(49, Short.MAX_VALUE))
+                .addContainerGap(40, Short.MAX_VALUE))
         );
 
         pack();
@@ -216,6 +265,7 @@ public class academicLeader extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel acName;
     private javax.swing.JToggleButton generateReports;
     private javax.swing.JToggleButton lecturerReview;
     private javax.swing.JToggleButton logOut;
