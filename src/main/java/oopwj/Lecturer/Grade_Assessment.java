@@ -17,8 +17,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
 
 /**
  *
@@ -28,6 +31,7 @@ public class Grade_Assessment extends javax.swing.JFrame {
 
     private String lecturerID;
     private Lecturer_menu lecturerMenu;
+    private TableRowSorter<TableModel> tableRowSorter;
 
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(Grade_Assessment.class.getName());
 
@@ -59,6 +63,8 @@ public class Grade_Assessment extends javax.swing.JFrame {
         // Attach action listeners for buttons
         jButton2.addActionListener(this::jButton2ActionPerformed);
         jButton3.addActionListener(this::jButton3ActionPerformed);
+        jButton4.addActionListener(this::jButton4ActionPerformed);
+        setupSearchHandlers();
         
         // Add double-click listener to table
         jTable1.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -95,6 +101,7 @@ public class Grade_Assessment extends javax.swing.JFrame {
         jTable1.setModel(new DefaultTableModel(
             new Object[]{"Module name", "Quiz Name", "StudentID", "Total Grade", "Grade", "Feedback", "ModuleID", "QuizID"}, 0
         ));
+        resetTableSorter();
         hideHiddenColumns();
     }
 
@@ -591,9 +598,80 @@ public class Grade_Assessment extends javax.swing.JFrame {
         }
         System.out.println("DEBUG: Setting model with " + model.getRowCount() + " rows");
         jTable1.setModel(model);
+        resetTableSorter();
         hideHiddenColumns();
+        applySearchFilter();
         
         System.out.println("DEBUG: loadAssessmentAnswers() END");
+    }
+
+    private void setupSearchHandlers() {
+        jTextField1.addActionListener(e -> applySearchFilter());
+        jTextField1.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
+            @Override
+            public void insertUpdate(javax.swing.event.DocumentEvent e) {
+                applySearchFilter();
+            }
+
+            @Override
+            public void removeUpdate(javax.swing.event.DocumentEvent e) {
+                applySearchFilter();
+            }
+
+            @Override
+            public void changedUpdate(javax.swing.event.DocumentEvent e) {
+                applySearchFilter();
+            }
+        });
+
+        jTextField1.addFocusListener(new java.awt.event.FocusAdapter() {
+            @Override
+            public void focusGained(java.awt.event.FocusEvent e) {
+                if ("Search".equals(jTextField1.getText())) {
+                    jTextField1.setText("");
+                }
+            }
+
+            @Override
+            public void focusLost(java.awt.event.FocusEvent e) {
+                if (jTextField1.getText().trim().isEmpty()) {
+                    jTextField1.setText("Search");
+                }
+            }
+        });
+    }
+
+    private void resetTableSorter() {
+        tableRowSorter = new TableRowSorter<>(jTable1.getModel());
+        jTable1.setRowSorter(tableRowSorter);
+    }
+
+    private void applySearchFilter() {
+        if (tableRowSorter == null) {
+            return;
+        }
+
+        String query = jTextField1.getText();
+        if (query == null) {
+            tableRowSorter.setRowFilter(null);
+            return;
+        }
+
+        query = query.trim();
+        if (query.isEmpty() || "Search".equalsIgnoreCase(query)) {
+            tableRowSorter.setRowFilter(null);
+            return;
+        }
+
+        String escaped = Pattern.quote(query);
+        javax.swing.RowFilter<TableModel, Object> filter = javax.swing.RowFilter.regexFilter(
+            "(?i)" + escaped, 0, 1, 2, 3, 4, 5
+        );
+        tableRowSorter.setRowFilter(filter);
+    }
+
+    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {
+        applySearchFilter();
     }
 
     /**
