@@ -56,7 +56,7 @@ public class Lecturer_menu extends javax.swing.JFrame {
 
         jPanel1.setBackground(new java.awt.Color(204, 255, 255));
 
-        Settings.setText("Settings");
+        Settings.setText("Edit Profile");
         Settings.setAlignmentX(0.5F);
         Settings.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
@@ -67,11 +67,11 @@ public class Lecturer_menu extends javax.swing.JFrame {
         GradeAssessmentButton.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         GradeAssessmentButton.addActionListener(this::GradeAssessmentButtonActionPerformed);
 
-        BackButton.setText("Back");
+        BackButton.setText("Exit");
         BackButton.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         BackButton.addActionListener(this::BackButtonActionPerformed);
 
-        jButton1.setText("Time Table");
+        jButton1.setText("Timetable");
         jButton1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         jButton1.addActionListener(this::jButton1ActionPerformed);
 

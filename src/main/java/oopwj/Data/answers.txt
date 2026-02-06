@@ -1,44 +1,24 @@
-S123,M001,QZ001,Q001,Objective,B
-S123,M001,QZ001,Q002,Subjective,Java is a high-level programming language.
-S123,M001,QZ001,Q003,Objective,A
-S123,M001,QZ001,Q004,Subjective,2+2 equals 4 because it's basic addition.
-S123,M001,QZ001,Q005,Objective,A
-S123,M001,QZ001,Q006,Subjective,The sun rises in the east due to Earth's rotation from west to east.
-S123,M001,QZ001,Q007,Objective,B
-S123,M001,QZ001,Q008,Subjective,5 multiplied by 5 equals 25.
-S123,M001,QZ001,Q009,Objective,A
-S123,M001,QZ001,Q010,Objective,B
-S123,M001,QZ001,Q011,Objective,C
-S123,M001,QZ001,Q012,Objective,D
-S123,M001,QZ001,Q013,Subjective,This is just a test response.
-S123,M001,QZ001,Q014,Objective,A
-S123,M001,QZ001,Q015,Subjective,Random answer to this question.
-S123,M001,QZ001,Q016,Subjective,Another subjective response here.
+S123,M001,QZ001,Q001,Subjective,Java is an object oriented programming language
+S123,M001,QZ001,Q002,Objective,B
+S123,M001,QZ001,Q003,Subjective,2 plus 2 equals 4
+S123,M001,QZ001,Q004,Objective,D
+S123,M001,QZ001,Q005,Subjective,Earth rotation makes the sun appear in the east
+S123,M001,QZ001,Q006,Objective,C
+S123,M001,QZ001,Q007,Subjective,Multiply 5 by 5 to get 25
+S123,M001,QZ001,Q008,Objective,B
+S123,M001,QZ001,Q009,Objective,D
+S123,M001,QZ001,Q010,Objective,C
+S123,M001,QZ001,Q011,Objective,A
+S123,M001,QZ001,Q012,Subjective,Sample short answer
+S123,M001,QZ001,Q013,Objective,D
+S123,M001,QZ001,Q014,Subjective,Sample response for the question
+S123,M001,QZ001,Q015,Subjective,Another short sample answer
+S123,M001,QZ001,Q016,Objective,B
 S123,M001,QZ001,Q017,Objective,A
-S123,M001,QZ001,Q018,Objective,B
+S123,M001,QZ001,Q018,Objective,C
 S123,M001,QZ001,Q019,Objective,B
 S123,M001,QZ001,Q020,Objective,C
 S123,M001,QZ001,Q021,Objective,D
-S123,M001,QZ001,Q022,Objective,A
-S122,M001,QZ001,Q001,Objective,A
-S122,M001,QZ001,Q002,Subjective,Java is an object-oriented programming language used for building applications.
-S122,M001,QZ001,Q003,Objective,C
-S122,M001,QZ001,Q004,Subjective,The sum of 2+2 is 4 as per basic arithmetic.
-S122,M001,QZ001,Q005,Objective,A
-S122,M001,QZ001,Q006,Subjective,Earth rotates from west to east making the sun appear to rise from the east.
-S122,M001,QZ001,Q007,Objective,A
-S122,M001,QZ001,Q008,Subjective,To calculate 5*5 you multiply 5 by itself which gives 25.
-S122,M001,QZ001,Q009,Objective,A
-S122,M001,QZ001,Q010,Objective,A
-S122,M001,QZ001,Q011,Objective,A
-S122,M001,QZ001,Q012,Objective,D
-S122,M001,QZ001,Q013,Subjective,This is a sample subjective answer for testing purposes.
-S122,M001,QZ001,Q014,Objective,B
-S122,M001,QZ001,Q015,Subjective,Providing a detailed response to this question.
-S122,M001,QZ001,Q016,Subjective,Yet another answer for subjective evaluation.
-S122,M001,QZ001,Q017,Objective,A
-S122,M001,QZ001,Q018,Objective,C
-S122,M001,QZ001,Q019,Objective,B
-S122,M001,QZ001,Q020,Objective,A
-S122,M001,QZ001,Q021,Objective,A
-S122,M001,QZ001,Q022,Objective,A
+S123,M001,QZ001,Q022,Objective,B
+S123,M001,QZ001,Q023,Objective,C
+S123,M001,QZ001,Q024,Objective,D

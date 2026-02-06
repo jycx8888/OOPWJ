@@ -15,6 +15,8 @@ public class View_Grade extends javax.swing.JFrame {
     private String moduleID;
     private String quizID;
     private String studentID;
+    private String moduleName;
+    private String quizName;
     private java.util.Map<String, Integer> maxMarksMap = new java.util.HashMap<>();
     private java.util.Map<String, Integer> subjectiveGrades = new java.util.HashMap<>(); // Stores questionID -> marks for subjective questions
 
@@ -24,6 +26,7 @@ public class View_Grade extends javax.swing.JFrame {
     public View_Grade() {
         initComponents();
         setLocationRelativeTo(null);
+        configureObjectiveAutoMark();
         jButton1.addActionListener(this::jButton1ActionPerformed);
     }
     
@@ -37,12 +40,15 @@ public class View_Grade extends javax.swing.JFrame {
         this.studentID = studentID;
         initComponents();
         setLocationRelativeTo(null);
+        configureObjectiveAutoMark();
         jButton1.addActionListener(this::jButton1ActionPerformed);
         jButton2.addActionListener(this::jButton2ActionPerformed);
         jButton3.addActionListener(this::jButton3ActionPerformed);
         jButton4.addActionListener(this::jButton4ActionPerformed);
         loadMaxMarks(moduleID, quizID);
-        setModuleAndStudentInfo(moduleID, studentID);
+        moduleName = lookupModuleName(moduleID);
+        quizName = lookupQuizName(moduleID, quizID);
+        setModuleAndStudentInfo(moduleName, quizName, studentID);
         loadQuestionIDs(moduleID, quizID);
         loadExistingGrades(); // Load already saved grades from Grade.txt
         setupSpinnerValidation();
@@ -52,10 +58,96 @@ public class View_Grade extends javax.swing.JFrame {
     /**
      * Sets the module ID, quiz ID, and student ID on the labels
      */
-    public void setModuleAndStudentInfo(String moduleID, String studentID) {
-        jLabel7.setText("Module ID: " + moduleID);
+    public void setModuleAndStudentInfo(String moduleName, String quizName, String studentID) {
+        jLabel7.setText("Module: " + moduleName);
         jLabel8.setText("Student ID: " + studentID);
-        jLabel9.setText("Quiz ID: " + quizID);
+        jLabel9.setText("Quiz: " + quizName);
+    }
+
+    private void configureObjectiveAutoMark() {
+        jRadioButton1.setEnabled(false);
+        jRadioButton2.setEnabled(false);
+        jRadioButton1.setFocusable(false);
+        jRadioButton2.setFocusable(false);
+    }
+
+    private void updateObjectiveAutoMark(String correctAnswer, String studentAnswer) {
+        jRadioButton1.setSelected(false);
+        jRadioButton2.setSelected(false);
+
+        if (studentAnswer == null || studentAnswer.isEmpty() || correctAnswer == null || correctAnswer.isEmpty()) {
+            return;
+        }
+
+        boolean isCorrect = correctAnswer.equalsIgnoreCase(studentAnswer);
+        jRadioButton2.setSelected(isCorrect);
+        jRadioButton1.setSelected(!isCorrect);
+    }
+
+    private String lookupModuleName(String moduleID) {
+        String projectRoot = System.getProperty("user.dir");
+        String modulesFilePath = projectRoot + "\\src\\main\\java\\oopwj\\data\\modules.txt";
+
+        java.io.File modulesFile = new java.io.File(modulesFilePath);
+        if (!modulesFile.exists()) {
+            logger.log(java.util.logging.Level.WARNING, "modules.txt not found at: " + modulesFile.getAbsolutePath());
+            return moduleID;
+        }
+
+        try (java.io.BufferedReader br = new java.io.BufferedReader(new java.io.FileReader(modulesFile))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                line = line.trim();
+                if (line.isEmpty() || line.startsWith("#")) continue;
+
+                String[] parts = line.split(",");
+                if (parts.length >= 2) {
+                    String fileModuleID = parts[0].trim();
+                    if (fileModuleID.equals(moduleID)) {
+                        return parts[1].trim();
+                    }
+                }
+            }
+        } catch (java.io.IOException e) {
+            logger.log(java.util.logging.Level.SEVERE, "Error reading modules.txt: " + e.getMessage(), e);
+        }
+
+        return moduleID;
+    }
+
+    private String lookupQuizName(String moduleID, String quizID) {
+        String projectRoot = System.getProperty("user.dir");
+        String quizFilePath = projectRoot + "\\src\\main\\java\\oopwj\\data\\Quiz.txt";
+
+        java.io.File quizFile = new java.io.File(quizFilePath);
+        if (!quizFile.exists()) {
+            logger.log(java.util.logging.Level.WARNING, "Quiz.txt not found at: " + quizFile.getAbsolutePath());
+            return quizID;
+        }
+
+        try (java.io.BufferedReader br = new java.io.BufferedReader(new java.io.FileReader(quizFile))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                line = line.trim();
+                if (line.isEmpty() || line.startsWith("#")) continue;
+
+                String[] parts = line.split(",", 3);
+                if (parts.length >= 2) {
+                    String fileQuizID = parts[0].trim();
+                    String fileModuleID = parts[1].trim();
+                    if (fileQuizID.equals(quizID) && fileModuleID.equals(moduleID)) {
+                        if (parts.length == 3) {
+                            return parts[2].trim();
+                        }
+                        return quizID;
+                    }
+                }
+            }
+        } catch (java.io.IOException e) {
+            logger.log(java.util.logging.Level.SEVERE, "Error reading Quiz.txt: " + e.getMessage(), e);
+        }
+
+        return quizID;
     }
     
     /**
@@ -560,6 +652,8 @@ public class View_Grade extends javax.swing.JFrame {
                             
                             // Fill subjective panel
                             jTextArea2.setText(question);
+                            jRadioButton1.setSelected(false);
+                            jRadioButton2.setSelected(false);
                             
                             // Note: Spinner value will be set by updateMaxMarksDisplay() which is called after this
                             
@@ -643,13 +737,8 @@ public class View_Grade extends javax.swing.JFrame {
                         if ("Objective".equalsIgnoreCase(questionType)) {
                             // Show student's objective answer
                             jTextField1.setText(answer);
-                            // Set objective answer radio buttons
-                            if ("A".equalsIgnoreCase(answer)) {
-                                jRadioButton1.setSelected(true);
-                            } else if ("B".equalsIgnoreCase(answer)) {
-                                jRadioButton2.setSelected(true);
-                            }
-                            // Add more radio buttons if you have C and D
+                            String correctAnswer = jTextField2.getText().trim();
+                            updateObjectiveAutoMark(correctAnswer, answer);
                         } else if ("Subjective".equalsIgnoreCase(questionType)) {
                             // Set subjective answer
                             jTextArea3.setText(answer);

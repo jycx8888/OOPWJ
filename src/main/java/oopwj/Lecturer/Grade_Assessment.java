@@ -93,8 +93,23 @@ public class Grade_Assessment extends javax.swing.JFrame {
 
     private void clearTable() {
         jTable1.setModel(new DefaultTableModel(
-            new Object[]{"ModuleID", "QuizID", "StudentID", "Total Grade", "Grade", "Feedback"}, 0
+            new Object[]{"Module name", "Quiz Name", "StudentID", "Total Grade", "Grade", "Feedback", "ModuleID", "QuizID"}, 0
         ));
+        hideHiddenColumns();
+    }
+
+    private void hideHiddenColumns() {
+        int columnCount = jTable1.getColumnCount();
+        if (columnCount < 2) {
+            return;
+        }
+        // Hide ModuleID and QuizID columns at the end.
+        for (int colIndex = columnCount - 2; colIndex < columnCount; colIndex++) {
+            javax.swing.table.TableColumn column = jTable1.getColumnModel().getColumn(colIndex);
+            column.setMinWidth(0);
+            column.setMaxWidth(0);
+            column.setPreferredWidth(0);
+        }
     }
 
     private void initLoadOnShow() {
@@ -173,24 +188,24 @@ public class Grade_Assessment extends javax.swing.JFrame {
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap(70, Short.MAX_VALUE)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(55, 55, 55)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jButton2)
-                        .addGap(65, 65, 65)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jButton3)
-                        .addGap(90, 90, 90)
+                        .addGap(122, 122, 122)
                         .addComponent(jButton1))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 391, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(70, 70, 70))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 481, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(55, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap(87, Short.MAX_VALUE)
+                .addContainerGap(75, Short.MAX_VALUE)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 376, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addGap(30, 30, 30)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton1)
                     .addComponent(jButton2)
@@ -202,7 +217,7 @@ public class Grade_Assessment extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -235,8 +250,8 @@ public class Grade_Assessment extends javax.swing.JFrame {
         }
         
         // Get moduleID, quizID, and studentID from selected row
-        String moduleID = jTable1.getValueAt(selectedRow, 0).toString();
-        String quizID = jTable1.getValueAt(selectedRow, 1).toString();
+        String moduleID = jTable1.getValueAt(selectedRow, 6).toString();
+        String quizID = jTable1.getValueAt(selectedRow, 7).toString();
         String studentID = jTable1.getValueAt(selectedRow, 2).toString();
         
         View_Grade viewGrade = new View_Grade(moduleID, quizID, studentID, lecturerID);
@@ -257,8 +272,8 @@ public class Grade_Assessment extends javax.swing.JFrame {
         }
         
         // Get moduleID, quizID, and studentID from selected row
-        String moduleID = jTable1.getValueAt(selectedRow, 0).toString();
-        String quizID = jTable1.getValueAt(selectedRow, 1).toString();
+        String moduleID = jTable1.getValueAt(selectedRow, 6).toString();
+        String quizID = jTable1.getValueAt(selectedRow, 7).toString();
         String studentID = jTable1.getValueAt(selectedRow, 2).toString();
         
         // Open Feedback window
@@ -272,8 +287,8 @@ public class Grade_Assessment extends javax.swing.JFrame {
      */
     private void showRowDetailsPopup(int row) {
         // Get data from the selected row
-        String moduleID = jTable1.getValueAt(row, 0).toString();
-        String quizID = jTable1.getValueAt(row, 1).toString();
+        String moduleName = jTable1.getValueAt(row, 0).toString();
+        String quizName = jTable1.getValueAt(row, 1).toString();
         String studentID = jTable1.getValueAt(row, 2).toString();
         String totalGrade = jTable1.getValueAt(row, 3).toString();
         String grade = jTable1.getValueAt(row, 4).toString();
@@ -292,8 +307,8 @@ public class Grade_Assessment extends javax.swing.JFrame {
         panel.setBackground(new java.awt.Color(255, 255, 255));
         
         // Add labels with the data
-        addDetailRow(panel, "Module ID:", moduleID);
-        addDetailRow(panel, "Quiz ID:", quizID);
+        addDetailRow(panel, "Module:", moduleName);
+        addDetailRow(panel, "Quiz:", quizName);
         addDetailRow(panel, "Student ID:", studentID);
         addDetailRow(panel, "Total Grade:", totalGrade);
         addDetailRow(panel, "Grade:", grade);
@@ -355,6 +370,8 @@ public class Grade_Assessment extends javax.swing.JFrame {
         String quizFilePath = projectRoot + "\\src\\main\\java\\oopwj\\data\\Quiz.txt";
         String finalGradeFilePath = projectRoot + "\\src\\main\\java\\oopwj\\data\\FinalGrade.txt";
         Set<String> allowedModuleIDs = new HashSet<>();
+        Map<String, String> moduleIdToName = new HashMap<>();
+        Map<String, String> quizKeyToName = new HashMap<>();
         Map<String, List<String>> quizByModule = new HashMap<>();
         Map<String, String[]> finalGrades = loadFinalGrades(finalGradeFilePath);
 
@@ -419,11 +436,13 @@ public class Grade_Assessment extends javax.swing.JFrame {
                 String[] parts = line.split(",");
                 if (parts.length > 3) {
                     String moduleID = parts[0].trim();
+                    String moduleName = parts[1].trim();
                     String fileLecturerID = parts[3].trim();
                     
                     System.out.println("Comparing: '" + fileLecturerID + "' == '" + lecturerID + "'");
                     if (fileLecturerID.equals(lecturerID)) {
                         allowedModuleIDs.add(moduleID);
+                        moduleIdToName.put(moduleID, moduleName);
                         System.out.println("✓ Found matching module: " + moduleID);
                         logger.log(java.util.logging.Level.INFO, "Found module: " + moduleID);
                     }
@@ -464,6 +483,9 @@ public class Grade_Assessment extends javax.swing.JFrame {
                 if (parts.length >= 2) {
                     String quizID = parts[0].trim();
                     String moduleID = parts[1].trim();
+                    String quizName = parts.length >= 3 ? parts[2].trim() : quizID;
+                    String quizKey = moduleID + "|" + quizID;
+                    quizKeyToName.put(quizKey, quizName);
 
                     if (!quizByModule.containsKey(moduleID)) {
                         quizByModule.put(moduleID, new ArrayList<>());
@@ -504,7 +526,10 @@ public class Grade_Assessment extends javax.swing.JFrame {
                         String tripleKey = moduleID + "|" + quizID + "|" + studentID;
                         if (!uniqueTriples.contains(tripleKey)) {
                             uniqueTriples.add(tripleKey);
-                            tableData.add(new String[]{moduleID, quizID, studentID});
+                            String moduleName = moduleIdToName.getOrDefault(moduleID, moduleID);
+                            String quizKey = moduleID + "|" + quizID;
+                            String quizName = quizKeyToName.getOrDefault(quizKey, quizID);
+                            tableData.add(new String[]{moduleName, quizName, studentID, moduleID, quizID});
                             System.out.println("✓ Added unique entry - Module: " + moduleID + ", Quiz: " + quizID + ", Student: " + studentID);
                         }
                     }
@@ -524,12 +549,16 @@ public class Grade_Assessment extends javax.swing.JFrame {
         }
 
         DefaultTableModel model = new DefaultTableModel(
-            new Object[]{"ModuleID", "QuizID", "StudentID", "Total Grade", "Grade", "Feedback"}, 0
+            new Object[]{"Module name", "Quiz Name", "StudentID", "Total Grade", "Grade", "Feedback", "ModuleID", "QuizID"}, 0
         );
         for (String[] row : tableData) {
-            String[] expandedRow = new String[6];
-            System.arraycopy(row, 0, expandedRow, 0, 3);
-            String key = row[2] + "|" + row[0] + "|" + row[1];
+            String[] expandedRow = new String[8];
+            expandedRow[0] = row[0]; // Module name
+            expandedRow[1] = row[1]; // Quiz name
+            expandedRow[2] = row[2]; // Student ID
+            expandedRow[6] = row[3]; // Module ID (hidden)
+            expandedRow[7] = row[4]; // Quiz ID (hidden)
+            String key = row[2] + "|" + row[3] + "|" + row[4];
             String[] finalGradeRecord = finalGrades.get(key);
             if (finalGradeRecord != null) {
                 expandedRow[3] = finalGradeRecord[0]; // Total Grade (mark)
@@ -545,6 +574,7 @@ public class Grade_Assessment extends javax.swing.JFrame {
         }
         System.out.println("DEBUG: Setting model with " + model.getRowCount() + " rows");
         jTable1.setModel(model);
+        hideHiddenColumns();
         
         System.out.println("DEBUG: loadAssessmentAnswers() END");
     }
