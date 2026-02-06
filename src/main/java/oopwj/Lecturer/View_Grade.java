@@ -28,6 +28,7 @@ public class View_Grade extends javax.swing.JFrame {
         setLocationRelativeTo(null);
         configureObjectiveAutoMark();
         jButton1.addActionListener(this::jButton1ActionPerformed);
+        jButton5.addActionListener(this::jButton5ActionPerformed);
     }
     
     /**
@@ -45,12 +46,14 @@ public class View_Grade extends javax.swing.JFrame {
         jButton2.addActionListener(this::jButton2ActionPerformed);
         jButton3.addActionListener(this::jButton3ActionPerformed);
         jButton4.addActionListener(this::jButton4ActionPerformed);
+        jButton5.addActionListener(this::jButton5ActionPerformed);
         loadMaxMarks(moduleID, quizID);
         moduleName = lookupModuleName(moduleID);
         quizName = lookupQuizName(moduleID, quizID);
         setModuleAndStudentInfo(moduleName, quizName, studentID);
         loadQuestionIDs(moduleID, quizID);
         loadExistingGrades(); // Load already saved grades from Grade.txt
+        refreshCurrentQuestionDisplay();
         setupSpinnerValidation();
         setupSpinnerChangeListener(); // Listen for mark changes
     }
@@ -381,6 +384,7 @@ public class View_Grade extends javax.swing.JFrame {
         jButton2 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
         jButton4 = new javax.swing.JButton();
+        jButton5 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setMaximumSize(null);
@@ -545,16 +549,16 @@ public class View_Grade extends javax.swing.JFrame {
         jPanel4.add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(210, 650, -1, -1));
 
         jLabel7.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        jLabel7.setText("Module ID:");
-        jPanel4.add(jLabel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 20, 190, -1));
+        jLabel7.setText("Module:");
+        jPanel4.add(jLabel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 20, 400, -1));
 
         jLabel8.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel8.setText("Student ID:");
         jPanel4.add(jLabel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 80, 200, -1));
 
         jLabel9.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        jLabel9.setText("Quiz ID: ");
-        jPanel4.add(jLabel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 50, 170, -1));
+        jLabel9.setText("Quiz: ");
+        jPanel4.add(jLabel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 50, 330, -1));
 
         jButton2.setText("Previous");
         jPanel4.add(jButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 590, -1, -1));
@@ -564,6 +568,9 @@ public class View_Grade extends javax.swing.JFrame {
 
         jButton4.setText("Save");
         jPanel4.add(jButton4, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 590, -1, -1));
+
+        jButton5.setText("Full Mark");
+        jPanel4.add(jButton5, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 590, -1, -1));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -879,6 +886,45 @@ public class View_Grade extends javax.swing.JFrame {
             javax.swing.JOptionPane.INFORMATION_MESSAGE);
         
         logger.log(java.util.logging.Level.INFO, "Saved " + totalMarked + " questions to Grade.txt");
+    }
+
+    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {
+        String selectedQuestionID = (String) jComboBox1.getSelectedItem();
+        if (selectedQuestionID == null || selectedQuestionID.isEmpty()) {
+            return;
+        }
+
+        if (!isSubjectiveQuestion(selectedQuestionID)) {
+            javax.swing.JOptionPane.showMessageDialog(this,
+                "Full Mark applies only to subjective questions.",
+                "Not a Subjective Question",
+                javax.swing.JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+
+        Integer maxMarks = maxMarksMap.get(selectedQuestionID);
+        if (maxMarks == null) {
+            javax.swing.JOptionPane.showMessageDialog(this,
+                "Maximum marks not found for this question.",
+                "Missing Max Marks",
+                javax.swing.JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        jSpinner2.setValue(maxMarks);
+        subjectiveGrades.put(selectedQuestionID, maxMarks);
+        logger.log(java.util.logging.Level.INFO, "Set full marks for " + selectedQuestionID + ": " + maxMarks);
+    }
+
+    private void refreshCurrentQuestionDisplay() {
+        String selectedQuestionID = (String) jComboBox1.getSelectedItem();
+        if (selectedQuestionID == null || selectedQuestionID.isEmpty()) {
+            return;
+        }
+
+        loadQuestionData(selectedQuestionID);
+        loadStudentAnswer(selectedQuestionID);
+        updateMaxMarksDisplay(selectedQuestionID);
     }
     
     /**
@@ -1710,6 +1756,7 @@ public class View_Grade extends javax.swing.JFrame {
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
+    private javax.swing.JButton jButton5;
     private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
