@@ -1,6 +1,6 @@
 M001,Data Management,AC010,L101
 M002,Object Oriented Programming with Java,AC010,L101
-M003,System Development Methods,AC010,L100
+M003,System Development Methods,AC010,L001
 M004,System and Network Administration,AC124,NONE
 M005,Innovation Process,AC124,NONE
 M006,Programming With Python,AC010,L001

@@ -109,7 +109,7 @@ public class generateReports extends javax.swing.JFrame {
         previousFeedback = new javax.swing.JButton();
         nextFeedback = new javax.swing.JButton();
         exportToPDF = new javax.swing.JButton();
-        viewStudents = new javax.swing.JToggleButton();
+        viewStudent = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -319,10 +319,10 @@ public class generateReports extends javax.swing.JFrame {
             }
         });
 
-        viewStudents.setText("View");
-        viewStudents.addActionListener(new java.awt.event.ActionListener() {
+        viewStudent.setText("View");
+        viewStudent.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                viewStudentsActionPerformed(evt);
+                viewStudentActionPerformed(evt);
             }
         });
 
@@ -363,8 +363,8 @@ public class generateReports extends javax.swing.JFrame {
                         .addComponent(jLabel6)
                         .addGap(222, 222, 222))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(viewStudents)
-                        .addGap(297, 297, 297))))
+                        .addComponent(viewStudent)
+                        .addGap(298, 298, 298))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -389,9 +389,9 @@ public class generateReports extends javax.swing.JFrame {
                 .addComponent(jLabel1)
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(viewStudents)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 31, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(viewStudent)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 25, Short.MAX_VALUE)
                 .addComponent(jLabel6)
                 .addGap(18, 18, 18)
                 .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -447,8 +447,8 @@ public class generateReports extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_quizActionPerformed
 
-    private void viewStudentsActionPerformed(java.awt.event.ActionEvent evt) {
-        // Validate that a module and quiz are selected
+    private void viewStudentActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_viewStudentActionPerformed
+        // TODO add your handling code here:
         String selectedModuleName = (String) modules.getSelectedItem();
         String selectedQuizName = (String) quiz.getSelectedItem();
         
@@ -469,10 +469,10 @@ public class generateReports extends javax.swing.JFrame {
         }
         
         showStudentsByGradeDialog();
-    }
+    }//GEN-LAST:event_viewStudentActionPerformed
 
-    private void exportToPDFActionPerformed(java.awt.event.ActionEvent evt) {
-        // Validate that a module and quiz are selected
+    private void exportToPDFActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportToPDFActionPerformed
+        // TODO add your handling code here:
         String selectedModuleName = (String) modules.getSelectedItem();
         String selectedQuizName = (String) quiz.getSelectedItem();
         
@@ -526,7 +526,7 @@ public class generateReports extends javax.swing.JFrame {
                     JOptionPane.ERROR_MESSAGE);
             }
         }
-    }
+    }//GEN-LAST:event_exportToPDFActionPerformed
 
     private void loadModulesFromFile() {
         modules.removeAllItems();
@@ -1311,6 +1311,6 @@ public class generateReports extends javax.swing.JFrame {
     private javax.swing.JLabel studentIDLowest;
     private javax.swing.JLabel studentNameHighest;
     private javax.swing.JLabel studentNameLowest;
-    private javax.swing.JToggleButton viewStudents;
+    private javax.swing.JButton viewStudent;
     // End of variables declaration//GEN-END:variables
 }

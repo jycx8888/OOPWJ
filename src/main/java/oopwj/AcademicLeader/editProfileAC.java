@@ -4,9 +4,13 @@
  */
 package oopwj.AcademicLeader;
 
+import java.awt.Image;
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.*;
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 /**
  *
@@ -15,6 +19,9 @@ import javax.swing.*;
 public class editProfileAC extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(editProfileAC.class.getName());
+    private static final String PROFILE_IMAGE_DIR = "src/main/java/oopwj/image";
+    private static final String[] PROFILE_IMAGE_EXTENSIONS = {"png", "jpg", "jpeg", "gif"};
+    private final javax.swing.JLabel profilePictureLabel = new javax.swing.JLabel();
     private String loggedInUserID;
     private javax.swing.JFrame parentFrame;
     private String currentPassword;
@@ -24,6 +31,7 @@ public class editProfileAC extends javax.swing.JFrame {
      */
     public editProfileAC() {
         initComponents();
+        setupProfilePicturePanel();
     }
     
     /**
@@ -35,7 +43,9 @@ public class editProfileAC extends javax.swing.JFrame {
         this.loggedInUserID = userID;
         this.parentFrame = parent;
         initComponents();
+        setupProfilePicturePanel();
         loadUserData();
+        loadProfilePicture();
     }
     
     /**
@@ -58,6 +68,90 @@ public class editProfileAC extends javax.swing.JFrame {
             logger.log(java.util.logging.Level.SEVERE, "Error loading user data", e);
             JOptionPane.showMessageDialog(this, "Error loading user data", "Error", JOptionPane.ERROR_MESSAGE);
         }
+    }
+
+    private void setupProfilePicturePanel() {
+        profilePictureLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        profilePicture.setLayout(new java.awt.BorderLayout());
+        profilePicture.add(profilePictureLabel, java.awt.BorderLayout.CENTER);
+    }
+
+    private void loadProfilePicture() {
+        if (loggedInUserID == null || loggedInUserID.trim().isEmpty()) {
+            profilePictureLabel.setIcon(null);
+            profilePictureLabel.setText("");
+            return;
+        }
+
+        File imageFile = findExistingProfileImage();
+        if (imageFile != null && imageFile.exists()) {
+            setProfilePicture(imageFile);
+        } else {
+            profilePictureLabel.setIcon(null);
+            profilePictureLabel.setText("");
+        }
+    }
+
+    private File findExistingProfileImage() {
+        File dir = new File(PROFILE_IMAGE_DIR);
+        if (!dir.exists()) {
+            return null;
+        }
+
+        String baseName = getProfileImageBaseName();
+        for (String ext : PROFILE_IMAGE_EXTENSIONS) {
+            File candidate = new File(dir, baseName + "." + ext);
+            if (candidate.exists()) {
+                return candidate;
+            }
+        }
+        return null;
+    }
+
+    private void setProfilePicture(File imageFile) {
+        try {
+            ImageIcon originalIcon = new ImageIcon(imageFile.getAbsolutePath());
+            int targetWidth = profilePicture.getPreferredSize().width;
+            int targetHeight = profilePicture.getPreferredSize().height;
+            if (targetWidth <= 0 || targetHeight <= 0) {
+                targetWidth = 100;
+                targetHeight = 100;
+            }
+            Image scaled = originalIcon.getImage().getScaledInstance(targetWidth, targetHeight, Image.SCALE_SMOOTH);
+            profilePictureLabel.setIcon(new ImageIcon(scaled));
+            profilePictureLabel.setText("");
+        } catch (Exception e) {
+            logger.log(java.util.logging.Level.WARNING, "Unable to load profile picture", e);
+            profilePictureLabel.setIcon(null);
+            profilePictureLabel.setText("");
+        }
+    }
+
+    private String getProfileImageBaseName() {
+        return "profile_" + loggedInUserID;
+    }
+
+    private void deleteExistingProfileImages() {
+        File dir = new File(PROFILE_IMAGE_DIR);
+        if (!dir.exists()) {
+            return;
+        }
+
+        String baseName = getProfileImageBaseName();
+        for (String ext : PROFILE_IMAGE_EXTENSIONS) {
+            File candidate = new File(dir, baseName + "." + ext);
+            if (candidate.exists()) {
+                candidate.delete();
+            }
+        }
+    }
+
+    private String getFileExtension(String fileName) {
+        int dotIndex = fileName.lastIndexOf('.');
+        if (dotIndex <= 0 || dotIndex == fileName.length() - 1) {
+            return "";
+        }
+        return fileName.substring(dotIndex + 1).toLowerCase(Locale.ROOT);
     }
     
     /**
@@ -213,6 +307,8 @@ public class editProfileAC extends javax.swing.JFrame {
         IDLabel = new javax.swing.JLabel();
         NameLabel = new javax.swing.JLabel();
         EmailLabel = new javax.swing.JLabel();
+        profilePicture = new java.awt.Panel();
+        editProfilePicture = new javax.swing.JToggleButton();
 
         jTextField1.setText("jTextField1");
 
@@ -262,6 +358,24 @@ public class editProfileAC extends javax.swing.JFrame {
         EmailLabel.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         EmailLabel.setText("jLabel5");
 
+        javax.swing.GroupLayout profilePictureLayout = new javax.swing.GroupLayout(profilePicture);
+        profilePicture.setLayout(profilePictureLayout);
+        profilePictureLayout.setHorizontalGroup(
+            profilePictureLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 140, Short.MAX_VALUE)
+        );
+        profilePictureLayout.setVerticalGroup(
+            profilePictureLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 131, Short.MAX_VALUE)
+        );
+
+        editProfilePicture.setText("Edit");
+        editProfilePicture.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                editProfilePictureActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -278,18 +392,28 @@ public class editProfileAC extends javax.swing.JFrame {
                             .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, 51, Short.MAX_VALUE)
                             .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGap(40, 40, 40)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(IDLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 174, Short.MAX_VALUE)
+                            .addComponent(IDLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(NameLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(EmailLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
-                .addContainerGap(186, Short.MAX_VALUE))
-            .addGroup(layout.createSequentialGroup()
-                .addGap(239, 239, 239)
-                .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(Exit)
-                .addGap(32, 32, 32))
+                            .addComponent(EmailLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 174, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addContainerGap(170, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(profilePicture, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(166, 166, 166))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel1)
+                                .addGap(180, 180, 180)))
+                        .addComponent(Exit)
+                        .addGap(32, 32, 32))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(editProfilePicture)
+                        .addGap(260, 260, 260))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -301,23 +425,27 @@ public class editProfileAC extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addGap(17, 17, 17)
                         .addComponent(Exit)))
-                .addGap(29, 29, 29)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(profilePicture, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(editProfilePicture)
+                .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4)
                     .addComponent(IDLabel))
-                .addGap(29, 29, 29)
+                .addGap(26, 26, 26)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
                     .addComponent(NameLabel))
-                .addGap(35, 35, 35)
+                .addGap(26, 26, 26)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
                     .addComponent(EmailLabel))
-                .addGap(36, 36, 36)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 28, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(changePassword)
                     .addComponent(editProfile))
-                .addContainerGap(162, Short.MAX_VALUE))
+                .addGap(19, 19, 19))
         );
 
         pack();
@@ -444,6 +572,43 @@ public class editProfileAC extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_editProfileActionPerformed
 
+    private void editProfilePictureActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editProfilePictureActionPerformed
+        if (loggedInUserID == null || loggedInUserID.trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "User ID not found.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setFileFilter(new FileNameExtensionFilter("Images", "jpg", "jpeg", "png", "gif"));
+        int result = fileChooser.showOpenDialog(this);
+        if (result != JFileChooser.APPROVE_OPTION) {
+            return;
+        }
+
+        File selectedFile = fileChooser.getSelectedFile();
+        String extension = getFileExtension(selectedFile.getName());
+        if (extension.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Unsupported image file.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        try {
+            File imageDir = new File(PROFILE_IMAGE_DIR);
+            if (!imageDir.exists()) {
+                imageDir.mkdirs();
+            }
+
+            deleteExistingProfileImages();
+            File destination = new File(imageDir, getProfileImageBaseName() + "." + extension);
+            Files.copy(selectedFile.toPath(), destination.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            loadProfilePicture();
+            JOptionPane.showMessageDialog(this, "Profile picture updated.", "Success", JOptionPane.INFORMATION_MESSAGE);
+        } catch (IOException e) {
+            logger.log(java.util.logging.Level.SEVERE, "Error updating profile picture", e);
+            JOptionPane.showMessageDialog(this, "Error updating profile picture.", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_editProfilePictureActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -476,10 +641,12 @@ public class editProfileAC extends javax.swing.JFrame {
     private javax.swing.JLabel NameLabel;
     private javax.swing.JButton changePassword;
     private javax.swing.JButton editProfile;
+    private javax.swing.JToggleButton editProfilePicture;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JTextField jTextField1;
+    private java.awt.Panel profilePicture;
     // End of variables declaration//GEN-END:variables
 }
