@@ -11,7 +11,7 @@ import java.awt.event.ActionListener;
 import java.util.List;
 
 public class FeedbackFrame extends JFrame {
-
+    //declare variables
     private User currentUser;
     private StudentService service;
     private JLabel lecturerLabel; 
