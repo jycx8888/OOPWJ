@@ -8,10 +8,16 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
+import java.util.Locale;
 
 public class ProfileFrame extends JFrame {
 
+    private static final String PROFILE_IMAGE_DIR = "src/main/java/oopwj/image";
+    private static final String[] PROFILE_IMAGE_EXTENSIONS = {"png", "jpg", "jpeg", "gif"};
     private JLabel imageLabel; 
     private JLabel nameLabel; 
     private User currentUser; 
@@ -49,12 +55,13 @@ public class ProfileFrame extends JFrame {
         imageLabel.setPreferredSize(new Dimension(250, 250)); 
         imageLabel.setBorder(BorderFactory.createLineBorder(Color.GRAY));
 
-        // 注意：确保 Image 文件夹下有 default_profile.png，否则显示 "No Image"
-        ImageIcon defaultIcon = loadAndScaleImage("Image/default_profile.png", 250, 250);
-        if (defaultIcon != null) {
-            imageLabel.setIcon(defaultIcon);
-        } else {
-            imageLabel.setText("No Image");
+        if (!loadSavedProfileImage()) {
+            ImageIcon defaultIcon = loadAndScaleImage("Image/default_profile.png", 250, 250);
+            if (defaultIcon != null) {
+                imageLabel.setIcon(defaultIcon);
+            } else {
+                imageLabel.setText("No Image");
+            }
         }
 
         JButton uploadBtn = new JButton("Change Image");
@@ -62,13 +69,32 @@ public class ProfileFrame extends JFrame {
 
         uploadBtn.addActionListener(e -> {
             JFileChooser fileChooser = new JFileChooser();
-            FileNameExtensionFilter filter = new FileNameExtensionFilter("Images", "jpg", "png", "gif");
+            FileNameExtensionFilter filter = new FileNameExtensionFilter("Images", "jpg", "jpeg", "png", "gif");
             fileChooser.setFileFilter(filter);
             if (fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
                 File selectedFile = fileChooser.getSelectedFile();
-                ImageIcon newIcon = loadAndScaleImage(selectedFile.getAbsolutePath(), 250, 250);
-                imageLabel.setIcon(newIcon);
-                JOptionPane.showMessageDialog(null, "Image Updated (Temporary view only)");
+                String extension = getFileExtension(selectedFile.getName());
+                if (extension.isEmpty()) {
+                    JOptionPane.showMessageDialog(this, "Unsupported image file.", "Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
+                try {
+                    File imageDir = new File(PROFILE_IMAGE_DIR);
+                    if (!imageDir.exists()) {
+                        imageDir.mkdirs();
+                    }
+
+                    deleteExistingProfileImages();
+                    File destination = new File(imageDir, getProfileImageBaseName() + "." + extension);
+                    Files.copy(selectedFile.toPath(), destination.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                    ImageIcon newIcon = loadAndScaleImage(destination.getAbsolutePath(), 250, 250);
+                    imageLabel.setIcon(newIcon);
+                    imageLabel.setText("");
+                    JOptionPane.showMessageDialog(this, "Image updated successfully.");
+                } catch (IOException ex) {
+                    JOptionPane.showMessageDialog(this, "Error saving image.", "Error", JOptionPane.ERROR_MESSAGE);
+                }
             }
         });
 
@@ -88,6 +114,68 @@ public class ProfileFrame extends JFrame {
             }
         } catch (Exception e) { return null; }
         return null;
+    }
+
+    private boolean loadSavedProfileImage() {
+        File imageFile = findExistingProfileImage();
+        if (imageFile == null || !imageFile.exists()) {
+            return false;
+        }
+
+        ImageIcon savedIcon = loadAndScaleImage(imageFile.getAbsolutePath(), 250, 250);
+        if (savedIcon != null) {
+            imageLabel.setIcon(savedIcon);
+            imageLabel.setText("");
+            return true;
+        }
+        return false;
+    }
+
+    private File findExistingProfileImage() {
+        if (currentUser == null || currentUser.getUserID() == null || currentUser.getUserID().trim().isEmpty()) {
+            return null;
+        }
+
+        File dir = new File(PROFILE_IMAGE_DIR);
+        if (!dir.exists()) {
+            return null;
+        }
+
+        String baseName = getProfileImageBaseName();
+        for (String ext : PROFILE_IMAGE_EXTENSIONS) {
+            File candidate = new File(dir, baseName + "." + ext);
+            if (candidate.exists()) {
+                return candidate;
+            }
+        }
+        return null;
+    }
+
+    private String getProfileImageBaseName() {
+        return "profile_" + currentUser.getUserID();
+    }
+
+    private void deleteExistingProfileImages() {
+        File dir = new File(PROFILE_IMAGE_DIR);
+        if (!dir.exists() || currentUser == null || currentUser.getUserID() == null) {
+            return;
+        }
+
+        String baseName = getProfileImageBaseName();
+        for (String ext : PROFILE_IMAGE_EXTENSIONS) {
+            File candidate = new File(dir, baseName + "." + ext);
+            if (candidate.exists()) {
+                candidate.delete();
+            }
+        }
+    }
+
+    private String getFileExtension(String fileName) {
+        int dotIndex = fileName.lastIndexOf('.');
+        if (dotIndex <= 0 || dotIndex == fileName.length() - 1) {
+            return "";
+        }
+        return fileName.substring(dotIndex + 1).toLowerCase(Locale.ROOT);
     }
 
     private JPanel createRightPanel() {
