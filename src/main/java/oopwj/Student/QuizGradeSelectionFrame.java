@@ -17,12 +17,12 @@ public class QuizGradeSelectionFrame extends JFrame {
         JPanel mainPanel = new JPanel(new BorderLayout(10, 10));
         mainPanel.setBorder(new EmptyBorder(20, 20, 20, 20));
 
-        // Title
+        
         JLabel titleLabel = new JLabel("<html>Grade Summary for<br/>" + moduleID + ": " + moduleName + "</html>", SwingConstants.CENTER);
         titleLabel.setFont(new Font("Arial", Font.BOLD, 16));
         mainPanel.add(titleLabel, BorderLayout.NORTH);
 
-        // List Panel
+        
         JPanel listPanel = new JPanel();
         listPanel.setLayout(new BoxLayout(listPanel, BoxLayout.Y_AXIS));
 
@@ -32,7 +32,7 @@ public class QuizGradeSelectionFrame extends JFrame {
             String grade = g[2];
             String comment = g[3];
 
-            // Card Panel for each grade entry
+            
             JPanel card = new JPanel(new BorderLayout());
             card.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(Color.GRAY),
@@ -52,7 +52,7 @@ public class QuizGradeSelectionFrame extends JFrame {
             card.add(infoLabel, BorderLayout.CENTER);
             card.add(viewBtn, BorderLayout.EAST);
             
-            // Add comment tooltip or small text if needed
+            
             card.setToolTipText("Lecturer Comment: " + comment);
 
             listPanel.add(card);
@@ -61,7 +61,7 @@ public class QuizGradeSelectionFrame extends JFrame {
 
         mainPanel.add(new JScrollPane(listPanel), BorderLayout.CENTER);
 
-        // Back Button
+        
         JButton backBtn = new JButton("Back");
         backBtn.addActionListener(e -> {
             new StudentResultFrame(user);

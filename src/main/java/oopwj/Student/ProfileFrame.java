@@ -105,7 +105,6 @@ public class ProfileFrame extends JFrame {
 
     private ImageIcon loadAndScaleImage(String path, int width, int height) {
          try {
-            // 简单的图片加载逻辑
             File imgFile = new File(path);
             if (imgFile.exists()) {
                 ImageIcon originalIcon = new ImageIcon(path);
@@ -250,7 +249,7 @@ public class ProfileFrame extends JFrame {
         courseTitleLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
         scrollPane.setAlignmentX(Component.LEFT_ALIGNMENT);
         
-        // 修改名字逻辑
+        
         editNameBtn.addActionListener(e -> {
             String currentName = currentUser.getUserName();
             String newName = JOptionPane.showInputDialog(this, "Enter new name:", currentName);
@@ -261,7 +260,7 @@ public class ProfileFrame extends JFrame {
                     return;
                 }
                 
-                // 真正写入文件
+                
                 if (service.updateName(currentUser.getUserID(), newName.trim())) {
                     currentUser.setUserName(newName.trim()); 
                     nameLabel.setText("Name: " + newName.trim() + "  ");
@@ -272,7 +271,7 @@ public class ProfileFrame extends JFrame {
             }
         });
 
-        // 修改密码逻辑
+        
         changePassBtn.addActionListener(e -> {
             JPasswordField pf = new JPasswordField();
             int okCfm = JOptionPane.showConfirmDialog(this, new Object[]{"Enter current password:", pf}, 
@@ -308,7 +307,7 @@ public class ProfileFrame extends JFrame {
                         continue;
                     }
 
-                    // 真正写入文件
+                    
                     if (service.updatePassword(currentUser.getUserID(), newPass)) {
                         currentUser.setPassword(newPass); 
                         JOptionPane.showMessageDialog(this, "Password changed successfully!");

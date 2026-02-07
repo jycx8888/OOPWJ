@@ -45,19 +45,19 @@ public class QuizMenu extends JFrame {
                 btn.setMaximumSize(new Dimension(400, 40));
                 btn.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-                // 点击事件
+                
                 btn.addActionListener(e -> {
                     System.out.println("[DEBUG] Clicked course: " + courseID);
                     
-                    // 1. 获取试卷列表
+                    
                     List<String[]> quizzes = service.getQuizzesForModule(courseID);
                     
-                    // 2. 安全检查：如果列表不为空，才打开选择页
+                    
                     if (quizzes != null && !quizzes.isEmpty()) {
                         new QuizPaperSelectionFrame(currentUser, courseID, courseName, quizzes);
                         dispose(); 
                     } else {
-                        // 如果列表为空，说明 Quiz.txt 里没有匹配的行，或者 ID 不对
+                        
                         JOptionPane.showMessageDialog(this, 
                             "No active quizzes found for " + courseID + ".\n(Check Console for details)", 
                             "No Quizzes", JOptionPane.INFORMATION_MESSAGE);

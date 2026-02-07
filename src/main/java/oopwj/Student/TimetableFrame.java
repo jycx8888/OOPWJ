@@ -27,18 +27,16 @@ public class TimetableFrame extends JFrame {
         JPanel mainPanel = new JPanel(new BorderLayout(10, 10));
         mainPanel.setBorder(new EmptyBorder(20, 20, 20, 20));
 
-        // ==========================================
-        // Top Panel: Title Middle, Select Box Right
-        // ==========================================
+        
         JPanel topPanel = new JPanel(new BorderLayout());
-        topPanel.setBorder(new EmptyBorder(0, 0, 20, 0)); // 底部留白
+        topPanel.setBorder(new EmptyBorder(0, 0, 20, 0)); 
 
-        // 1. 中间标题
+        
         JLabel titleLabel = new JLabel("Timetable", SwingConstants.CENTER);
         titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
         titleLabel.setForeground(new Color(50, 50, 50));
         
-        // 2. 右侧选择区域
+        
         JPanel rightSelectPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 5, 0));
         
         JLabel viewLabel = new JLabel("View: ");
@@ -53,15 +51,13 @@ public class TimetableFrame extends JFrame {
         rightSelectPanel.add(viewLabel);
         rightSelectPanel.add(daySelector);
 
-        // 组装 Top Panel
+        
         topPanel.add(titleLabel, BorderLayout.CENTER);
         topPanel.add(rightSelectPanel, BorderLayout.EAST);
         
         mainPanel.add(topPanel, BorderLayout.NORTH);
 
-        // ==========================================
-        // Center: Content
-        // ==========================================
+        
         contentPanel = new JPanel();
         contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
         
@@ -70,16 +66,14 @@ public class TimetableFrame extends JFrame {
         scrollPane.getVerticalScrollBar().setUnitIncrement(16);
         mainPanel.add(scrollPane, BorderLayout.CENTER);
 
-        // ==========================================
-        // Bottom: Close Button
-        // ==========================================
+        
         JButton closeBtn = new JButton("Close");
         closeBtn.addActionListener(e -> dispose());
         JPanel bottomPanel = new JPanel();
         bottomPanel.add(closeBtn);
         mainPanel.add(bottomPanel, BorderLayout.SOUTH);
 
-        // 初始加载
+        
         updateSchedule();
 
         this.add(mainPanel);
@@ -93,7 +87,6 @@ public class TimetableFrame extends JFrame {
         List<String[]> classes = service.getStudentTimetable(currentUser.getUserID(), selectedDay);
 
         if (classes.isEmpty()) {
-            // --- 无课显示 (去掉 Emoji) ---
             contentPanel.add(Box.createVerticalGlue());
             
             JLabel enjoyLabel = new JLabel("No class today, enjoy it!", SwingConstants.CENTER);
@@ -106,7 +99,6 @@ public class TimetableFrame extends JFrame {
             contentPanel.add(Box.createVerticalGlue());
             
         } else {
-            // --- 有课显示 (卡片样式) ---
             for (String[] cls : classes) {
                 String modID = cls[0];
                 String dateStr = cls[1];
