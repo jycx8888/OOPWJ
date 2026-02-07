@@ -31,9 +31,6 @@ public class lecturerReview extends javax.swing.JFrame {
     private final Map<String, String> studentIdToName = new HashMap<>();
     private static final String LECTURER_PLACEHOLDER = "Select Lecturer";
 
-    /**
-     * Creates new form lecturerReview
-     */
     public lecturerReview() {
         initComponents();
         configureWindowBehavior();
