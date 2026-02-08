@@ -897,6 +897,9 @@ public class Assessments extends javax.swing.JFrame {
     }
     
     private void showFeedbackDialog() {
+        if (tryOpenFeedbackFromSelection()) {
+            return;
+        }
         // Create a dialog with module and quiz selection
         javax.swing.JDialog dialog = new javax.swing.JDialog(this, "Provide Feedback", true);
         dialog.setDefaultCloseOperation(javax.swing.JDialog.DISPOSE_ON_CLOSE);
@@ -973,6 +976,59 @@ public class Assessments extends javax.swing.JFrame {
         // Do not auto-load quizzes; wait for user selection
         
         dialog.setVisible(true);
+    }
+
+    private boolean tryOpenFeedbackFromSelection() {
+        int selectedRow = jTable2.getSelectedRow();
+        if (selectedRow < 0) {
+            return false;
+        }
+
+        String moduleId = null;
+        String quizId = null;
+
+        if ("question".equals(currentDataType)) {
+            String[] ids = getQuestionIdentifiersFromRow(selectedRow);
+            if (ids != null && ids.length >= 2) {
+                moduleId = ids[0];
+                quizId = ids[1];
+            }
+        } else if ("quizSets".equals(currentDataType)) {
+            String[] ids = getQuizSetIdentifiersFromRow(selectedRow);
+            if (ids != null && ids.length >= 2) {
+                moduleId = ids[0];
+                quizId = ids[1];
+            }
+        }
+
+        if (moduleId == null || moduleId.isEmpty() || quizId == null || quizId.isEmpty()) {
+            return false;
+        }
+
+        Feedback feedbackWindow = new Feedback(moduleId, quizId, lecturerID, true, this);
+        feedbackWindow.setVisible(true);
+        Assessments.this.setVisible(false);
+        return true;
+    }
+
+    private String[] getQuizSetIdentifiersFromRow(int selectedRow) {
+        if (selectedRow < 0 || selectedRow >= displayedQuizSetKeys.size()) {
+            return null;
+        }
+
+        String key = displayedQuizSetKeys.get(selectedRow);
+        if (key == null || key.trim().isEmpty()) {
+            return null;
+        }
+
+        String[] parts = key.split("\\|");
+        if (parts.length < 2) {
+            return null;
+        }
+
+        String quizId = parts[0].trim();
+        String moduleId = parts[1].trim();
+        return new String[]{moduleId, quizId};
     }
     
     private void loadQuizzesForFeedback(String moduleID, javax.swing.JComboBox<String> quizComboBox) {
