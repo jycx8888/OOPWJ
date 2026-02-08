@@ -4,6 +4,11 @@
  */
 package oopwj.AdministrativeStaff;
 
+import java.awt.*;
+import java.io.*;
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author kwany
@@ -11,7 +16,7 @@ package oopwj.AdministrativeStaff;
 public class AdminMainPage extends javax.swing.JFrame {
 
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(AdminMainPage.class.getName());
-    private String loggedInUserID;  // Store logged-in user ID
+    private String loggedInUserID;
     
     /**
      * Creates new form AdminMainPage
@@ -23,13 +28,21 @@ public class AdminMainPage extends javax.swing.JFrame {
     
     /**
      * Constructor with user session
-     * @param userID - The logged-in user's ID
+     * @param userID 
      */
     public AdminMainPage(String userID) {
         this.loggedInUserID = userID;
         initComponents();
         setLocationRelativeTo(null);
+        String username = getUserNameByID(userID);
+        jLabel2.setText("Logged in as: " + username);
         logger.info("Admin logged in: " + userID);
+        addHoverEffect(btnManage, new Color(70,130,180), new Color(100,149,237));
+        addHoverEffect(btnAssign, new Color(70,130,180), new Color(100,149,237));
+        addHoverEffect(btnDefineGrading, new Color(70,130,180), new Color(100,149,237));
+        addHoverEffect(btnCreateClass, new Color(70,130,180), new Color(100,149,237));
+        addHoverEffect(btnLogout, new Color(220,80,80), new Color(255,120,120));
+
     }
     
     /**
@@ -47,6 +60,51 @@ public class AdminMainPage extends javax.swing.JFrame {
         this.loggedInUserID = null;
         logger.info("Admin session cleared");
     }
+    
+    private void addHoverEffect(JButton btn, Color normal, Color hover) {
+        btn.setOpaque(true);
+        btn.setContentAreaFilled(true);
+        btn.setBorderPainted(false);
+        btn.setFocusPainted(false);
+
+        btn.setBackground(normal);
+        btn.setForeground(Color.WHITE);
+
+        btn.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseEntered(java.awt.event.MouseEvent e) {
+                btn.setBackground(hover);
+            }
+
+            @Override
+            public void mouseExited(java.awt.event.MouseEvent e) {
+                btn.setBackground(normal);
+            }
+        });
+    }
+    
+    private String getUserNameByID(String userID) {
+        File file = new File("src\\main\\java\\oopwj\\Data\\admin.txt");
+
+        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+
+                String[] parts = line.split(",");
+
+                if (parts.length >= 2) {
+                    String id = parts[0].trim();
+
+                    if (id.equals(userID)) {
+                        return parts[1].trim();
+                    }
+                }
+            }
+        } catch (IOException e) {
+        }
+        return userID;
+    }
+
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -57,78 +115,168 @@ public class AdminMainPage extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jPanel1 = new javax.swing.JPanel(){
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                Graphics2D g2 = (Graphics2D) g;
+
+                GradientPaint gp = new GradientPaint(
+                    0, 0, new Color(230, 240, 255),
+                    0, getHeight(), new Color(245, 247, 250)
+                );
+
+                g2.setPaint(gp);
+                g2.fillRect(0, 0, getWidth(), getHeight());
+            }
+        };
+        jLabel1 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
         btnManage = new javax.swing.JButton();
         btnAssign = new javax.swing.JButton();
         btnDefineGrading = new javax.swing.JButton();
         btnCreateClass = new javax.swing.JButton();
         btnLogout = new javax.swing.JButton();
+        jLabel3 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Admin Main Page");
+        setBackground(new java.awt.Color(245, 247, 250));
 
+        jPanel1.setBackground(new java.awt.Color(255, 255, 255));
+        jPanel1.setOpaque(false);
+
+        jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        jLabel1.setText("Admin Dashboard");
+
+        jLabel2.setText("Logged in as: ");
+
+        btnManage.setBackground(new java.awt.Color(70, 130, 180));
+        btnManage.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        btnManage.setForeground(new java.awt.Color(255, 255, 255));
         btnManage.setText("Manage User");
+        btnManage.setBorderPainted(false);
+        btnManage.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        btnManage.setOpaque(true);
+        btnManage.setPreferredSize(new java.awt.Dimension(120, 27));
+        btnManage.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                btnManageMouseEntered(evt);
+            }
+        });
         btnManage.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnManageActionPerformed(evt);
             }
         });
 
+        btnAssign.setBackground(new java.awt.Color(70, 130, 180));
+        btnAssign.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        btnAssign.setForeground(new java.awt.Color(255, 255, 255));
         btnAssign.setText("Assign Lecturer");
+        btnAssign.setBorderPainted(false);
+        btnAssign.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         btnAssign.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnAssignActionPerformed(evt);
             }
         });
 
+        btnDefineGrading.setBackground(new java.awt.Color(70, 130, 180));
+        btnDefineGrading.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        btnDefineGrading.setForeground(new java.awt.Color(255, 255, 255));
         btnDefineGrading.setText("Define Grading System");
+        btnDefineGrading.setBorderPainted(false);
+        btnDefineGrading.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        btnDefineGrading.setOpaque(true);
         btnDefineGrading.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnDefineGradingActionPerformed(evt);
             }
         });
 
+        btnCreateClass.setBackground(new java.awt.Color(70, 130, 180));
+        btnCreateClass.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        btnCreateClass.setForeground(new java.awt.Color(255, 255, 255));
         btnCreateClass.setText("Assign Classes and Scheduling");
+        btnCreateClass.setBorderPainted(false);
+        btnCreateClass.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        btnCreateClass.setOpaque(true);
         btnCreateClass.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnCreateClassActionPerformed(evt);
             }
         });
 
+        btnLogout.setBackground(new java.awt.Color(220, 80, 80));
+        btnLogout.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        btnLogout.setForeground(new java.awt.Color(255, 255, 255));
         btnLogout.setText("Logout");
+        btnLogout.setBorderPainted(false);
+        btnLogout.setOpaque(true);
         btnLogout.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnLogoutActionPerformed(evt);
             }
         });
 
+        jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        jLabel3.setText("Welcome");
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(31, 31, 31)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 236, Short.MAX_VALUE)
+                        .addGap(313, 313, 313))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 340, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(btnLogout)
+                            .addComponent(btnCreateClass)
+                            .addComponent(btnDefineGrading)
+                            .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(btnAssign)
+                            .addComponent(btnManage, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(0, 0, Short.MAX_VALUE))))
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(19, 19, 19)
+                .addComponent(jLabel1)
+                .addGap(5, 5, 5)
+                .addComponent(jLabel3)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel2)
+                .addGap(18, 18, 18)
+                .addComponent(btnManage, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(btnAssign)
+                .addGap(18, 18, 18)
+                .addComponent(btnDefineGrading)
+                .addGap(18, 18, 18)
+                .addComponent(btnCreateClass)
+                .addGap(18, 18, 18)
+                .addComponent(btnLogout)
+                .addContainerGap(97, Short.MAX_VALUE))
+        );
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(52, 52, 52)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(btnLogout)
-                    .addComponent(btnCreateClass)
-                    .addComponent(btnDefineGrading)
-                    .addComponent(btnAssign)
-                    .addComponent(btnManage))
-                .addContainerGap(338, Short.MAX_VALUE))
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(59, 59, 59)
-                .addComponent(btnManage)
-                .addGap(18, 18, 18)
-                .addComponent(btnAssign)
-                .addGap(26, 26, 26)
-                .addComponent(btnDefineGrading)
-                .addGap(29, 29, 29)
-                .addComponent(btnCreateClass)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 127, Short.MAX_VALUE)
-                .addComponent(btnLogout)
-                .addGap(49, 49, 49))
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         pack();
@@ -178,6 +326,10 @@ public class AdminMainPage extends javax.swing.JFrame {
         
     }//GEN-LAST:event_btnCreateClassActionPerformed
 
+    private void btnManageMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnManageMouseEntered
+
+    }//GEN-LAST:event_btnManageMouseEntered
+
     /**
      * @param args the command line arguments
      */
@@ -211,5 +363,9 @@ public class AdminMainPage extends javax.swing.JFrame {
     private javax.swing.JButton btnDefineGrading;
     private javax.swing.JButton btnLogout;
     private javax.swing.JButton btnManage;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JPanel jPanel1;
     // End of variables declaration//GEN-END:variables
 }
