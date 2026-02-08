@@ -1,110 +1,221 @@
 package oopwj.Student;
 
 import oopwj.Model.User;
+import oopwj.LoginFrame;
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
-import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import oopwj.LoginFrame;
 
 public class StudentFrame extends JFrame {
 
-    private User user; 
-    private JLabel welcomeLabel; 
+    private User user;
+    private JLabel welcomeLabel;
+
+    
+    private Color headerBlue = new Color(0, 60, 100);    // Top Bar
+    private Color bgGrey = new Color(240, 242, 245);      // Main Background
+    private Color cardBg = Color.WHITE;                   // Card Background
+    private Color textTitle = new Color(33, 37, 41);      // Dark Grey Title
+    private Color textDesc = new Color(108, 117, 125);    // Light Grey Description
+    private Color hoverBorder = new Color(0, 123, 255);   // Blue highlight on hover
 
     public StudentFrame(User user) {
-        this.user = user; 
+        this.user = user;
 
-        setSize(1000, 1000);
+        
+        setSize(1200, 800);
         setTitle("Student Dashboard - " + user.getUserID());
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLocationRelativeTo(null); 
+        setLocationRelativeTo(null);
+        setLayout(new BorderLayout());
 
-        JPanel panel = new JPanel();
-        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-        panel.setAlignmentX(Component.CENTER_ALIGNMENT);
+    
+        JPanel headerPanel = new JPanel(new BorderLayout());
+        headerPanel.setBackground(headerBlue);
+        headerPanel.setPreferredSize(new Dimension(getWidth(), 80));
+        headerPanel.setBorder(new EmptyBorder(0, 40, 0, 40));
 
-        panel.add(Box.createVerticalGlue());
+        
+        String name = (user != null) ? user.getUserName() : "Student";
+        welcomeLabel = new JLabel("Welcome, " + name);
+        welcomeLabel.setFont(new Font("Segoe UI", Font.BOLD, 26));
+        welcomeLabel.setForeground(Color.WHITE);
+        headerPanel.add(welcomeLabel, BorderLayout.WEST);
 
-        String name = (user != null) ? user.getUserName() : "User";
-        welcomeLabel = new JLabel("Hi, " + name);
-        welcomeLabel.setFont(new Font("Arial", Font.BOLD, 30)); 
-        welcomeLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        panel.add(welcomeLabel);
+        
+        JButton logoutBtn = new JButton("Logout");
+        logoutBtn.setFocusPainted(false);
+        logoutBtn.setBackground(new Color(220, 53, 69)); // Red color
+        logoutBtn.setForeground(Color.WHITE);
+        logoutBtn.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        logoutBtn.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        logoutBtn.setBorder(BorderFactory.createEmptyBorder(8, 20, 8, 20));
+        logoutBtn.addActionListener(e -> {
+            dispose();
+            new LoginFrame();
+        });
 
-        panel.add(Box.createRigidArea(new Dimension(0, 40))); 
+        
+        JPanel btnContainer = new JPanel(new GridBagLayout());
+        btnContainer.setOpaque(false);
+        btnContainer.add(logoutBtn);
+        headerPanel.add(btnContainer, BorderLayout.EAST);
 
-       
-        JButton profileBtn = new JButton("Edit Profile");
-        setupButton(profileBtn);
-        panel.add(profileBtn);
-        panel.add(Box.createRigidArea(new Dimension(0, 20)));
+        add(headerPanel, BorderLayout.NORTH);
+
         
         
-        JButton timetableBtn = new JButton("My Timetable");
-        setupButton(timetableBtn);
-        panel.add(timetableBtn);
-        panel.add(Box.createRigidArea(new Dimension(0, 20)));
+        
+        JPanel cardsPanel = new JPanel(new GridLayout(0, 3, 40, 40));
+        cardsPanel.setBackground(bgGrey);
+        cardsPanel.setBorder(new EmptyBorder(40, 40, 40, 40)); 
 
-        JButton registerBtn = new JButton("Register for Classes");
-        setupButton(registerBtn);
-        panel.add(registerBtn);
-        panel.add(Box.createRigidArea(new Dimension(0, 20)));
+        
 
-        JButton quizBtn = new JButton("Attempt Quiz");
-        setupButton(quizBtn);
-        panel.add(quizBtn);
-        panel.add(Box.createRigidArea(new Dimension(0, 20)));
+        
+        cardsPanel.add(createCard(
+            "Edit Profile", 
+            "Update personal details & contact info.", 
+            "👤", 
+            new Color(70, 130, 180), 
+            e -> {
+                ProfileFrame pFrame = new ProfileFrame(user);
+                pFrame.addWindowListener(new WindowAdapter() {
+                    public void windowClosed(WindowEvent e) {
+                        welcomeLabel.setText("Welcome, " + user.getUserName());
+                    }
+                });
+            }
+        ));
 
-        JButton resultBtn = new JButton("Check Results");
-        setupButton(resultBtn);
-        panel.add(resultBtn);
-        panel.add(Box.createRigidArea(new Dimension(0, 20)));
+        
+        cardsPanel.add(createCard(
+            "My Timetable", 
+            "View weekly schedule & room locations.", 
+            "📅", 
+            new Color(255, 165, 0), 
+            e -> new TimetableFrame(user)
+        ));
 
-        JButton feedbackBtn = new JButton("Provide Feedback");
-        setupButton(feedbackBtn);
-        panel.add(feedbackBtn);
-        panel.add(Box.createRigidArea(new Dimension(0, 20)));
+        
+        cardsPanel.add(createCard(
+            "Register Classes", 
+            "Enroll in modules for new semesters.", 
+            "📝", 
+            new Color(40, 167, 69),
+            e -> new RegisterClassFrame(user)
+        ));
 
-        JButton logoutButton = new JButton("Logout");
-        setupButton(logoutButton);
-        panel.add(logoutButton);
+        cardsPanel.add(createCard(
+            "Attempt Quiz", 
+            "Take pending quizzes & assessments.", 
+            "❓", 
+            new Color(111, 66, 193), 
+            e -> new QuizMenu(user)
+        ));
 
-        panel.add(Box.createVerticalGlue());
+        
+        cardsPanel.add(createCard(
+            "Check Results", 
+            "View grades, CGPA & transcripts.", 
+            "📊", 
+            new Color(220, 53, 69), 
+            e -> new StudentResultFrame(user)
+        ));
 
-        this.add(panel);
+        
+        cardsPanel.add(createCard(
+            "Provide Feedback", 
+            "Rate courses and lecturers.", 
+            "💬", 
+            new Color(23, 162, 184), 
+            e -> new FeedbackFrame(user)
+        ));
+
+        
+        JScrollPane scrollPane = new JScrollPane(cardsPanel);
+        scrollPane.setBorder(null);
+        scrollPane.getVerticalScrollBar().setUnitIncrement(20); // Faster scrolling
+        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        
+        add(scrollPane, BorderLayout.CENTER);
+
         setVisible(true);
-
-        
-
-        profileBtn.addActionListener(e -> {
-            ProfileFrame pFrame = new ProfileFrame(user);
-            pFrame.addWindowListener(new WindowAdapter() {
-                @Override
-                public void windowClosed(WindowEvent e) {
-                    welcomeLabel.setText("Hi, " + user.getUserName());
-                }
-            });
-        });
-
-        
-        timetableBtn.addActionListener(e -> new TimetableFrame(user));
-
-        registerBtn.addActionListener(e -> new RegisterClassFrame(user));
-        quizBtn.addActionListener(e -> new QuizMenu(user));
-        resultBtn.addActionListener(e -> new StudentResultFrame(user));
-        feedbackBtn.addActionListener(e -> new FeedbackFrame(user));
-
-        logoutButton.addActionListener(e -> {
-            dispose(); 
-            new LoginFrame(); 
-        });
     }
 
-    private void setupButton(JButton btn) {
-        btn.setMaximumSize(new Dimension(200, 50)); 
-        btn.setAlignmentX(Component.CENTER_ALIGNMENT); 
+   
+    private JPanel createCard(String title, String description, String iconSymbol, Color headerColor, ActionListener action) {
+        
+        
+        JPanel card = new JPanel();
+        card.setLayout(new BorderLayout());
+        card.setBackground(cardBg);
+        card.setBorder(BorderFactory.createLineBorder(new Color(220, 220, 220), 1));
+        card.setCursor(new Cursor(Cursor.HAND_CURSOR));
+
+        
+        JPanel headerPanel = new JPanel(new GridBagLayout());
+        headerPanel.setBackground(headerColor);
+        headerPanel.setPreferredSize(new Dimension(100, 100)); // Fixed height for header
+
+        
+        JLabel iconLabel = new JLabel(iconSymbol);
+        iconLabel.setFont(new Font("Segoe UI Symbol", Font.PLAIN, 40)); // Large Icon
+        iconLabel.setForeground(Color.WHITE);
+        headerPanel.add(iconLabel);
+
+        card.add(headerPanel, BorderLayout.NORTH);
+
+        
+        JPanel textPanel = new JPanel();
+        textPanel.setLayout(new BoxLayout(textPanel, BoxLayout.Y_AXIS));
+        textPanel.setBackground(cardBg);
+        textPanel.setBorder(new EmptyBorder(20, 20, 20, 20)); // Padding inside text area
+
+        
+        JLabel titleLbl = new JLabel(title);
+        titleLbl.setFont(new Font("Segoe UI", Font.BOLD, 18));
+        titleLbl.setForeground(textTitle);
+        titleLbl.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        
+        textPanel.add(Box.createRigidArea(new Dimension(0, 10)));
+
+        
+        JLabel descLbl = new JLabel("<html>" + description + "</html>"); // Wrap text
+        descLbl.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        descLbl.setForeground(textDesc);
+        descLbl.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        textPanel.add(titleLbl);
+        textPanel.add(descLbl);
+
+        card.add(textPanel, BorderLayout.CENTER);
+
+        card.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                action.actionPerformed(null);
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                card.setBorder(BorderFactory.createLineBorder(hoverBorder, 2));
+                textPanel.setBackground(new Color(248, 249, 250)); 
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                card.setBorder(BorderFactory.createLineBorder(new Color(220, 220, 220), 1));
+                textPanel.setBackground(Color.WHITE);
+            }
+        });
+
+        return card;
     }
 }

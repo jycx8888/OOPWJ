@@ -27,16 +27,15 @@ public class TimetableFrame extends JFrame {
         JPanel mainPanel = new JPanel(new BorderLayout(10, 10));
         mainPanel.setBorder(new EmptyBorder(20, 20, 20, 20));
 
-        
+        // --- 1. Top Panel (Title & Dropdown) ---
         JPanel topPanel = new JPanel(new BorderLayout());
         topPanel.setBorder(new EmptyBorder(0, 0, 20, 0)); 
 
-        
         JLabel titleLabel = new JLabel("Timetable", SwingConstants.CENTER);
         titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
         titleLabel.setForeground(new Color(50, 50, 50));
         
-        
+        // Right side: "View: [Dropdown]"
         JPanel rightSelectPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 5, 0));
         
         JLabel viewLabel = new JLabel("View: ");
@@ -51,13 +50,12 @@ public class TimetableFrame extends JFrame {
         rightSelectPanel.add(viewLabel);
         rightSelectPanel.add(daySelector);
 
-        
         topPanel.add(titleLabel, BorderLayout.CENTER);
         topPanel.add(rightSelectPanel, BorderLayout.EAST);
         
         mainPanel.add(topPanel, BorderLayout.NORTH);
 
-        
+        // --- 2. Scrollable Content Area ---
         contentPanel = new JPanel();
         contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
         
@@ -66,14 +64,14 @@ public class TimetableFrame extends JFrame {
         scrollPane.getVerticalScrollBar().setUnitIncrement(16);
         mainPanel.add(scrollPane, BorderLayout.CENTER);
 
-        
+        // --- 3. Bottom Panel (Close Button) ---
         JButton closeBtn = new JButton("Close");
         closeBtn.addActionListener(e -> dispose());
         JPanel bottomPanel = new JPanel();
         bottomPanel.add(closeBtn);
         mainPanel.add(bottomPanel, BorderLayout.SOUTH);
 
-        
+        // Load initial data
         updateSchedule();
 
         this.add(mainPanel);
@@ -91,20 +89,21 @@ public class TimetableFrame extends JFrame {
             
             JLabel enjoyLabel = new JLabel("No class today, enjoy it!", SwingConstants.CENTER);
             enjoyLabel.setFont(new Font("Arial", Font.BOLD | Font.ITALIC, 24));
-            enjoyLabel.setForeground(new Color(39, 174, 96)); // 绿色
+            enjoyLabel.setForeground(new Color(39, 174, 96)); // Green
             enjoyLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
             
             contentPanel.add(enjoyLabel);
-            
             contentPanel.add(Box.createVerticalGlue());
             
         } else {
             for (String[] cls : classes) {
+                // Data: [0]ID, [1]Date, [2]Start, [3]End, [4]Venue, [5]Name
                 String modID = cls[0];
                 String dateStr = cls[1];
                 String timeStr = cls[2] + " - " + cls[3];
                 String venueStr = cls[4];
 
+                // Create Card Panel
                 JPanel card = new JPanel(new BorderLayout(10, 5));
                 card.setBorder(BorderFactory.createCompoundBorder(
                     BorderFactory.createEmptyBorder(5, 5, 5, 5),
@@ -116,41 +115,44 @@ public class TimetableFrame extends JFrame {
                 card.setMaximumSize(new Dimension(550, 100)); 
                 card.setBackground(Color.WHITE);
 
+                // --- Left Info: Module Code & Venue ---
                 JLabel modLabel = new JLabel(modID);
                 modLabel.setFont(new Font("Arial", Font.BOLD, 18));
-                modLabel.setForeground(new Color(41, 128, 185));
+                modLabel.setForeground(new Color(41, 128, 185)); // Blue
                 
                 JLabel venueLabel = new JLabel("Venue: " + venueStr);
                 venueLabel.setFont(new Font("Arial", Font.BOLD, 14));
-                venueLabel.setForeground(new Color(44, 62, 80));
-                
+                venueLabel.setForeground(new Color(44, 62, 80)); // Dark Grey
                 try {
+                    // Try to add a simple icon if available in default LookAndFeel
                     venueLabel.setIcon(UIManager.getIcon("FileView.computerIcon")); 
                 } catch(Exception ignored){}
-
-                JLabel timeLabel = new JLabel(timeStr);
-                timeLabel.setFont(new Font("Arial", Font.BOLD, 16));
-                timeLabel.setForeground(new Color(192, 57, 43)); 
-                
-                JLabel dateLabel = new JLabel(dateStr, SwingConstants.RIGHT);
-                dateLabel.setFont(new Font("Arial", Font.PLAIN, 12));
-                dateLabel.setForeground(Color.GRAY);
 
                 JPanel leftInfo = new JPanel(new GridLayout(2, 1, 0, 5));
                 leftInfo.setOpaque(false);
                 leftInfo.add(modLabel);
                 leftInfo.add(venueLabel);
 
+                // --- Right Info: Time & Date ---
+                JLabel timeLabel = new JLabel(timeStr, SwingConstants.RIGHT);
+                timeLabel.setFont(new Font("Arial", Font.BOLD, 16));
+                timeLabel.setForeground(new Color(192, 57, 43)); // Red
+                
+                JLabel dateLabel = new JLabel(dateStr, SwingConstants.RIGHT);
+                dateLabel.setFont(new Font("Arial", Font.PLAIN, 12));
+                dateLabel.setForeground(Color.GRAY);
+
                 JPanel rightInfo = new JPanel(new GridLayout(2, 1, 0, 5));
                 rightInfo.setOpaque(false);
                 rightInfo.add(timeLabel);
                 rightInfo.add(dateLabel);
 
+                // Add to card
                 card.add(leftInfo, BorderLayout.CENTER);
                 card.add(rightInfo, BorderLayout.EAST);
 
                 contentPanel.add(card);
-                contentPanel.add(Box.createRigidArea(new Dimension(0, 10)));
+                contentPanel.add(Box.createRigidArea(new Dimension(0, 10))); // Spacing
             }
         }
 

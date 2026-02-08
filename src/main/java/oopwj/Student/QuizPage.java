@@ -4,7 +4,10 @@ import oopwj.Model.User;
 import oopwj.Model.StudentService;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import javax.swing.border.LineBorder;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -23,7 +26,7 @@ public class QuizPage extends JFrame {
 
     private JLabel sectionHeaderLabel;
     private JLabel progressLabel;
-    private JPanel questionContainer;
+    private JPanel contentArea;
     private JButton prevBtn;
     private JButton nextBtn;
     private JButton finishBtn;
@@ -38,7 +41,7 @@ public class QuizPage extends JFrame {
         this.userAnswers = new HashMap<>();
 
         setTitle("Quiz: " + quizTitle);
-        setSize(900, 600);
+        setSize(1000, 750); 
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
 
@@ -50,41 +53,53 @@ public class QuizPage extends JFrame {
             return;
         }
 
-        JPanel mainPanel = new JPanel(new BorderLayout(10, 10));
-        mainPanel.setBorder(new EmptyBorder(20, 20, 20, 20));
+        JPanel mainPanel = new JPanel(new BorderLayout(0, 0));
+        mainPanel.setBackground(new Color(245, 247, 250));
 
+        JPanel topPanel = new JPanel(new BorderLayout());
+        topPanel.setBackground(new Color(255, 255, 255));
+        topPanel.setBorder(new EmptyBorder(15, 30, 15, 30));
         
-        JPanel topPanel = new JPanel(new GridLayout(2, 1));
-        JLabel courseLabel = new JLabel("Quiz: " + quizTitle + " (" + moduleID + ")", SwingConstants.CENTER);
-        courseLabel.setFont(new Font("Arial", Font.BOLD, 16));
+        JLabel courseLabel = new JLabel(moduleID + ": " + quizTitle);
+        courseLabel.setFont(new Font("Segoe UI", Font.BOLD, 18));
+        courseLabel.setForeground(new Color(50, 50, 50));
         
-        sectionHeaderLabel = new JLabel("Loading...", SwingConstants.LEFT);
-        sectionHeaderLabel.setFont(new Font("Arial", Font.BOLD | Font.ITALIC, 14));
-        sectionHeaderLabel.setForeground(new Color(0, 102, 204)); // Dark Blue
+        sectionHeaderLabel = new JLabel("Loading...");
+        sectionHeaderLabel.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        sectionHeaderLabel.setForeground(new Color(0, 120, 215)); 
         
-        topPanel.add(courseLabel);
-        topPanel.add(sectionHeaderLabel);
+        JPanel titleContainer = new JPanel(new GridLayout(2, 1, 0, 5));
+        titleContainer.setOpaque(false);
+        titleContainer.add(courseLabel);
+        titleContainer.add(sectionHeaderLabel);
+        
+        progressLabel = new JLabel("1 / " + allQuestions.size());
+        progressLabel.setFont(new Font("Segoe UI", Font.BOLD, 24));
+        progressLabel.setForeground(new Color(200, 200, 200));
+
+        topPanel.add(titleContainer, BorderLayout.CENTER);
+        topPanel.add(progressLabel, BorderLayout.EAST);
         mainPanel.add(topPanel, BorderLayout.NORTH);
 
-        
-        questionContainer = new JPanel();
-        questionContainer.setLayout(new BoxLayout(questionContainer, BoxLayout.Y_AXIS));
-        mainPanel.add(questionContainer, BorderLayout.CENTER);
+        contentArea = new JPanel();
+        contentArea.setLayout(new BoxLayout(contentArea, BoxLayout.Y_AXIS));
+        contentArea.setOpaque(false);
+        contentArea.setBorder(new EmptyBorder(30, 50, 30, 50));
+        mainPanel.add(contentArea, BorderLayout.CENTER);
 
+        JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 20, 15));
+        bottomPanel.setBackground(Color.WHITE);
+        bottomPanel.setBorder(new LineBorder(new Color(230, 230, 230), 1));
         
-        JPanel bottomPanel = new JPanel(new BorderLayout());
-        progressLabel = new JLabel("Question 1 / " + allQuestions.size());
-        
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        prevBtn = new JButton("<< Previous");
-        nextBtn = new JButton("Next >>");
-        finishBtn = new JButton("Finish Test");
+        prevBtn = createNavButton("Previous", false);
+        nextBtn = createNavButton("Next", true);
+        finishBtn = createNavButton("Finish", true);
+        finishBtn.setBackground(new Color(40, 167, 69));
         finishBtn.setVisible(false);
-        finishBtn.setBackground(new Color(200, 255, 200)); // Light Green
         
-        buttonPanel.add(prevBtn); buttonPanel.add(nextBtn); buttonPanel.add(finishBtn);
-        bottomPanel.add(progressLabel, BorderLayout.WEST);
-        bottomPanel.add(buttonPanel, BorderLayout.EAST);
+        bottomPanel.add(prevBtn);
+        bottomPanel.add(nextBtn);
+        bottomPanel.add(finishBtn);
         mainPanel.add(bottomPanel, BorderLayout.SOUTH);
 
         nextBtn.addActionListener(e -> navigate(1));
@@ -94,6 +109,23 @@ public class QuizPage extends JFrame {
         renderQuestion();
         this.add(mainPanel);
         setVisible(true);
+    }
+
+    private JButton createNavButton(String text, boolean filled) {
+        JButton btn = new JButton(text);
+        btn.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        btn.setFocusPainted(false);
+        btn.setPreferredSize(new Dimension(120, 40));
+        btn.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        if (filled) {
+            btn.setBackground(new Color(0, 120, 215));
+            btn.setForeground(Color.WHITE);
+        } else {
+            btn.setBackground(Color.WHITE);
+            btn.setForeground(new Color(80, 80, 80));
+            btn.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 200)));
+        }
+        return btn;
     }
 
     private void navigate(int direction) {
@@ -108,10 +140,9 @@ public class QuizPage extends JFrame {
         String qID = qData[0];
         String answer = "";
         
-        if (currentQuestionType.equalsIgnoreCase("Objective")) {
-            
+        if ("Objective".equalsIgnoreCase(currentQuestionType)) {
             Container container = (Container) currentInputComponent;
-            answer = findSelectedRadio(container);
+            answer = findSelectedToggle(container);
         } else {
             JScrollPane scroll = (JScrollPane) currentInputComponent;
             JTextArea area = (JTextArea) scroll.getViewport().getView();
@@ -122,23 +153,20 @@ public class QuizPage extends JFrame {
         else userAnswers.remove(qID);
     }
 
-    
-    private String findSelectedRadio(Container container) {
+    private String findSelectedToggle(Container container) {
         for (Component comp : container.getComponents()) {
-            if (comp instanceof JRadioButton) {
-                JRadioButton rb = (JRadioButton) comp;
-                if (rb.isSelected()) return rb.getActionCommand();
-            } else if (comp instanceof Container) {
-                String result = findSelectedRadio((Container) comp);
-                if (!result.isEmpty()) return result;
+            if (comp instanceof JToggleButton) {
+                JToggleButton btn = (JToggleButton) comp;
+                if (btn.isSelected()) return btn.getActionCommand();
             }
         }
         return "";
     }
 
     private void renderQuestion() {
-        questionContainer.removeAll();
+        contentArea.removeAll();
         String[] qData = allQuestions.get(currentIndex);
+        
         String qID = qData[0];
         String qText = qData[1];
         String qType = qData[2];
@@ -147,82 +175,63 @@ public class QuizPage extends JFrame {
         if (qType.equalsIgnoreCase("Objective")) sectionHeaderLabel.setText("Section A: Objective");
         else sectionHeaderLabel.setText("Section B: Subjective");
         
-        progressLabel.setText("Question " + (currentIndex + 1) + " / " + allQuestions.size());
+        progressLabel.setText((currentIndex + 1) + " / " + allQuestions.size());
         
+        JPanel questionCard = new JPanel(new BorderLayout());
+        questionCard.setBackground(new Color(255, 235, 156)); 
+        questionCard.setBackground(Color.WHITE); 
+        questionCard.setBorder(BorderFactory.createCompoundBorder(
+            new LineBorder(new Color(220, 220, 220), 1, true),
+            new EmptyBorder(30, 30, 30, 30)
+        ));
+        questionCard.setMaximumSize(new Dimension(Integer.MAX_VALUE, 200));
+        questionCard.setPreferredSize(new Dimension(800, 180));
         
-        JTextArea qLabel = new JTextArea("Q" + (currentIndex + 1) + ". " + qText);
+        JTextArea qLabel = new JTextArea(qText);
         qLabel.setWrapStyleWord(true); 
         qLabel.setLineWrap(true); 
         qLabel.setEditable(false);
+        qLabel.setOpaque(false);
+        qLabel.setFont(new Font("Segoe UI", Font.BOLD, 22)); 
+        qLabel.setForeground(new Color(50, 50, 50));
+        qLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         
-        qLabel.setBackground(Color.WHITE); 
+        questionCard.add(qLabel, BorderLayout.CENTER);
+        contentArea.add(questionCard);
         
-        qLabel.setFont(new Font("SansSerif", Font.BOLD, 16)); 
-        qLabel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10)); 
-        
-        
-        JScrollPane qScroll = new JScrollPane(qLabel);
-        qScroll.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
-        qScroll.setAlignmentX(Component.LEFT_ALIGNMENT);
-        qScroll.setMaximumSize(new Dimension(Integer.MAX_VALUE, 150)); 
-        qScroll.setPreferredSize(new Dimension(800, 100)); // Default height
-        
-        questionContainer.add(qScroll); 
-        questionContainer.add(Box.createRigidArea(new Dimension(0, 20)));
+        contentArea.add(Box.createRigidArea(new Dimension(0, 30)));
         
         String savedAnswer = userAnswers.getOrDefault(qID, "");
 
         if (qType.equalsIgnoreCase("Objective")) {
-            
             String optA = qData[3], optB = qData[4], optC = qData[5], optD = qData[6];
             
+            JPanel gridPanel = new JPanel(new GridLayout(2, 2, 20, 20));
+            gridPanel.setOpaque(false);
+            gridPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 300));
             
-            JPanel optionsPanel = new JPanel(new GridLayout(1, 2, 20, 0)); // 1 Row, 2 Cols
-            optionsPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
-            optionsPanel.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 0));
-
+            ButtonGroup bg = new ButtonGroup();
             
-            JPanel leftCol = new JPanel(new GridLayout(2, 1, 0, 15)); // Vertical spacing
-            JRadioButton rbA = new JRadioButton("A. " + optA);
-            JRadioButton rbB = new JRadioButton("B. " + optB);
-            leftCol.add(rbA); leftCol.add(rbB);
-
+            gridPanel.add(createOptionCard("A", optA, savedAnswer, bg));
+            gridPanel.add(createOptionCard("B", optB, savedAnswer, bg));
+            gridPanel.add(createOptionCard("C", optC, savedAnswer, bg));
+            gridPanel.add(createOptionCard("D", optD, savedAnswer, bg));
             
-            JPanel rightCol = new JPanel(new GridLayout(2, 1, 0, 15));
-            JRadioButton rbC = new JRadioButton("C. " + optC);
-            JRadioButton rbD = new JRadioButton("D. " + optD);
-            rightCol.add(rbC); rightCol.add(rbD);
-
-            optionsPanel.add(leftCol);
-            optionsPanel.add(rightCol);
-
-            
-            rbA.setActionCommand("A"); rbB.setActionCommand("B"); 
-            rbC.setActionCommand("C"); rbD.setActionCommand("D");
-            if(savedAnswer.equals("A")) rbA.setSelected(true); 
-            if(savedAnswer.equals("B")) rbB.setSelected(true);
-            if(savedAnswer.equals("C")) rbC.setSelected(true); 
-            if(savedAnswer.equals("D")) rbD.setSelected(true);
-            
-            ButtonGroup g = new ButtonGroup(); g.add(rbA); g.add(rbB); g.add(rbC); g.add(rbD);
-            
-            optionsPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 200));
-            
-            questionContainer.add(optionsPanel); 
-            currentInputComponent = optionsPanel;
+            contentArea.add(gridPanel);
+            currentInputComponent = gridPanel;
 
         } else {
-            
-            JTextArea t = new JTextArea(10, 20); 
+            JTextArea t = new JTextArea(12, 20); 
             t.setLineWrap(true); t.setWrapStyleWord(true);
             t.setText(savedAnswer);
-            t.setFont(new Font("SansSerif", Font.PLAIN, 14));
+            t.setFont(new Font("Segoe UI", Font.PLAIN, 18));
+            t.setBorder(new EmptyBorder(15, 15, 15, 15));
             
             JScrollPane s = new JScrollPane(t); 
+            s.setBorder(new LineBorder(new Color(200, 200, 200)));
             s.setAlignmentX(Component.LEFT_ALIGNMENT);
-            s.setBorder(BorderFactory.createTitledBorder("Type your answer here:"));
             
-            questionContainer.add(s); 
+            contentArea.add(s); 
             currentInputComponent = s;
         }
         
@@ -230,21 +239,65 @@ public class QuizPage extends JFrame {
         if (currentIndex == allQuestions.size() - 1) { nextBtn.setVisible(false); finishBtn.setVisible(true); }
         else { nextBtn.setVisible(true); finishBtn.setVisible(false); }
         
-        questionContainer.revalidate(); questionContainer.repaint();
+        contentArea.revalidate(); contentArea.repaint();
+    }
+
+    private JToggleButton createOptionCard(String letter, String text, String saved, ButtonGroup bg) {
+        JToggleButton btn = new JToggleButton("<html><b style='font-size:14px; color:#555'>" + letter + ".</b>&nbsp;&nbsp;" + text + "</html>");
+        btn.setFont(new Font("Segoe UI", Font.PLAIN, 18));
+        btn.setForeground(new Color(60, 60, 60));
+        btn.setBackground(Color.WHITE);
+        btn.setFocusPainted(false);
+        btn.setHorizontalAlignment(SwingConstants.LEFT);
+        btn.setBorder(BorderFactory.createCompoundBorder(
+            new LineBorder(new Color(200, 200, 200), 1, true),
+            new EmptyBorder(10, 20, 10, 20)
+        ));
+        btn.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        btn.setActionCommand(letter);
+        
+        if (saved.equals(letter)) {
+            btn.setSelected(true);
+            btn.setBackground(new Color(230, 242, 255)); 
+            btn.setBorder(new LineBorder(new Color(0, 120, 215), 2, true));
+        }
+
+        btn.addActionListener(e -> {
+            userAnswers.put(allQuestions.get(currentIndex)[0], letter);
+            updateButtonStyles((Container) btn.getParent());
+        });
+
+        bg.add(btn);
+        return btn;
+    }
+
+    private void updateButtonStyles(Container parent) {
+        for (Component c : parent.getComponents()) {
+            if (c instanceof JToggleButton) {
+                JToggleButton b = (JToggleButton) c;
+                if (b.isSelected()) {
+                    b.setBackground(new Color(230, 242, 255));
+                    b.setBorder(new LineBorder(new Color(0, 120, 215), 2, true));
+                } else {
+                    b.setBackground(Color.WHITE);
+                    b.setBorder(new LineBorder(new Color(200, 200, 200), 1, true));
+                }
+            }
+        }
     }
 
     private void submitTest() {
         saveCurrentAnswer();
+        
         if (userAnswers.size() < allQuestions.size()) {
-            int c = JOptionPane.showConfirmDialog(this, "Not all answered. Submit?", "Confirm", JOptionPane.YES_NO_OPTION);
+            int c = JOptionPane.showConfirmDialog(this, "Not all questions answered. Submit anyway?", "Confirm", JOptionPane.YES_NO_OPTION);
             if(c != JOptionPane.YES_OPTION) return;
         }
 
         List<String[]> finalData = new ArrayList<>();
         for (String[] q : allQuestions) {
             String qID = q[0];
-            String type = "";
-            if (q.length >= 3) type = q[2];
+            String type = (q.length >= 3) ? q[2] : "";
             String answer = userAnswers.getOrDefault(qID, "NO_ANSWER");
             finalData.add(new String[]{qID, answer, type});
         }

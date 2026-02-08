@@ -11,7 +11,7 @@ import java.awt.event.ActionListener;
 import java.util.List;
 
 public class FeedbackFrame extends JFrame {
-    //declare variables
+    
     private User currentUser;
     private StudentService service;
     private JLabel lecturerLabel; 
@@ -84,7 +84,6 @@ public class FeedbackFrame extends JFrame {
                 String courseID = selectedString.split(",")[0].trim();
                 
                 String lecturerID = lecturerLabel.getText().replace("Lecturer ID: ", "").trim();
-                
                 
                 boolean success = service.submitFeedback(currentUser.getUserID(), courseID, lecturerID, comment);
 

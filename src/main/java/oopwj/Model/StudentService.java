@@ -1,41 +1,23 @@
 package oopwj.Model;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class StudentService {
 
-    // --- File Paths ---
     private final String MODULES_FILE = "src\\main\\java\\oopwj\\Data\\modules.txt";
     private final String ENROLLMENT_FILE = "src\\main\\java\\oopwj\\Data\\enrollment.txt";
-    
-    // [CHANGE] Modified to save into studentFeedback.txt
     private final String FEEDBACK_FILE = "src\\main\\java\\oopwj\\Data\\studentFeedback.txt";
-    
-    private final String USERS_FILE = "src\\main\\java\\oopwj\\Data\\users.txt";
-    
-    // [Updated] Read from student.txt instead of users.txt
     private final String STUDENT_FILE = "src\\main\\java\\oopwj\\Data\\student.txt"; 
     
-    // Quiz & Result Files
     private final String QUIZ_FILE = "src\\main\\java\\oopwj\\Data\\Quiz.txt";
     private final String QUESTION_FILE = "src\\main\\java\\oopwj\\Data\\question.txt";
     private final String ANSWER_FILE = "src\\main\\java\\oopwj\\Data\\student_answers.txt";
     private final String GRADE_FILE = "src\\main\\java\\oopwj\\Data\\Grade.txt";
     private final String FINAL_GRADE_FILE = "src\\main\\java\\oopwj\\Data\\FinalGrade.txt";
     
-    // Timetable Files
     private final String SCHEDULE_FILE = "src\\main\\java\\oopwj\\Data\\class_schedule.txt";
     private final String VENUE_FILE = "src\\main\\java\\oopwj\\Data\\class.txt";
-
-    // =========================================================
-    // 1. General Helper Methods
-    // =========================================================
 
     public List<String> getAllModules() {
         List<String> modules = new ArrayList<>();
@@ -83,6 +65,49 @@ public class StudentService {
         } catch (IOException e) { e.printStackTrace(); return false; }
     }
 
+    public boolean unenrollCourse(String studentID, String courseString) {
+        String[] parts = courseString.split(",");
+        if (parts.length < 1) return false;
+        String courseID = parts[0].trim();
+
+        File file = new File(ENROLLMENT_FILE);
+        if (!file.exists()) return false;
+
+        List<String> lines = new ArrayList<>();
+        boolean found = false;
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] data = line.split(",");
+                if (data.length >= 2) {
+                    if (data[0].trim().equals(studentID) && data[1].trim().equals(courseID)) {
+                        found = true;
+                    } else {
+                        lines.add(line);
+                    }
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+
+        if (found) {
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
+                for (String l : lines) {
+                    writer.write(l);
+                    writer.newLine();
+                }
+                return true;
+            } catch (IOException e) {
+                e.printStackTrace();
+                return false;
+            }
+        }
+        return false;
+    }
+
     public String getLecturerIdByCourse(String courseID) {
         File file = new File(MODULES_FILE);
         if (!file.exists()) return "Unknown";
@@ -90,30 +115,21 @@ public class StudentService {
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] data = line.split(",");
-                if (data.length >= 3 && data[0].trim().equalsIgnoreCase(courseID)) {
-                    return data[2].trim();
+                if (data.length >= 4 && data[0].trim().equalsIgnoreCase(courseID)) {
+                    return data[3].trim();
                 }
             }
         } catch (IOException e) { e.printStackTrace(); }
         return "Unknown";
     }
 
-    // =========================================================
-    // 2. Feedback Logic
-    // =========================================================
-
     public boolean submitFeedback(String studentID, String courseID, String lecturerID, String comment) {
-        // Uses the new FEEDBACK_FILE path ("Data/studentFeedback.txt")
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(FEEDBACK_FILE, true))) {
             writer.write(studentID + "," + courseID + "," + lecturerID + "," + comment);
             writer.newLine();
             return true;
         } catch (IOException e) { e.printStackTrace(); return false; }
     }
-
-    // =========================================================
-    // 3. Profile Logic
-    // =========================================================
 
     public boolean isValidPassword(String password) {
         if (password == null || password.length() < 7 || password.length() > 14) return false;
@@ -124,7 +140,7 @@ public class StudentService {
             else if (Character.isUpperCase(c)) hasUpper = true;
             else if (Character.isDigit(c)) hasDigit = true;
             else if (symbols.indexOf(c) != -1) hasSymbol = true;
-            else if (c == ',') return false;
+            else if (c == ',') return false; 
         }
         return hasLower && hasUpper && hasDigit && hasSymbol;
     }
@@ -165,10 +181,6 @@ public class StudentService {
         }
         return false;
     }
-
-    // =========================================================
-    // 4. Quiz Logic
-    // =========================================================
 
     public boolean hasQuizForModule(String moduleID) {
         File file = new File(QUIZ_FILE);
@@ -243,10 +255,6 @@ public class StudentService {
         } catch (IOException e) { e.printStackTrace(); return false; }
     }
 
-    // =========================================================
-    // 5. Result Logic
-    // =========================================================
-
     public List<String[]> getFinalGradesForModule(String studentID, String moduleID) {
         List<String[]> gradeList = new ArrayList<>();
         File file = new File(FINAL_GRADE_FILE);
@@ -284,15 +292,14 @@ public class StudentService {
         return results;
     }
 
-    // =========================================================
-    // 6. Timetable Logic
-    // =========================================================
-
     public List<String[]> getStudentTimetable(String studentID, String selectedDay) {
         List<String[]> schedule = new ArrayList<>();
+        
         List<String> enrolledStrings = getEnrolledCourses(studentID);
         List<String> enrolledIDs = new ArrayList<>();
-        for (String s : enrolledStrings) enrolledIDs.add(s.split(",")[0].trim()); 
+        for (String s : enrolledStrings) {
+            enrolledIDs.add(s.split(",")[0].trim()); 
+        }
 
         Map<String, String> venueMap = new HashMap<>();
         File venueFile = new File(VENUE_FILE);
@@ -306,6 +313,20 @@ public class StudentService {
             } catch (IOException e) { e.printStackTrace(); }
         }
 
+        Map<String, String> moduleNameMap = new HashMap<>();
+        File moduleFile = new File(MODULES_FILE);
+        if (moduleFile.exists()) {
+            try (BufferedReader reader = new BufferedReader(new FileReader(moduleFile))) {
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    String[] parts = line.split(",");
+                    if (parts.length >= 2) {
+                        moduleNameMap.put(parts[0].trim(), parts[1].trim());
+                    }
+                }
+            } catch (IOException e) { e.printStackTrace(); }
+        }
+
         File file = new File(SCHEDULE_FILE);
         if (!file.exists()) return schedule;
 
@@ -314,16 +335,29 @@ public class StudentService {
             while ((line = reader.readLine()) != null) {
                 String[] parts = line.split(",");
                 if (parts.length >= 6) {
-                    String classID = parts[0].trim(), modID = parts[1].trim(), day = parts[3].trim();
+                    String classID = parts[0].trim();
+                    String modID = parts[1].trim();
+                    String day = parts[3].trim();
+                    
                     if (enrolledIDs.contains(modID) && day.equalsIgnoreCase(selectedDay)) {
                         String venue = venueMap.getOrDefault(classID, "Venue TBD");
-                        schedule.add(new String[]{ modID, parts[2].trim(), parts[4].trim(), parts[5].trim(), venue });
+                        String modName = moduleNameMap.getOrDefault(modID, modID); 
+                        
+                        schedule.add(new String[]{ 
+                            modID,             
+                            parts[2].trim(),   
+                            parts[4].trim(),   
+                            parts[5].trim(),   
+                            venue,             
+                            modName            
+                        });
                     }
                 }
             }
         } catch (IOException e) { e.printStackTrace(); }
         
         Collections.sort(schedule, Comparator.comparing(o -> o[2]));
+        
         return schedule;
     }
 }

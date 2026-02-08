@@ -3,6 +3,7 @@ S002,M002,Object Oriented Programming with Java
 S002,M003,System Development Methods
 S002,M004,System and Network Administration
 S123,M001,Data Management
+S123,M002,Object Oriented Programming with Java
+S111,M002,Object Oriented Programming with Java
 S111,M001,Data Management
-S111,M003,System Development Methods
-S111,M004,System and Network Administration
+S111,M006,Programming With Python
