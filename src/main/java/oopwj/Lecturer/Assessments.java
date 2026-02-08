@@ -410,9 +410,30 @@ public class Assessments extends javax.swing.JFrame {
         String projectRoot = System.getProperty("user.dir");
         File quizFile = new File(projectRoot, "src\\main\\java\\oopwj\\data\\Quiz.txt");
         File questionFile = new File(projectRoot, "src\\main\\java\\oopwj\\data\\question.txt");
+        java.util.Map<String, String> quizTitlesByKey = new java.util.HashMap<>();
 
         // Update Quiz.txt
         if (quizFile.exists()) {
+            try (BufferedReader br = new BufferedReader(new FileReader(quizFile))) {
+                String line;
+                while ((line = br.readLine()) != null) {
+                    String[] fields = line.split(",", 3);
+                    if (fields.length >= 2) {
+                        String quizID = fields[0].trim();
+                        String moduleID = fields[1].trim();
+                        String key = quizID + "|" + moduleID;
+                        if (quizSetKeysToDelete.contains(key)) {
+                            String quizTitle = fields.length >= 3 ? fields[2].trim() : "";
+                            quizTitlesByKey.put(key, quizTitle);
+                        }
+                    }
+                }
+            } catch (IOException ex) {
+                logger.log(java.util.logging.Level.SEVERE, null, ex);
+                JOptionPane.showMessageDialog(this, "Error reading Quiz.txt: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
             List<String> remainingQuizLines = new ArrayList<>();
             try (BufferedReader br = new BufferedReader(new FileReader(quizFile))) {
                 String line;
@@ -456,7 +477,24 @@ public class Assessments extends javax.swing.JFrame {
                         String quizID = fields[1].trim();
                         String moduleID = fields[2].trim();
                         String key = quizID + "|" + moduleID;
-                        if (quizSetKeysToDelete.contains(key)) {
+                        boolean matchesDeletedQuiz = quizSetKeysToDelete.contains(key);
+                        if (!matchesDeletedQuiz) {
+                            for (java.util.Map.Entry<String, String> entry : quizTitlesByKey.entrySet()) {
+                                String deletedKey = entry.getKey();
+                                String deletedTitleValue = entry.getValue();
+                                String[] keyParts = deletedKey.split("\\|");
+                                if (keyParts.length == 2) {
+                                    String deletedQuizId = keyParts[0];
+                                    String deletedModuleId = keyParts[1];
+                                    if (deletedModuleId.equals(moduleID) &&
+                                        (quizID.equals(deletedQuizId) || quizID.equals(deletedTitleValue))) {
+                                        matchesDeletedQuiz = true;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                        if (matchesDeletedQuiz) {
                             continue;
                         }
                     }
@@ -1318,8 +1356,6 @@ public class Assessments extends javax.swing.JFrame {
         File quizFile = new File(projectRoot, "src\\main\\java\\oopwj\\data\\Quiz.txt");
         File questionFile = new File(projectRoot, "src\\main\\java\\oopwj\\data\\question.txt");
 
-        Map<String, String> quizSetFeedback = loadQuizSetFeedback(projectRoot);
-
         // Count questions per QuizID and ModuleID combination
         Map<String, Integer> questionCounts = new HashMap<>();
 
@@ -1342,7 +1378,7 @@ public class Assessments extends javax.swing.JFrame {
             }
         }
 
-        String[] columnNames = {"Module Name", "Quiz Name", "Total Questions", "Feedback"};
+        String[] columnNames = {"Module Name", "Quiz Name", "Total Questions"};
         List<Object[]> rows = new ArrayList<>();
 
         displayedQuizSetKeys.clear();
@@ -1364,9 +1400,8 @@ public class Assessments extends javax.swing.JFrame {
                         String moduleName = getModuleName(moduleID);
                         String key = quizID + "|" + moduleID;
                         int totalQuestions = questionCounts.getOrDefault(key, 0);
-                        String feedback = quizSetFeedback.getOrDefault(key, "Pending");
 
-                        rows.add(new Object[]{moduleName, quizName, totalQuestions, feedback});
+                        rows.add(new Object[]{moduleName, quizName, totalQuestions});
                         displayedQuizSetKeys.add(quizID + "|" + moduleID);
                     }
                 }
@@ -1385,44 +1420,6 @@ public class Assessments extends javax.swing.JFrame {
 
         originalQuizLines.clear();
         displayedQuizLineIndices.clear();
-    }
-
-    private Map<String, String> loadQuizSetFeedback(String projectRoot) {
-        Map<String, String> feedbackMap = new HashMap<>();
-        File quizFeedbackFile = new File(projectRoot, "src\\main\\java\\oopwj\\data\\QuizFeedback.txt");
-
-        if (!quizFeedbackFile.exists()) {
-            return feedbackMap;
-        }
-
-        try (BufferedReader br = new BufferedReader(new FileReader(quizFeedbackFile))) {
-            String line;
-            while ((line = br.readLine()) != null) {
-                String trimmedLine = line.trim();
-                if (trimmedLine.isEmpty() || trimmedLine.startsWith("#")) {
-                    continue;
-                }
-
-                String[] parts = trimmedLine.split(",", 4);
-                if (parts.length >= 3) {
-                    String moduleID = parts[0].trim();
-                    String quizID = parts[1].trim();
-                    String feedbackField = parts.length == 4 ? parts[3].trim() : parts[2].trim();
-                    String feedback = feedbackField;
-                    if (feedback.startsWith("\"") && feedback.endsWith("\"")) {
-                        feedback = feedback.substring(1, feedback.length() - 1).replace("\"\"", "\"");
-                    }
-                    String key = quizID + "|" + moduleID;
-                    if (!feedback.isEmpty()) {
-                        feedbackMap.put(key, feedback);
-                    }
-                }
-            }
-        } catch (IOException ex) {
-            logger.log(java.util.logging.Level.WARNING, "Error reading QuizFeedback.txt", ex);
-        }
-
-        return feedbackMap;
     }
     
     private void loadQuizzesByModuleID(String moduleID) {
