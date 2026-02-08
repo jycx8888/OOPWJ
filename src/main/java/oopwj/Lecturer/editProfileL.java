@@ -5,13 +5,14 @@
 package oopwj.Lecturer;
 
 import oopwj.Lecturer.*;
-import java.awt.Image;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.*;
+import java.util.List;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import java.awt.*;
 
 /**
  *
@@ -27,24 +28,45 @@ public class editProfileL extends javax.swing.JFrame {
     private javax.swing.JFrame parentFrame;
     private String currentPassword;
 
-
     public editProfileL() {
         initComponents();
         setupProfilePicturePanel();
     }
     
-    /**
-     * Constructor with user session
-     * @param userID - The logged-in user's ID
-     * @param parent - The parent frame
-     */
     public editProfileL(String userID, javax.swing.JFrame parent) {
         this.loggedInUserID = userID;
         this.parentFrame = parent;
         initComponents();
+        setLocationRelativeTo(null);
         setupProfilePicturePanel();
         loadUserData();
         loadProfilePicture();
+        addHoverEffect(editProfilePicture, new Color(70,130,180), new Color(100,149,237));
+        addHoverEffect(editProfile, new Color(70,130,180), new Color(100,149,237));
+        addHoverEffect(changePassword, new Color(70,130,180), new Color(100,149,237));
+        addHoverEffect(exit, new Color(220,80,80), new Color(255,120,120));
+    }
+    
+    private void addHoverEffect(JButton btn, Color normal, Color hover) {
+        btn.setOpaque(true);
+        btn.setContentAreaFilled(true);
+        btn.setBorderPainted(false);
+        btn.setFocusPainted(false);
+
+        btn.setBackground(normal);
+        btn.setForeground(Color.WHITE);
+
+        btn.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseEntered(java.awt.event.MouseEvent e) {
+                btn.setBackground(hover);
+            }
+
+            @Override
+            public void mouseExited(java.awt.event.MouseEvent e) {
+                btn.setBackground(normal);
+            }
+        });
     }
     
     private void loadUserData() {
@@ -171,7 +193,7 @@ public class editProfileL extends javax.swing.JFrame {
             } else if (allowedSymbols.indexOf(c) != -1) {
                 hasSymbol = true;
             } else if (c == ',') {
-                return false; // Comma not allowed
+                return false;
             }
         }
         
@@ -182,10 +204,9 @@ public class editProfileL extends javax.swing.JFrame {
         if (name == null || name.trim().isEmpty()) {
             return false;
         }
-        // Only allow alphabets and spaces
         return name.matches("^[a-zA-Z ]+$");
     }
-
+    
     private boolean updatePassword(String newPassword) {
         List<String> lines = new ArrayList<>();
         boolean updated = false;
@@ -267,28 +288,55 @@ public class editProfileL extends javax.swing.JFrame {
     private void initComponents() {
 
         jTextField1 = new javax.swing.JTextField();
+        jPanel1 = new javax.swing.JPanel(){
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                Graphics2D g2 = (Graphics2D) g;
+
+                GradientPaint gp = new GradientPaint(
+                    0, 0, new Color(230, 240, 255),
+                    0, getHeight(), new Color(245, 247, 250)
+                );
+
+                g2.setPaint(gp);
+                g2.fillRect(0, 0, getWidth(), getHeight());
+            }
+        };
+        profilePicture = new java.awt.Panel();
         jLabel1 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         changePassword = new javax.swing.JButton();
         editProfile = new javax.swing.JButton();
-        Exit = new javax.swing.JToggleButton();
         IDLabel = new javax.swing.JLabel();
         NameLabel = new javax.swing.JLabel();
         EmailLabel = new javax.swing.JLabel();
-        profilePicture = new java.awt.Panel();
-        editProfilePicture = new javax.swing.JToggleButton();
+        jLabel2 = new javax.swing.JLabel();
+        exit = new javax.swing.JButton();
+        editProfilePicture = new javax.swing.JButton();
 
         jTextField1.setText("jTextField1");
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
+        jPanel1.setOpaque(false);
+
+        profilePicture.setPreferredSize(new java.awt.Dimension(180, 180));
+
+        javax.swing.GroupLayout profilePictureLayout = new javax.swing.GroupLayout(profilePicture);
+        profilePicture.setLayout(profilePictureLayout);
+        profilePictureLayout.setHorizontalGroup(
+            profilePictureLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 180, Short.MAX_VALUE)
+        );
+        profilePictureLayout.setVerticalGroup(
+            profilePictureLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 180, Short.MAX_VALUE)
+        );
+
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
         jLabel1.setText("Profile");
-
-        jLabel2.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        jLabel2.setText("Name:");
 
         jLabel3.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel3.setText("Email:");
@@ -296,6 +344,7 @@ public class editProfileL extends javax.swing.JFrame {
         jLabel4.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel4.setText("ID:");
 
+        changePassword.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         changePassword.setText("Change Password");
         changePassword.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -303,19 +352,11 @@ public class editProfileL extends javax.swing.JFrame {
             }
         });
 
+        editProfile.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         editProfile.setText("Edit Profile");
         editProfile.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 editProfileActionPerformed(evt);
-            }
-        });
-
-        Exit.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        Exit.setForeground(new java.awt.Color(255, 51, 102));
-        Exit.setText("X");
-        Exit.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                ExitActionPerformed(evt);
             }
         });
 
@@ -328,17 +369,20 @@ public class editProfileL extends javax.swing.JFrame {
         EmailLabel.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         EmailLabel.setText("jLabel5");
 
-        javax.swing.GroupLayout profilePictureLayout = new javax.swing.GroupLayout(profilePicture);
-        profilePicture.setLayout(profilePictureLayout);
-        profilePictureLayout.setHorizontalGroup(
-            profilePictureLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 140, Short.MAX_VALUE)
-        );
-        profilePictureLayout.setVerticalGroup(
-            profilePictureLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 131, Short.MAX_VALUE)
-        );
+        jLabel2.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        jLabel2.setText("Name:");
 
+        exit.setBackground(new java.awt.Color(220, 80, 80));
+        exit.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        exit.setForeground(new java.awt.Color(255, 255, 255));
+        exit.setText("X");
+        exit.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                exitActionPerformed(evt);
+            }
+        });
+
+        editProfilePicture.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         editProfilePicture.setText("Edit");
         editProfilePicture.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -346,90 +390,88 @@ public class editProfileL extends javax.swing.JFrame {
             }
         });
 
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap(146, Short.MAX_VALUE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                            .addComponent(jLabel1)
+                            .addGap(236, 236, 236))
+                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                            .addComponent(profilePicture, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGap(195, 195, 195))
+                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGap(40, 40, 40)
+                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addComponent(IDLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(NameLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(EmailLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 174, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGap(184, 184, 184))
+                        .addGroup(jPanel1Layout.createSequentialGroup()
+                            .addComponent(changePassword)
+                            .addGap(38, 38, 38)
+                            .addComponent(editProfile)
+                            .addGap(157, 157, 157)))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addComponent(editProfilePicture)
+                        .addGap(249, 249, 249))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addComponent(exit)
+                        .addGap(39, 39, 39))))
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(20, 20, 20)
+                .addComponent(exit)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(profilePicture, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(editProfilePicture)
+                .addGap(26, 26, 26)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel4)
+                    .addComponent(IDLabel))
+                .addGap(26, 26, 26)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel2)
+                    .addComponent(NameLabel))
+                .addGap(26, 26, 26)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel3)
+                    .addComponent(EmailLabel))
+                .addGap(26, 26, 26)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(changePassword)
+                    .addComponent(editProfile))
+                .addContainerGap(30, Short.MAX_VALUE))
+        );
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(150, 150, 150)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(changePassword)
-                        .addGap(38, 38, 38)
-                        .addComponent(editProfile))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, 51, Short.MAX_VALUE)
-                            .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addGap(40, 40, 40)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(IDLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(NameLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(EmailLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 174, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addContainerGap(170, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(profilePicture, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(166, 166, 166))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel1)
-                                .addGap(180, 180, 180)))
-                        .addComponent(Exit)
-                        .addGap(32, 32, 32))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(editProfilePicture)
-                        .addGap(260, 260, 260))))
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(32, 32, 32)
-                        .addComponent(jLabel1))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(17, 17, 17)
-                        .addComponent(Exit)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(profilePicture, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(editProfilePicture)
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel4)
-                    .addComponent(IDLabel))
-                .addGap(26, 26, 26)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2)
-                    .addComponent(NameLabel))
-                .addGap(26, 26, 26)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel3)
-                    .addComponent(EmailLabel))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 28, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(changePassword)
-                    .addComponent(editProfile))
-                .addGap(19, 19, 19))
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void ExitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ExitActionPerformed
-        this.dispose();
-        if (parentFrame != null) {
-            parentFrame.setVisible(true);
-        }
-    }//GEN-LAST:event_ExitActionPerformed
-
     private void changePasswordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_changePasswordActionPerformed
-        // Step 1: Confirm current password
         JPasswordField passwordField = new JPasswordField();
         Object[] message = {
             "Enter your current password:", passwordField
@@ -441,13 +483,11 @@ public class editProfileL extends javax.swing.JFrame {
         if (option == JOptionPane.OK_OPTION) {
             String enteredPassword = new String(passwordField.getPassword());
             
-            // Verify current password
             if (!enteredPassword.equals(currentPassword)) {
                 JOptionPane.showMessageDialog(this, "Wrong password!", "Error", JOptionPane.ERROR_MESSAGE);
-                return; // Return to allow re-entry
+                return;
             }
             
-            // Step 2: Enter new password
             boolean passwordChanged = false;
             while (!passwordChanged) {
                 JPasswordField newPasswordField = new JPasswordField();
@@ -473,7 +513,6 @@ public class editProfileL extends javax.swing.JFrame {
                     String newPassword = new String(newPasswordField.getPassword());
                     String confirmPassword = new String(confirmPasswordField.getPassword());
                     
-                    // Validate password format
                     if (!isValidPassword(newPassword)) {
                         JOptionPane.showMessageDialog(this, 
                                 "<html>Invalid password format!<br/><br/>" +
@@ -484,18 +523,16 @@ public class editProfileL extends javax.swing.JFrame {
                                 "- At least one number (0-9)<br/>" +
                                 "- At least one symbol (!@#$%^)</html>", 
                                 "Failed", JOptionPane.ERROR_MESSAGE);
-                        continue; // Loop again for re-entry
+                        continue;
                     }
                     
-                    // Check if passwords match
                     if (!newPassword.equals(confirmPassword)) {
                         JOptionPane.showMessageDialog(this, 
                                 "Passwords do not match!", 
                                 "Failed", JOptionPane.ERROR_MESSAGE);
-                        continue; // Loop again for re-entry
+                        continue;
                     }
                     
-                    // Update password
                     if (updatePassword(newPassword)) {
                         JOptionPane.showMessageDialog(this, 
                                 "Password changed successfully!", 
@@ -505,22 +542,20 @@ public class editProfileL extends javax.swing.JFrame {
                         JOptionPane.showMessageDialog(this, 
                                 "Error updating password. Please try again.", 
                                 "Error", JOptionPane.ERROR_MESSAGE);
-                        passwordChanged = true; // Exit to prevent infinite loop
+                        passwordChanged = true;
                     }
                 } else {
-                    break; // User cancelled
+                    break; 
                 }
             }
         }
     }//GEN-LAST:event_changePasswordActionPerformed
 
     private void editProfileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editProfileActionPerformed
-        // Show popup to change name
         String currentName = NameLabel.getText();
         String newName = JOptionPane.showInputDialog(this, "Enter new name:", currentName);
         
         if (newName != null && !newName.trim().isEmpty()) {
-            // Validate name (only alphabets and spaces)
             if (!isValidName(newName)) {
                 JOptionPane.showMessageDialog(this, 
                         "Invalid name! Name can only contain alphabets and spaces.", 
@@ -528,7 +563,6 @@ public class editProfileL extends javax.swing.JFrame {
                 return;
             }
             
-            // Update name in file
             if (updateName(newName.trim())) {
                 NameLabel.setText(newName.trim());
                 JOptionPane.showMessageDialog(this, 
@@ -542,8 +576,17 @@ public class editProfileL extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_editProfileActionPerformed
 
+    private void exitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitActionPerformed
+        // TODO add your handling code here:
+        this.dispose();
+        if (parentFrame != null) {
+            parentFrame.setVisible(true);
+        }
+    }//GEN-LAST:event_exitActionPerformed
+
     private void editProfilePictureActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editProfilePictureActionPerformed
-        if (loggedInUserID == null || loggedInUserID.trim().isEmpty()) {
+        // TODO add your handling code here:
+                if (loggedInUserID == null || loggedInUserID.trim().isEmpty()) {
             JOptionPane.showMessageDialog(this, "User ID not found.", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
@@ -600,22 +643,22 @@ public class editProfileL extends javax.swing.JFrame {
         }
         //</editor-fold>
 
-        /* Create and display the form */
         java.awt.EventQueue.invokeLater(() -> new editProfileL().setVisible(true));
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel EmailLabel;
-    private javax.swing.JToggleButton Exit;
     private javax.swing.JLabel IDLabel;
     private javax.swing.JLabel NameLabel;
     private javax.swing.JButton changePassword;
     private javax.swing.JButton editProfile;
-    private javax.swing.JToggleButton editProfilePicture;
+    private javax.swing.JButton editProfilePicture;
+    private javax.swing.JButton exit;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JTextField jTextField1;
     private java.awt.Panel profilePicture;
     // End of variables declaration//GEN-END:variables

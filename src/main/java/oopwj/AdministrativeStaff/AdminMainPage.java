@@ -157,8 +157,10 @@ public class AdminMainPage extends javax.swing.JFrame {
         btnManage.setText("Manage User");
         btnManage.setBorderPainted(false);
         btnManage.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        btnManage.setMaximumSize(new java.awt.Dimension(125, 27));
+        btnManage.setMinimumSize(new java.awt.Dimension(125, 27));
         btnManage.setOpaque(true);
-        btnManage.setPreferredSize(new java.awt.Dimension(120, 27));
+        btnManage.setPreferredSize(new java.awt.Dimension(125, 27));
         btnManage.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 btnManageMouseEntered(evt);
@@ -242,9 +244,8 @@ public class AdminMainPage extends javax.swing.JFrame {
                             .addComponent(btnCreateClass)
                             .addComponent(btnDefineGrading)
                             .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                .addComponent(btnManage, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(btnAssign, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                            .addComponent(btnAssign)
+                            .addComponent(btnManage, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(0, 0, Short.MAX_VALUE))))
         );
         jPanel1Layout.setVerticalGroup(

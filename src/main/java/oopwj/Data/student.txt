@@ -1,6 +1,5 @@
 S111,student,sup,S111@mail.apu.edu.my
 S122,kum,kumkum,S122@mail.apu.edu.my
-S123,tester,stu,S123@mail.apu.edu.my
 S124,Alex Johnson,pass124,S124@mail.apu.edu.my
 S125,Bella Smith,pass125,S125@mail.apu.edu.my
 S126,Charlie Davis,pass126,S126@mail.apu.edu.my
@@ -101,3 +100,4 @@ S220,Timothee Chalamet,pass220,S220@mail.apu.edu.my
 S221,Umair Khan,pass221,S221@mail.apu.edu.my
 S222,Vicky Kaushal,pass222,S222@mail.apu.edu.my
 S223,Zendaya Coleman,pass223,S223@mail.apu.edu.my
+S123,tester,Stu!dent1@,S123@mail.apu.edu.my

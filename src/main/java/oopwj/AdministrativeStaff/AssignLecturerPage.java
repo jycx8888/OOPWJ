@@ -430,7 +430,7 @@ public class AssignLecturerPage extends javax.swing.JFrame {
 
         if (!assignedAL.equals("None")) {
             JOptionPane.showMessageDialog(this,
-                    "This lecturer is already assigned to an Academic Leader.",
+                    "This lecturer is already assigned to an Academic Leader. Use 'Update' button instead",
                     "Already Assigned",
                     JOptionPane.WARNING_MESSAGE);
             return;

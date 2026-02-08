@@ -4,7 +4,8 @@
  */
 package oopwj.AcademicLeader;
 
-
+import java.awt.*;
+import javax.swing.JButton;
 
 /**
  *
@@ -24,8 +25,36 @@ public class academicLeader extends javax.swing.JFrame {
     public academicLeader(String userID) {
         this.loggedInUserID = userID;
         initComponents();
+        setLocationRelativeTo(null);
         updateAcNameLabel();
         logger.info("Academic Leader logged in: " + userID);
+        addHoverEffect(profile, new Color(70,130,180), new Color(100,149,237));
+        addHoverEffect(modules, new Color(70,130,180), new Color(100,149,237));
+        addHoverEffect(reports, new Color(70,130,180), new Color(100,149,237));
+        addHoverEffect(lecturerReview, new Color(70,130,180), new Color(100,149,237));
+        addHoverEffect(logout, new Color(220,80,80), new Color(255,120,120));
+    }
+    
+    private void addHoverEffect(JButton btn, Color normal, Color hover) {
+        btn.setOpaque(true);
+        btn.setContentAreaFilled(true);
+        btn.setBorderPainted(false);
+        btn.setFocusPainted(false);
+
+        btn.setBackground(normal);
+        btn.setForeground(Color.WHITE);
+
+        btn.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseEntered(java.awt.event.MouseEvent e) {
+                btn.setBackground(hover);
+            }
+
+            @Override
+            public void mouseExited(java.awt.event.MouseEvent e) {
+                btn.setBackground(normal);
+            }
+        });
     }
     
     public String getLoggedInUserID() {
@@ -42,7 +71,7 @@ public class academicLeader extends javax.swing.JFrame {
         if (name == null || name.isEmpty()) {
             acName.setText("Academic Leader");
         } else {
-            acName.setText(name);
+            acName.setText("Logged in as: " + name);
         }
     }
 
@@ -80,131 +109,172 @@ public class academicLeader extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jPanel1 = new javax.swing.JPanel(){
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                Graphics2D g2 = (Graphics2D) g;
+
+                GradientPaint gp = new GradientPaint(
+                    0, 0, new Color(230, 240, 255),
+                    0, getHeight(), new Color(245, 247, 250)
+                );
+
+                g2.setPaint(gp);
+                g2.fillRect(0, 0, getWidth(), getHeight());
+            }
+        };
         welcome = new javax.swing.JLabel();
         acName = new javax.swing.JLabel();
-        profileNew = new javax.swing.JButton();
-        modulesNew = new javax.swing.JButton();
-        reportsNew = new javax.swing.JButton();
-        lecturerReviewNew = new javax.swing.JButton();
-        logoutNew = new javax.swing.JButton();
+        profile = new javax.swing.JButton();
+        modules = new javax.swing.JButton();
+        reports = new javax.swing.JButton();
+        lecturerReview = new javax.swing.JButton();
+        logout = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+
+        jPanel1.setOpaque(false);
+        jPanel1.setRequestFocusEnabled(false);
 
         welcome.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
         welcome.setText("Welcome, Academic Leader");
 
-        acName.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        acName.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         acName.setText("jLabel1");
 
-        profileNew.setText("Profile");
-        profileNew.addActionListener(new java.awt.event.ActionListener() {
+        profile.setBackground(new java.awt.Color(70, 130, 180));
+        profile.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        profile.setForeground(new java.awt.Color(255, 255, 255));
+        profile.setText("Profile");
+        profile.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                profileNewActionPerformed(evt);
+                profileActionPerformed(evt);
             }
         });
 
-        modulesNew.setText("Modules");
-        modulesNew.addActionListener(new java.awt.event.ActionListener() {
+        modules.setBackground(new java.awt.Color(70, 130, 180));
+        modules.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        modules.setForeground(new java.awt.Color(255, 255, 255));
+        modules.setText("Modules");
+        modules.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                modulesNewActionPerformed(evt);
+                modulesActionPerformed(evt);
             }
         });
 
-        reportsNew.setText("Reports");
-        reportsNew.addActionListener(new java.awt.event.ActionListener() {
+        reports.setBackground(new java.awt.Color(70, 130, 180));
+        reports.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        reports.setForeground(new java.awt.Color(255, 255, 255));
+        reports.setText("Reports");
+        reports.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                reportsNewActionPerformed(evt);
+                reportsActionPerformed(evt);
             }
         });
 
-        lecturerReviewNew.setText("Lecturer Review");
-        lecturerReviewNew.addActionListener(new java.awt.event.ActionListener() {
+        lecturerReview.setBackground(new java.awt.Color(70, 130, 180));
+        lecturerReview.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lecturerReview.setForeground(new java.awt.Color(255, 255, 255));
+        lecturerReview.setText("Evaluation of Lecturer");
+        lecturerReview.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                lecturerReviewNewActionPerformed(evt);
+                lecturerReviewActionPerformed(evt);
             }
         });
 
-        logoutNew.setText("Log Out");
-        logoutNew.addActionListener(new java.awt.event.ActionListener() {
+        logout.setBackground(new java.awt.Color(220, 80, 80));
+        logout.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        logout.setForeground(new java.awt.Color(255, 255, 255));
+        logout.setText("Log Out");
+        logout.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                logoutNewActionPerformed(evt);
+                logoutActionPerformed(evt);
             }
         });
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(64, 64, 64)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addComponent(lecturerReview, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(profile, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(modules, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(reports, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(logout, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(acName)
+                    .addComponent(welcome))
+                .addContainerGap(272, Short.MAX_VALUE))
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addContainerGap(40, Short.MAX_VALUE)
+                .addComponent(welcome)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(acName)
+                .addGap(18, 18, 18)
+                .addComponent(profile)
+                .addGap(30, 30, 30)
+                .addComponent(modules)
+                .addGap(30, 30, 30)
+                .addComponent(reports)
+                .addGap(30, 30, 30)
+                .addComponent(lecturerReview)
+                .addGap(30, 30, 30)
+                .addComponent(logout)
+                .addGap(36, 36, 36))
+        );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(264, 264, 264)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(lecturerReviewNew, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(profileNew, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(modulesNew, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(reportsNew, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(logoutNew, javax.swing.GroupLayout.PREFERRED_SIZE, 113, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(167, 167, 167)
-                        .addComponent(welcome))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(289, 289, 289)
-                        .addComponent(acName)))
-                .addContainerGap(168, Short.MAX_VALUE))
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(66, 66, 66)
-                .addComponent(welcome)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(acName)
-                .addGap(28, 28, 28)
-                .addComponent(profileNew)
-                .addGap(30, 30, 30)
-                .addComponent(modulesNew)
-                .addGap(30, 30, 30)
-                .addComponent(reportsNew)
-                .addGap(30, 30, 30)
-                .addComponent(lecturerReviewNew)
-                .addGap(30, 30, 30)
-                .addComponent(logoutNew)
-                .addContainerGap(31, Short.MAX_VALUE))
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void profileNewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_profileNewActionPerformed
+    private void profileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_profileActionPerformed
         // TODO add your handling code here:
         editProfileAC ed = new editProfileAC(this.loggedInUserID, this);
         ed.setVisible(true);
         this.setVisible(false);
-    }//GEN-LAST:event_profileNewActionPerformed
+    }//GEN-LAST:event_profileActionPerformed
 
-    private void modulesNewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_modulesNewActionPerformed
+    private void modulesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_modulesActionPerformed
         // TODO add your handling code here:
         modules m = new modules(this.loggedInUserID, this);
         m.setVisible(true);
         this.setVisible(false);
-    }//GEN-LAST:event_modulesNewActionPerformed
+    }//GEN-LAST:event_modulesActionPerformed
 
-    private void reportsNewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_reportsNewActionPerformed
+    private void reportsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_reportsActionPerformed
         // TODO add your handling code here:
         generateReports gr = new generateReports(this.loggedInUserID, this);
         gr.setVisible(true);
         this.setVisible(false);
-    }//GEN-LAST:event_reportsNewActionPerformed
+    }//GEN-LAST:event_reportsActionPerformed
 
-    private void lecturerReviewNewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_lecturerReviewNewActionPerformed
+    private void lecturerReviewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_lecturerReviewActionPerformed
         // TODO add your handling code here:
-        lecturerReview lr = new lecturerReview(this.loggedInUserID, this);
+        evaluationOfLecturer lr = new evaluationOfLecturer(this.loggedInUserID, this);
         lr.setVisible(true);
         this.setVisible(false);
-    }//GEN-LAST:event_lecturerReviewNewActionPerformed
+    }//GEN-LAST:event_lecturerReviewActionPerformed
 
-    private void logoutNewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_logoutNewActionPerformed
+    private void logoutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_logoutActionPerformed
         // TODO add your handling code here:
         int confirm = javax.swing.JOptionPane.showConfirmDialog(
             this,
@@ -219,7 +289,7 @@ public class academicLeader extends javax.swing.JFrame {
             this.dispose();
             new oopwj.LoginFrame();
         }
-    }//GEN-LAST:event_logoutNewActionPerformed
+    }//GEN-LAST:event_logoutActionPerformed
 
     /**
      * @param args the command line arguments
@@ -247,11 +317,12 @@ public class academicLeader extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel acName;
-    private javax.swing.JButton lecturerReviewNew;
-    private javax.swing.JButton logoutNew;
-    private javax.swing.JButton modulesNew;
-    private javax.swing.JButton profileNew;
-    private javax.swing.JButton reportsNew;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JButton lecturerReview;
+    private javax.swing.JButton logout;
+    private javax.swing.JButton modules;
+    private javax.swing.JButton profile;
+    private javax.swing.JButton reports;
     private javax.swing.JLabel welcome;
     // End of variables declaration//GEN-END:variables
 }
