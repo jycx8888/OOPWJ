@@ -7,6 +7,7 @@ package oopwj.AdministrativeStaff;
 import java.awt.*;
 import java.io.*;
 import javax.swing.*;
+import static javax.swing.SwingConstants.CENTER;
 import javax.swing.table.*;
 
 /**
@@ -30,6 +31,14 @@ public class DefineGradingPage extends javax.swing.JFrame {
         PlaceHolder.apply(txtMin, "Select or enter a min marks");
         PlaceHolder.apply(txtMax, "Select or enter a max marks");
         
+        addHoverEffect(btnCancel,new Color(200,200,200),new Color(170,170,170));
+        addHoverEffect(btnClear, new Color(108, 117, 125), new Color(90, 98, 104));
+        addHoverEffect(btnDelete,new Color(220,80,80),new Color(255,120,120));
+        addHoverEffect(btnAdd,new Color(70,130,180),new Color(100,149,237));
+        addHoverEffect(btnUpdate,new Color(70,130,180),new Color(100,149,237));
+        
+        styleTables(tableGrade);
+        
         tableGrade.getSelectionModel().addListSelectionListener(e -> {
             if (!e.getValueIsAdjusting()) { 
                 int selectedRow = tableGrade.getSelectedRow();
@@ -52,6 +61,7 @@ public class DefineGradingPage extends javax.swing.JFrame {
         });
     }
 
+    
     public DefineGradingPage(String userID) {
         this.loggedInUserID = userID;
         initComponents();
@@ -62,6 +72,14 @@ public class DefineGradingPage extends javax.swing.JFrame {
         PlaceHolder.apply(txtMin, "Select or enter a min marks");
         PlaceHolder.apply(txtMax, "Select or enter a max marks");
 
+        addHoverEffect(btnCancel, new Color(108, 117, 125), new Color(90, 98, 104));
+        addHoverEffect(btnClear, new Color(108, 117, 125), new Color(90, 98, 104));
+        addHoverEffect(btnDelete,new Color(220,80,80),new Color(255,120,120));
+        addHoverEffect(btnAdd,new Color(70,130,180),new Color(100,149,237));
+        addHoverEffect(btnUpdate,new Color(70,130,180),new Color(100,149,237));
+        
+        styleTables(tableGrade);
+        
         tableGrade.getSelectionModel().addListSelectionListener(e -> {
             if (!e.getValueIsAdjusting()) {
                 int selectedRow = tableGrade.getSelectedRow();
@@ -84,6 +102,28 @@ public class DefineGradingPage extends javax.swing.JFrame {
         });
     }
 
+    private void styleTables(JTable table) {
+        JTableHeader header = table.getTableHeader();
+        header.setFont(header.getFont().deriveFont(Font.BOLD));
+        table.setRowHeight(22);
+
+        header.setDefaultRenderer(new DefaultTableCellRenderer() {
+            @Override
+            public Component getTableCellRendererComponent(JTable table,
+                                                           Object value,
+                                                           boolean isSelected,
+                                                           boolean hasFocus,
+                                                           int row,
+                                                           int column) {
+                super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                setBackground(new Color(230, 235, 245));
+                setForeground(Color.BLACK);
+                setHorizontalAlignment(CENTER);
+                return this;
+            }
+        });
+    }
+    
     public void loadGrade() {
     DefaultTableModel list = (DefaultTableModel) tableGrade.getModel();
     list.setRowCount(0);
@@ -96,11 +136,30 @@ public class DefineGradingPage extends javax.swing.JFrame {
         }
     } catch (IOException e) {
         JOptionPane.showMessageDialog(this, "Failed to load grade.", "Error", JOptionPane.ERROR_MESSAGE);
-    }
-    
-    
+    } 
 }
     
+    private void addHoverEffect(JButton btn, Color normal, Color hover) {
+        btn.setOpaque(true);
+        btn.setContentAreaFilled(true);
+        btn.setBorderPainted(false);
+        btn.setFocusPainted(false);
+
+        btn.setBackground(normal);
+        btn.setForeground(Color.WHITE);
+
+        btn.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseEntered(java.awt.event.MouseEvent e) {
+                btn.setBackground(hover);
+            }
+
+            @Override
+            public void mouseExited(java.awt.event.MouseEvent e) {
+                btn.setBackground(normal);
+            }
+        });
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -110,40 +169,40 @@ public class DefineGradingPage extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jPanel1 = new javax.swing.JPanel(){
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                Graphics2D g2 = (Graphics2D) g;
+
+                GradientPaint gp = new GradientPaint(
+                    0, 0, new Color(230, 240, 250),
+                    0, getHeight(), new Color(255, 255, 255)
+                );
+
+                g2.setPaint(gp);
+                g2.fillRect(0, 0, getWidth(), getHeight());
+            }
+        };
+        btnUpdate = new javax.swing.JButton();
+        btnClear = new javax.swing.JButton();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        tableGrade = new javax.swing.JTable();
         jLabel1 = new javax.swing.JLabel();
+        btnDelete = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
+        btnCancel = new javax.swing.JButton();
         jLabel3 = new javax.swing.JLabel();
         txtGrade = new javax.swing.JTextField();
         txtMin = new javax.swing.JTextField();
         txtMax = new javax.swing.JTextField();
         btnAdd = new javax.swing.JButton();
-        btnUpdate = new javax.swing.JButton();
-        btnClear = new javax.swing.JButton();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        tableGrade = new javax.swing.JTable();
-        btnDelete = new javax.swing.JButton();
-        btnCancel = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Define Grading Page");
 
-        jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        jLabel1.setText("Grade:");
-
-        jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        jLabel2.setText("Min Marks:");
-
-        jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        jLabel3.setText("Max Marks:");
-
-        btnAdd.setText("Add");
-        btnAdd.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnAddActionPerformed(evt);
-            }
-        });
-
         btnUpdate.setText("Update");
+        btnUpdate.setOpaque(true);
         btnUpdate.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnUpdateActionPerformed(evt);
@@ -151,6 +210,7 @@ public class DefineGradingPage extends javax.swing.JFrame {
         });
 
         btnClear.setText("Clear");
+        btnClear.setOpaque(true);
         btnClear.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnClearActionPerformed(evt);
@@ -179,80 +239,110 @@ public class DefineGradingPage extends javax.swing.JFrame {
         tableGrade.getTableHeader().setReorderingAllowed(false);
         jScrollPane1.setViewportView(tableGrade);
 
+        jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel1.setText("Grade:");
+
         btnDelete.setText("Delete");
+        btnDelete.setOpaque(true);
         btnDelete.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnDeleteActionPerformed(evt);
             }
         });
 
+        jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel2.setText("Min Marks:");
+
         btnCancel.setText("Cancel");
+        btnCancel.setOpaque(true);
         btnCancel.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnCancelActionPerformed(evt);
             }
         });
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(27, 27, 27)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, 130, Short.MAX_VALUE))
-                            .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 165, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(txtGrade, javax.swing.GroupLayout.DEFAULT_SIZE, 200, Short.MAX_VALUE)
-                            .addComponent(txtMin)
-                            .addComponent(txtMax)))
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                        .addGroup(layout.createSequentialGroup()
-                            .addComponent(btnAdd)
-                            .addGap(74, 74, 74)
-                            .addComponent(btnUpdate)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 81, Short.MAX_VALUE)
-                            .addComponent(btnClear))
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(btnDelete)
+        jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel3.setText("Max Marks:");
+
+        btnAdd.setText("Add");
+        btnAdd.setOpaque(true);
+        btnAdd.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAddActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(21, 21, 21)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addGroup(jPanel1Layout.createSequentialGroup()
+                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 165, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addComponent(txtGrade)
+                                .addComponent(txtMin)
+                                .addComponent(txtMax, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(btnAdd)
+                                .addGap(74, 74, 74)
+                                .addComponent(btnUpdate)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(btnCancel))
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 370, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addContainerGap(27, Short.MAX_VALUE))
+                                .addComponent(btnClear))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(btnDelete)
+                                .addGap(226, 226, 226)
+                                .addComponent(btnCancel)))))
+                .addContainerGap(33, Short.MAX_VALUE))
         );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(25, 25, 25)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(26, 26, 26)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
                     .addComponent(txtGrade, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
                     .addComponent(txtMin, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
                     .addComponent(txtMax, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnAdd)
                     .addComponent(btnUpdate)
                     .addComponent(btnClear))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 214, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnDelete)
                     .addComponent(btnCancel))
-                .addContainerGap(18, Short.MAX_VALUE))
+                .addContainerGap(31, Short.MAX_VALUE))
+        );
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
 
         pack();
@@ -264,7 +354,7 @@ public class DefineGradingPage extends javax.swing.JFrame {
         int selectedRow = tableGrade.getSelectedRow();
         
         if (selectedRow == -1) {
-            JOptionPane.showMessageDialog(this, "Please select a user to update.", 
+            JOptionPane.showMessageDialog(this, "Please select a grade to update.", 
                                           "No Selection", JOptionPane.WARNING_MESSAGE);
             return;
         }
@@ -518,6 +608,9 @@ public class DefineGradingPage extends javax.swing.JFrame {
                 JOptionPane.showMessageDialog(this, "Error deleting grade: " + ex.getMessage(), 
                                               "Error", JOptionPane.ERROR_MESSAGE);
             }
+            
+            JOptionPane.showMessageDialog(this, "Grading deleted successfully.", 
+                                      "Deleted", JOptionPane.INFORMATION_MESSAGE);
         }
         
         loadGrade();
@@ -526,9 +619,6 @@ public class DefineGradingPage extends javax.swing.JFrame {
         PlaceHolder.apply(txtGrade, "Select or enter a grade");
         PlaceHolder.apply(txtMin, "Select or enter a min marks");
         PlaceHolder.apply(txtMax, "Select or enter a max marks");
-
-        JOptionPane.showMessageDialog(this, "Grading deleted successfully.", 
-                                      "Deleted", JOptionPane.INFORMATION_MESSAGE);
         
     }//GEN-LAST:event_btnDeleteActionPerformed
 
@@ -593,6 +683,7 @@ public class DefineGradingPage extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable tableGrade;
     private javax.swing.JTextField txtGrade;
