@@ -534,6 +534,14 @@ public class Quiz extends javax.swing.JFrame {
         String projectRoot = System.getProperty("user.dir");
         File marksFile = new File(projectRoot, "src\\main\\java\\oopwj\\data\\TotalQuizMark.txt");
 
+        String normalizedQuizId = quizId != null ? quizId.trim() : "";
+        if (moduleId != null && !moduleId.trim().isEmpty() && !normalizedQuizId.startsWith("QZ")) {
+            String resolved = resolveQuizIdFromTitle(moduleId.trim(), normalizedQuizId);
+            if (resolved != null && !resolved.isEmpty()) {
+                normalizedQuizId = resolved;
+            }
+        }
+
         // Read all existing marks
         java.util.List<String> allLines = new java.util.ArrayList<>();
         boolean updated = false;
@@ -549,11 +557,11 @@ public class Quiz extends javax.swing.JFrame {
                         String lineQuestionId = parts[2].trim();
                         
                         // Check if this is the entry we want to update
-                        if (lineModuleId.equals(moduleId) && lineQuizId.equals(quizId) && lineQuestionId.equals(questionId)) {
+                                                if (lineModuleId.equals(moduleId) && lineQuizId.equals(normalizedQuizId) && lineQuestionId.equals(questionId)) {
                             // Update this entry
                             StringBuilder sb = new StringBuilder();
                             sb.append(csvEscape(moduleId)).append(",")
-                              .append(csvEscape(quizId)).append(",")
+                                                            .append(csvEscape(normalizedQuizId)).append(",")
                               .append(csvEscape(questionId)).append(",")
                               .append(csvEscape(marks));
                             allLines.add(sb.toString());
@@ -575,7 +583,7 @@ public class Quiz extends javax.swing.JFrame {
         if (!updated) {
             StringBuilder sb = new StringBuilder();
             sb.append(csvEscape(moduleId)).append(",")
-              .append(csvEscape(quizId)).append(",")
+                            .append(csvEscape(normalizedQuizId)).append(",")
               .append(csvEscape(questionId)).append(",")
               .append(csvEscape(marks));
             allLines.add(sb.toString());
@@ -908,7 +916,7 @@ public class Quiz extends javax.swing.JFrame {
 
         jTextField9.addActionListener(this::jTextField9ActionPerformed);
 
-        jButton5.setText("Add Quiz Set");
+        jButton5.setText("Add");
 
         jButton6.setText("Enter");
 
@@ -1130,6 +1138,11 @@ public class Quiz extends javax.swing.JFrame {
                 JOptionPane.showMessageDialog(this, "Please enter the marks for this question.", "Validation", JOptionPane.WARNING_MESSAGE);
                 return;
             }
+
+            if (!isValidMarks(marks)) {
+                JOptionPane.showMessageDialog(this, "Marks must be a whole number greater than 0.", "Validation", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
         } else if (selectedTabIndex == 1) { // Subjective tab
             String subjectiveQuestion = jTextArea2.getText().trim();
             String marks = jTextField7.getText().trim();
@@ -1141,6 +1154,11 @@ public class Quiz extends javax.swing.JFrame {
 
             if (marks.isEmpty()) {
                 JOptionPane.showMessageDialog(this, "Please enter the marks for this question.", "Validation", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+            if (!isValidMarks(marks)) {
+                JOptionPane.showMessageDialog(this, "Marks must be a whole number greater than 0.", "Validation", JOptionPane.WARNING_MESSAGE);
                 return;
             }
 
@@ -1440,6 +1458,23 @@ public class Quiz extends javax.swing.JFrame {
         String value = s.replace("\r", "").replace("\n", " ").trim();
         return value.replace("\"", "");
     }
+
+    private boolean isValidMarks(String marks) {
+        if (marks == null || marks.trim().isEmpty()) {
+            return false;
+        }
+
+        String value = marks.trim();
+        if (!value.matches("\\d+")) {
+            return false;
+        }
+
+        try {
+            return Integer.parseInt(value) > 0;
+        } catch (NumberFormatException ex) {
+            return false;
+        }
+    }
     
     /**
      * Inserts new questions after existing ones with the same QuizID and ModuleID
@@ -1572,7 +1607,7 @@ public class Quiz extends javax.swing.JFrame {
                        .append("Objective");
             
             // Update marks in TotalQuizMark.txt
-            saveQuestionMarks(moduleId, currentQuizID, questionId, marks);
+            saveQuestionMarks(moduleId, quizIdForSave, questionId, marks);
         } else if (selectedTabIndex == 1) { // Subjective tab
             String subjectiveQuestion = jTextArea2.getText().trim();
             String marks = jTextField7.getText().trim();
@@ -1581,7 +1616,7 @@ public class Quiz extends javax.swing.JFrame {
                        .append("Subjective");
             
             // Update marks in TotalQuizMark.txt
-            saveQuestionMarks(moduleId, currentQuizID, questionId, marks);
+            saveQuestionMarks(moduleId, quizIdForSave, questionId, marks);
         }
         
         // Read all lines from question.txt

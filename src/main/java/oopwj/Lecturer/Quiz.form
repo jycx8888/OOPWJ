@@ -658,7 +658,7 @@
         </Component>
         <Component class="javax.swing.JButton" name="jButton5">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Add Quiz Set"/>
+            <Property name="text" type="java.lang.String" value="Add"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JButton" name="jButton6">

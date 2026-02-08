@@ -410,6 +410,7 @@ public class Assessments extends javax.swing.JFrame {
         String projectRoot = System.getProperty("user.dir");
         File quizFile = new File(projectRoot, "src\\main\\java\\oopwj\\data\\Quiz.txt");
         File questionFile = new File(projectRoot, "src\\main\\java\\oopwj\\data\\question.txt");
+        File totalMarksFile = new File(projectRoot, "src\\main\\java\\oopwj\\data\\TotalQuizMark.txt");
         java.util.Map<String, String> quizTitlesByKey = new java.util.HashMap<>();
 
         // Update Quiz.txt
@@ -531,6 +532,67 @@ public class Assessments extends javax.swing.JFrame {
                 logger.log(java.util.logging.Level.SEVERE, null, ex);
                 JOptionPane.showMessageDialog(this, "Error updating question.txt: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             }
+        }
+
+        // Update TotalQuizMark.txt for deleted quiz sets
+        deleteTotalQuizMarks(totalMarksFile, quizSetKeysToDelete, quizTitlesByKey);
+    }
+
+    private void deleteTotalQuizMarks(File totalMarksFile,
+        java.util.Set<String> quizSetKeysToDelete,
+        java.util.Map<String, String> quizTitlesByKey) {
+        if (!totalMarksFile.exists()) {
+            return;
+        }
+
+        List<String> remainingLines = new ArrayList<>();
+        try (BufferedReader br = new BufferedReader(new FileReader(totalMarksFile))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] fields = line.split(",", -1);
+                if (fields.length >= 3) {
+                    String moduleID = fields[0].trim();
+                    String quizID = fields[1].trim();
+                    String key = quizID + "|" + moduleID;
+                    boolean matchesDeletedQuiz = quizSetKeysToDelete.contains(key);
+
+                    if (!matchesDeletedQuiz) {
+                        for (java.util.Map.Entry<String, String> entry : quizTitlesByKey.entrySet()) {
+                            String deletedKey = entry.getKey();
+                            String deletedTitleValue = entry.getValue();
+                            String[] keyParts = deletedKey.split("\\|");
+                            if (keyParts.length == 2) {
+                                String deletedQuizId = keyParts[0];
+                                String deletedModuleId = keyParts[1];
+                                if (deletedModuleId.equals(moduleID) &&
+                                    (quizID.equals(deletedQuizId) || quizID.equals(deletedTitleValue))) {
+                                    matchesDeletedQuiz = true;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+
+                    if (matchesDeletedQuiz) {
+                        continue;
+                    }
+                }
+
+                remainingLines.add(line);
+            }
+        } catch (IOException ex) {
+            logger.log(java.util.logging.Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(this, "Error reading TotalQuizMark.txt: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        try (java.io.FileWriter fw = new java.io.FileWriter(totalMarksFile)) {
+            for (String line : remainingLines) {
+                fw.write(line + "\n");
+            }
+        } catch (IOException ex) {
+            logger.log(java.util.logging.Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(this, "Error updating TotalQuizMark.txt: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
     
