@@ -68,8 +68,10 @@
                               <Component id="btnCreateClass" min="-2" max="-2" attributes="0"/>
                               <Component id="btnDefineGrading" min="-2" max="-2" attributes="0"/>
                               <Component id="jLabel3" alignment="0" min="-2" pref="116" max="-2" attributes="0"/>
-                              <Component id="btnAssign" alignment="0" min="-2" max="-2" attributes="0"/>
-                              <Component id="btnManage" alignment="0" min="-2" max="-2" attributes="0"/>
+                              <Group type="103" alignment="0" groupAlignment="1" max="-2" attributes="0">
+                                  <Component id="btnManage" alignment="0" max="32767" attributes="0"/>
+                                  <Component id="btnAssign" alignment="0" max="32767" attributes="0"/>
+                              </Group>
                           </Group>
                           <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                       </Group>
