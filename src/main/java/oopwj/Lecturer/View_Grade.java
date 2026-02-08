@@ -604,7 +604,7 @@ public class View_Grade extends javax.swing.JFrame {
         // Load question data from question.txt
         loadQuestionData(selectedQuestionID);
         
-        // Load student answer from answers.txt
+        // Load student answer from student_answers.txt
         loadStudentAnswer(selectedQuestionID);
         
         // Update spinner max value and label for subjective questions
@@ -710,15 +710,15 @@ public class View_Grade extends javax.swing.JFrame {
     }
     
     /**
-     * Loads student answer from answers.txt and displays it
+    * Loads student answer from student_answers.txt and displays it
      */
     private void loadStudentAnswer(String questionID) {
         String projectRoot = System.getProperty("user.dir");
-        String answersFilePath = projectRoot + "\\src\\main\\java\\oopwj\\data\\answers.txt";
+        String answersFilePath = projectRoot + "\\src\\main\\java\\oopwj\\data\\student_answers.txt";
         
         java.io.File answersFile = new java.io.File(answersFilePath);
         if (!answersFile.exists()) {
-            logger.log(java.util.logging.Level.SEVERE, "answers.txt not found");
+            logger.log(java.util.logging.Level.SEVERE, "student_answers.txt not found");
             return;
         }
         
@@ -755,7 +755,7 @@ public class View_Grade extends javax.swing.JFrame {
                 }
             }
         } catch (java.io.IOException e) {
-            logger.log(java.util.logging.Level.SEVERE, "Error reading answers.txt: " + e.getMessage(), e);
+            logger.log(java.util.logging.Level.SEVERE, "Error reading student_answers.txt: " + e.getMessage(), e);
         }
     }
     
@@ -1115,17 +1115,17 @@ public class View_Grade extends javax.swing.JFrame {
     }
     
     /**
-     * Loads subjective question answers from answers.txt for the current student/module/quiz
+    * Loads subjective question answers from student_answers.txt for the current student/module/quiz
      * Returns map of questionID -> answer
      */
     private java.util.Map<String, String> loadSubjectiveAnswers() {
         java.util.Map<String, String> answers = new java.util.HashMap<>();
         String projectRoot = System.getProperty("user.dir");
-        String answersFilePath = projectRoot + "\\src\\main\\java\\oopwj\\data\\answers.txt";
+        String answersFilePath = projectRoot + "\\src\\main\\java\\oopwj\\data\\student_answers.txt";
         
         java.io.File answersFile = new java.io.File(answersFilePath);
         if (!answersFile.exists()) {
-            logger.log(java.util.logging.Level.WARNING, "answers.txt not found at: " + answersFilePath);
+            logger.log(java.util.logging.Level.WARNING, "student_answers.txt not found at: " + answersFilePath);
             return answers;
         }
         
@@ -1154,9 +1154,9 @@ public class View_Grade extends javax.swing.JFrame {
                     }
                 }
             }
-            logger.log(java.util.logging.Level.INFO, "Loaded " + answers.size() + " subjective answers from answers.txt");
+            logger.log(java.util.logging.Level.INFO, "Loaded " + answers.size() + " subjective answers from student_answers.txt");
         } catch (java.io.IOException e) {
-            logger.log(java.util.logging.Level.SEVERE, "Error reading answers.txt: " + e.getMessage(), e);
+            logger.log(java.util.logging.Level.SEVERE, "Error reading student_answers.txt: " + e.getMessage(), e);
         }
         
         return answers;
@@ -1172,7 +1172,7 @@ public class View_Grade extends javax.swing.JFrame {
         
         java.io.File gradeFile = new java.io.File(gradeFilePath);
         
-        // Load student answers for subjective questions from answers.txt
+        // Load student answers for subjective questions from student_answers.txt
         java.util.Map<String, String> subjectiveAnswers = loadSubjectiveAnswers();
         
         // Separate lists for different types of lines
@@ -1297,7 +1297,7 @@ public class View_Grade extends javax.swing.JFrame {
         
         String projectRoot = System.getProperty("user.dir");
         String questionFilePath = projectRoot + "\\src\\main\\java\\oopwj\\data\\question.txt";
-        String answersFilePath = projectRoot + "\\src\\main\\java\\oopwj\\data\\answers.txt";
+        String answersFilePath = projectRoot + "\\src\\main\\java\\oopwj\\data\\student_answers.txt";
         String totalQuizMarkPath = projectRoot + "\\src\\main\\java\\oopwj\\data\\TotalQuizMark.txt";
         String gradeFilePath = projectRoot + "\\src\\main\\java\\oopwj\\data\\Grade.txt";
         
@@ -1404,7 +1404,7 @@ public class View_Grade extends javax.swing.JFrame {
     }
     
     /**
-     * Loads student answers from answers.txt
+    * Loads student answers from student_answers.txt
      * Returns map of questionID -> studentAnswer
      */
     private java.util.Map<String, String> loadStudentAnswers(String answersFilePath, String studentID, String moduleID, String quizID) {
@@ -1412,7 +1412,7 @@ public class View_Grade extends javax.swing.JFrame {
         
         java.io.File answersFile = new java.io.File(answersFilePath);
         if (!answersFile.exists()) {
-            logger.log(java.util.logging.Level.WARNING, "answers.txt not found at: " + answersFilePath);
+            logger.log(java.util.logging.Level.WARNING, "student_answers.txt not found at: " + answersFilePath);
             return studentAnswers;
         }
         
@@ -1439,7 +1439,7 @@ public class View_Grade extends javax.swing.JFrame {
                 }
             }
         } catch (java.io.IOException e) {
-            logger.log(java.util.logging.Level.SEVERE, "Error reading answers.txt: " + e.getMessage(), e);
+            logger.log(java.util.logging.Level.SEVERE, "Error reading student_answers.txt: " + e.getMessage(), e);
         }
         
         return studentAnswers;

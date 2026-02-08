@@ -458,7 +458,7 @@ public class Grade_Assessment extends javax.swing.JFrame {
         // Use absolute paths based on project root
         String projectRoot = System.getProperty("user.dir");
         String modulesFilePath = projectRoot + "\\src\\main\\java\\oopwj\\data\\modules.txt";
-        String answersFilePath = projectRoot + "\\src\\main\\java\\oopwj\\data\\answers.txt";
+        String answersFilePath = projectRoot + "\\src\\main\\java\\oopwj\\data\\student_answers.txt";
         String quizFilePath = projectRoot + "\\src\\main\\java\\oopwj\\data\\Quiz.txt";
         String finalGradeFilePath = projectRoot + "\\src\\main\\java\\oopwj\\data\\FinalGrade.txt";
         Set<String> allowedModuleIDs = new HashSet<>();
@@ -492,9 +492,9 @@ public class Grade_Assessment extends javax.swing.JFrame {
         }
         
         if (!answersFile.exists()) {
-            logger.log(java.util.logging.Level.SEVERE, "answers.txt not found at: " + answersFile.getAbsolutePath());
+            logger.log(java.util.logging.Level.SEVERE, "student_answers.txt not found at: " + answersFile.getAbsolutePath());
             javax.swing.JOptionPane.showMessageDialog(this, 
-                "answers.txt not found at: " + answersFile.getAbsolutePath(), 
+                "student_answers.txt not found at: " + answersFile.getAbsolutePath(), 
                 "File Not Found", 
                 javax.swing.JOptionPane.ERROR_MESSAGE);
             return;
@@ -597,7 +597,7 @@ public class Grade_Assessment extends javax.swing.JFrame {
             return;
         }
 
-        // Show unique moduleID, quizID, and studentID pairs from answers.txt
+        // Show unique moduleID, quizID, and studentID pairs from student_answers.txt
         Set<String> uniqueTriples = new HashSet<>();
         List<String[]> tableData = new ArrayList<>();
         try (BufferedReader br = new BufferedReader(new FileReader(answersFile))) {
@@ -626,15 +626,15 @@ public class Grade_Assessment extends javax.swing.JFrame {
                         }
                     }
                 } else {
-                    logger.log(java.util.logging.Level.WARNING, "Malformed line in answers.txt (line " + lineCount + "): " + line);
+                    logger.log(java.util.logging.Level.WARNING, "Malformed line in student_answers.txt (line " + lineCount + "): " + line);
                 }
             }
             System.out.println("Total answers read: " + lineCount + ", Unique entries: " + tableData.size());
             logger.log(java.util.logging.Level.INFO, "Total unique entries loaded: " + tableData.size());
         } catch (IOException e) {
-            logger.log(java.util.logging.Level.SEVERE, "Error reading answers.txt: " + e.getMessage(), e);
+            logger.log(java.util.logging.Level.SEVERE, "Error reading student_answers.txt: " + e.getMessage(), e);
             javax.swing.JOptionPane.showMessageDialog(this, 
-                "Error reading answers.txt: " + e.getMessage(), 
+                "Error reading student_answers.txt: " + e.getMessage(), 
                 "File Error", 
                 javax.swing.JOptionPane.ERROR_MESSAGE);
             return;
@@ -818,7 +818,7 @@ public class Grade_Assessment extends javax.swing.JFrame {
         
         String projectRoot = System.getProperty("user.dir");
         String questionFilePath = projectRoot + "\\src\\main\\java\\oopwj\\data\\question.txt";
-        String answersFilePath = projectRoot + "\\src\\main\\java\\oopwj\\data\\answers.txt";
+        String answersFilePath = projectRoot + "\\src\\main\\java\\oopwj\\data\\student_answers.txt";
         String totalQuizMarkPath = projectRoot + "\\src\\main\\java\\oopwj\\data\\TotalQuizMark.txt";
         String gradeFilePath = projectRoot + "\\src\\main\\java\\oopwj\\data\\Grade.txt";
         
@@ -925,7 +925,7 @@ public class Grade_Assessment extends javax.swing.JFrame {
     }
     
     /**
-     * Loads student answers from answers.txt
+    * Loads student answers from student_answers.txt
      * Returns map of questionID -> studentAnswer
      */
     private Map<String, String> loadStudentAnswers(String answersFilePath, String studentID, String moduleID, String quizID) {
@@ -933,7 +933,7 @@ public class Grade_Assessment extends javax.swing.JFrame {
         
         java.io.File answersFile = new java.io.File(answersFilePath);
         if (!answersFile.exists()) {
-            logger.log(java.util.logging.Level.WARNING, "answers.txt not found at: " + answersFilePath);
+            logger.log(java.util.logging.Level.WARNING, "student_answers.txt not found at: " + answersFilePath);
             return studentAnswers;
         }
         
@@ -960,7 +960,7 @@ public class Grade_Assessment extends javax.swing.JFrame {
                 }
             }
         } catch (IOException e) {
-            logger.log(java.util.logging.Level.SEVERE, "Error reading answers.txt: " + e.getMessage(), e);
+            logger.log(java.util.logging.Level.SEVERE, "Error reading student_answers.txt: " + e.getMessage(), e);
         }
         
         return studentAnswers;

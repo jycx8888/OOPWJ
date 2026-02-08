@@ -1,0 +1,20 @@
+"Q001",QZ001,M001,"Which database normal form removes transitive dependencies?",1NF,2NF,3NF,BCNF,C,Objective
+"Q002",QZ001,M001,"Explain the concept of normalization in databases. Why is 3NF used", and what problems does it solve?,Subjective
+"Q003",QZ001,M001,"Which SQL command is used to remove a table and all its data permanently?",DELETE,DROP,TRUNCATE,REMOVE,B,Objective
+"Q004",QZ001,M001,"What is a primary key in a relational database, and why is it important?",Subjective
+"Q005",QZ001,M001,"Which of the following is a valid join type in SQL?",INNER,LEFT,RIGHT,ALL OF THE ABOVE,D,Objective
+Q001,QZ001,M002,"What is encapsulation in OOP?",Subjective
+Q002,QZ001,M002,"Which keyword is used in Java to inherit a class?",extends,implements,inherit,base,A,Objective
+Q003,QZ001,M002,"Which concept allows methods with the same name but different parameters?",Overriding,Overloading,Hiding,Casting,B,Objective
+Q004,QZ001,M002,"Explain the difference between an interface and an abstract class.",Subjective
+Q005,QZ001,M002,"Which access modifier allows visibility within the same package and subclasses?",private,protected,public,default,B,Objective
+Q001,QZ002,M001,"Which file organization method is best for fast equality search on a key?",Heap,Sequential,Hash,Clustered,C,Objective
+Q002,QZ002,M001,"Describe the difference between logical and physical data independence.",Subjective
+Q003,QZ002,M001,"Which SQL constraint enforces a relationship between two tables?",UNIQUE,PRIMARY KEY,FOREIGN KEY,CHECK,C,Objective
+Q004,QZ002,M001,"What is a transaction in DBMS? Mention the ACID properties.",Subjective
+Q005,QZ002,M001,"Which isolation level provides the highest degree of isolation?",READ UNCOMMITTED,READ COMMITTED,REPEATABLE READ,SERIALIZABLE,D,Objective
+Q001,QZ002,M002,"What is polymorphism in OOP?",Subjective
+Q002,QZ002,M002,"Which principle states that a subclass can replace its superclass without breaking behavior?",Encapsulation,Abstraction,Liskov Substitution,Modularity,C,Objective
+Q003,QZ002,M002,"Which collection type in Java guarantees no duplicate elements?",List,Set,Map,Queue,B,Objective
+Q004,QZ002,M002,"Describe method overriding and when it is used.",Subjective
+Q005,QZ002,M002,"Which Java keyword prevents a class from being subclassed?",static,final,private,protected,B,Objective
