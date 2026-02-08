@@ -4,6 +4,10 @@
  */
 package oopwj.Lecturer;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+
 /**
  *
  * @author User
@@ -25,6 +29,7 @@ public class Lecturer_menu extends javax.swing.JFrame {
         initComponents();
         centerWindow();
         setupListeners();
+        loadWelcomeName();
     }
 
     private void centerWindow() {
@@ -33,7 +38,38 @@ public class Lecturer_menu extends javax.swing.JFrame {
     
     private void setupListeners() {
         Assessmentsbutton.addActionListener(this::AssessmentsbuttonActionPerformed);
-        Settings.addActionListener(this::SettingsActionPerformed);
+    }
+
+    private void loadWelcomeName() {
+        if (lecturerID == null || lecturerID.trim().isEmpty()) {
+            welcome.setText("Welcome");
+            return;
+        }
+
+        String lecturerName = null;
+        try (BufferedReader br = new BufferedReader(new FileReader("src/main/java/oopwj/Data/lecturer.txt"))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] parts = line.split(",");
+                if (parts.length >= 2 && parts[0].equals(lecturerID)) {
+                    lecturerName = parts[1];
+                    break;
+                }
+            }
+        } catch (IOException e) {
+            logger.log(java.util.logging.Level.SEVERE, "Error loading lecturer data", e);
+        }
+
+        if (lecturerName == null || lecturerName.trim().isEmpty()) {
+            welcome.setText("Welcome");
+        } else {
+            welcome.setText("Welcome, " + lecturerName.trim());
+        }
+    }
+    
+    public void clearSession() {
+        this.lecturerID = null;
+        logger.info("Academic Leader session cleared");
     }
 
     /**
@@ -46,19 +82,21 @@ public class Lecturer_menu extends javax.swing.JFrame {
     private void initComponents() {
 
         jPanel1 = new javax.swing.JPanel();
-        Settings = new javax.swing.JButton();
+        editProfile = new javax.swing.JButton();
         Assessmentsbutton = new javax.swing.JButton();
         GradeAssessmentButton = new javax.swing.JButton();
-        BackButton = new javax.swing.JButton();
+        logOut = new javax.swing.JButton();
         jButton1 = new javax.swing.JButton();
+        welcome = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         jPanel1.setBackground(new java.awt.Color(204, 255, 255));
 
-        Settings.setText("Edit Profile");
-        Settings.setAlignmentX(0.5F);
-        Settings.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        editProfile.setText("Edit Profile");
+        editProfile.setAlignmentX(0.5F);
+        editProfile.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        editProfile.addActionListener(this::editProfileActionPerformed);
 
         Assessmentsbutton.setText("Assessments");
         Assessmentsbutton.setBorder(javax.swing.BorderFactory.createEtchedBorder());
@@ -67,34 +105,44 @@ public class Lecturer_menu extends javax.swing.JFrame {
         GradeAssessmentButton.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         GradeAssessmentButton.addActionListener(this::GradeAssessmentButtonActionPerformed);
 
-        BackButton.setText("Exit");
-        BackButton.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-        BackButton.addActionListener(this::BackButtonActionPerformed);
+        logOut.setText("Log Out");
+        logOut.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        logOut.addActionListener(this::logOutActionPerformed);
 
         jButton1.setText("Timetable");
         jButton1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         jButton1.addActionListener(this::jButton1ActionPerformed);
+
+        welcome.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        welcome.setText("Welcome");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(140, 140, 140)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                        .addComponent(Settings, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(Assessmentsbutton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(GradeAssessmentButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(BackButton, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(134, Short.MAX_VALUE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(179, 179, 179)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                .addComponent(editProfile, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(Assessmentsbutton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(GradeAssessmentButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(logOut, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(155, 155, 155)
+                        .addComponent(welcome)))
+                .addContainerGap(177, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(96, 96, 96)
-                .addComponent(Settings)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addContainerGap(73, Short.MAX_VALUE)
+                .addComponent(welcome)
+                .addGap(50, 50, 50)
+                .addComponent(editProfile)
                 .addGap(18, 18, 18)
                 .addComponent(Assessmentsbutton)
                 .addGap(18, 18, 18)
@@ -102,19 +150,23 @@ public class Lecturer_menu extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addComponent(jButton1)
                 .addGap(18, 18, 18)
-                .addComponent(BackButton)
-                .addContainerGap(111, Short.MAX_VALUE))
+                .addComponent(logOut)
+                .addGap(100, 100, 100))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
 
         pack();
@@ -125,15 +177,16 @@ public class Lecturer_menu extends javax.swing.JFrame {
         this.setVisible(false);
     }//GEN-LAST:event_jButton1ActionPerformed
 
+    private void editProfileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editProfileActionPerformed
+        // TODO add your handling code here:
+        new editProfileL(lecturerID,this).setVisible(true);
+        this.setVisible(false);
+    }//GEN-LAST:event_editProfileActionPerformed
+
     private void GradeAssessmentButtonActionPerformed(java.awt.event.ActionEvent evt) {
         new Grade_Assessment(lecturerID, this).setVisible(true);
         this.setVisible(false);
     }                                                     
-
-    private void SettingsActionPerformed(java.awt.event.ActionEvent evt) {
-        new Lecturer_Settings(lecturerID, this).setVisible(true);
-        this.setVisible(false);
-    }
 
     private void CreateAssessmentsbuttonActionPerformed(java.awt.event.ActionEvent evt) {
         new Assessments().setVisible(true);
@@ -145,8 +198,20 @@ public class Lecturer_menu extends javax.swing.JFrame {
         this.setVisible(false);
     }
 
-    private void BackButtonActionPerformed(java.awt.event.ActionEvent evt) {
+    private void logOutActionPerformed(java.awt.event.ActionEvent evt) {
+        int confirm = javax.swing.JOptionPane.showConfirmDialog(
+            this,
+            "Are you sure you want to log out?",
+            "Confirm Logout",
+            javax.swing.JOptionPane.YES_NO_OPTION,
+            javax.swing.JOptionPane.QUESTION_MESSAGE
+        );
         
+        if (confirm == javax.swing.JOptionPane.YES_OPTION) {
+            clearSession();  // Clear user session
+            this.dispose();
+            new oopwj.LoginFrame();  // Return to login page
+        }
     }
 
     /**
@@ -176,10 +241,11 @@ public class Lecturer_menu extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton Assessmentsbutton;
-    private javax.swing.JButton BackButton;
     private javax.swing.JButton GradeAssessmentButton;
-    private javax.swing.JButton Settings;
+    private javax.swing.JButton editProfile;
     private javax.swing.JButton jButton1;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JButton logOut;
+    private javax.swing.JLabel welcome;
     // End of variables declaration//GEN-END:variables
 }

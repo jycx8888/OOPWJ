@@ -11,7 +11,7 @@ import java.awt.event.ActionListener;
 import java.util.List;
 
 public class FeedbackFrame extends JFrame {
-
+    //declare variables
     private User currentUser;
     private StudentService service;
     private JLabel lecturerLabel; 
@@ -33,7 +33,6 @@ public class FeedbackFrame extends JFrame {
 
         if (myCourses.isEmpty()) {
             JOptionPane.showMessageDialog(null, "You have not registered for any courses yet!\nPlease register first.");
-            // 注意：这里 return 后构造函数结束，frame 不会显示，这是正确行为
             return; 
         }
 
@@ -55,7 +54,7 @@ public class FeedbackFrame extends JFrame {
 
         courseBox.addActionListener(e -> updateLecturerID());
 
-        // 初始化 Lecturer ID
+
         updateLecturerID();
 
         JTextArea commentArea = new JTextArea();
@@ -83,10 +82,10 @@ public class FeedbackFrame extends JFrame {
 
                 String selectedString = (String) courseBox.getSelectedItem();
                 String courseID = selectedString.split(",")[0].trim();
-                // 确保这里去掉前缀，只保留 ID
+                
                 String lecturerID = lecturerLabel.getText().replace("Lecturer ID: ", "").trim();
                 
-                // 现在 StudentService 是完全修复版，这里会真正保存文件
+                
                 boolean success = service.submitFeedback(currentUser.getUserID(), courseID, lecturerID, comment);
 
                 if (success) {

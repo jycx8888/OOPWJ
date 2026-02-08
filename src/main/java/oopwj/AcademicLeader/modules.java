@@ -25,15 +25,15 @@ public class modules extends javax.swing.JFrame {
     private final List<String> lecturers = new ArrayList<>();
     private final Map<String, String> lecturerIdToName = new HashMap<>();
     private final Map<String, String> lecturerNameToId = new HashMap<>();
-    private String academicLeaderID;  // Store the logged-in Academic Leader ID
-    private academicLeader parentWindow;  // Store reference to parent window
+    private String academicLeaderID;
+    private academicLeader parentWindow;
     
     public modules() {
-        this(null, null);  // Default constructor for backward compatibility
+        this(null, null);
     }
     
     public modules(String academicLeaderID) {
-        this(academicLeaderID, null);  // Constructor with user ID only
+        this(academicLeaderID, null);
     }
     
     public modules(String academicLeaderID, academicLeader parentWindow) {
@@ -53,19 +53,16 @@ public class modules extends javax.swing.JFrame {
                 values[i] = values[i].trim();
             }
             
-            // Filter modules: only show modules under this Academic Leader
             if (values.length >= 3) {
-                String moduleACID = values[2];  // Academic Leader ID
+                String moduleACID = values[2];
                 
-                // If academicLeaderID is set, only show modules belonging to this AC
                 if (this.academicLeaderID != null && !moduleACID.equals(this.academicLeaderID)) {
-                    continue;  // Skip modules not belonging to this AC
+                    continue;
                 }
                 
                 String lecturerName = lecturerIdToName.getOrDefault(values[3], values[3]);
                 model.addRow(new Object[]{values[0], values[1], lecturerName});
             } else if (values.length == 2) {
-                // For backward compatibility, check if we should still display
                 if (this.academicLeaderID == null) {
                     model.addRow(new Object[]{values[0], values[1], "NONE"});
                 }
@@ -102,39 +99,18 @@ public class modules extends javax.swing.JFrame {
 
         jScrollPane1 = new javax.swing.JScrollPane();
         modulesList = new javax.swing.JTable();
-        Add = new javax.swing.JToggleButton();
-        Edit = new javax.swing.JToggleButton();
-        Delete = new javax.swing.JToggleButton();
         Exit = new javax.swing.JToggleButton();
         jLabel1 = new javax.swing.JLabel();
         searchBar = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
+        addModule = new javax.swing.JButton();
+        editModule = new javax.swing.JButton();
+        deleteModule = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         modulesList.setModel(model);
         jScrollPane1.setViewportView(modulesList);
-
-        Add.setText("Add");
-        Add.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                AddActionPerformed(evt);
-            }
-        });
-
-        Edit.setText("Edit");
-        Edit.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                EditActionPerformed(evt);
-            }
-        });
-
-        Delete.setText("Delete");
-        Delete.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                DeleteActionPerformed(evt);
-            }
-        });
 
         Exit.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         Exit.setForeground(new java.awt.Color(255, 51, 102));
@@ -152,24 +128,31 @@ public class modules extends javax.swing.JFrame {
         jLabel2.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel2.setText("Search:");
 
+        addModule.setText("Add");
+        addModule.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                addModuleActionPerformed(evt);
+            }
+        });
+
+        editModule.setText("Edit");
+        editModule.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                editModuleActionPerformed(evt);
+            }
+        });
+
+        deleteModule.setText("Delete");
+        deleteModule.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                deleteModuleActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(66, 66, 66)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap(78, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(Add)
-                        .addGap(41, 41, 41)
-                        .addComponent(Edit)
-                        .addGap(40, 40, 40)
-                        .addComponent(Delete)
-                        .addGap(173, 173, 173))))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -183,6 +166,19 @@ public class modules extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(searchBar, javax.swing.GroupLayout.PREFERRED_SIZE, 278, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(148, 148, 148))))
+            .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(66, 66, 66)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(170, 170, 170)
+                        .addComponent(addModule)
+                        .addGap(18, 18, 18)
+                        .addComponent(editModule)
+                        .addGap(18, 18, 18)
+                        .addComponent(deleteModule)))
+                .addContainerGap(78, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -202,16 +198,28 @@ public class modules extends javax.swing.JFrame {
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 350, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(Add)
-                    .addComponent(Edit)
-                    .addComponent(Delete))
+                    .addComponent(addModule)
+                    .addComponent(editModule)
+                    .addComponent(deleteModule))
                 .addGap(30, 30, 30))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void AddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AddActionPerformed
+    private void ExitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ExitActionPerformed
+        // TODO add your handling code here:
+        if (parentWindow != null) {
+            parentWindow.setVisible(true);
+        } else {
+            academicLeader al = new academicLeader(academicLeaderID);
+            al.setVisible(true);
+        }
+        this.dispose();
+    }//GEN-LAST:event_ExitActionPerformed
+
+    private void addModuleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addModuleActionPerformed
+        // TODO add your handling code here:
         String nextId = getNextModuleId();
 
         JTextField moduleNameField = new JTextField();
@@ -251,9 +259,10 @@ public class modules extends javax.swing.JFrame {
 
         saveData();
         JOptionPane.showMessageDialog(this, "New module added successfully.", "Success", JOptionPane.INFORMATION_MESSAGE);
-    }//GEN-LAST:event_AddActionPerformed
+    }//GEN-LAST:event_addModuleActionPerformed
 
-    private void EditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_EditActionPerformed
+    private void editModuleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editModuleActionPerformed
+        // TODO add your handling code here:
         int selectedRow = modulesList.getSelectedRow();
         if (selectedRow == -1) {
             JOptionPane.showMessageDialog(this, "Please select a module to edit.", "Error", JOptionPane.ERROR_MESSAGE);
@@ -303,9 +312,10 @@ public class modules extends javax.swing.JFrame {
 
         saveData();
         JOptionPane.showMessageDialog(this, "Module updated successfully.", "Success", JOptionPane.INFORMATION_MESSAGE);
-    }//GEN-LAST:event_EditActionPerformed
+        
+    }//GEN-LAST:event_editModuleActionPerformed
 
-    private void DeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_DeleteActionPerformed
+    private void deleteModuleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteModuleActionPerformed
         // TODO add your handling code here:
         int selectedRow = modulesList.getSelectedRow();
         if (selectedRow == -1) {
@@ -319,24 +329,12 @@ public class modules extends javax.swing.JFrame {
             saveData();
             JOptionPane.showMessageDialog(this, "Module deleted successfully.", "Success", JOptionPane.INFORMATION_MESSAGE);
         }
-    }//GEN-LAST:event_DeleteActionPerformed
-
-    private void ExitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ExitActionPerformed
-        // TODO add your handling code here:
-        if (parentWindow != null) {
-            parentWindow.setVisible(true);  // Return to parent window with session preserved
-        } else {
-            academicLeader al = new academicLeader(academicLeaderID);  // Create with session ID
-            al.setVisible(true);
-        }
-        this.dispose();
-    }//GEN-LAST:event_ExitActionPerformed
+    }//GEN-LAST:event_deleteModuleActionPerformed
 
     private void saveData () {
         try {
-            // First, read all existing modules from file and maintain order
             List<String> allLines = new ArrayList<>();
-            Map<String, int[]> currentModuleMap = new HashMap<>();  // moduleId -> [modelRowIndex, exists]
+            Map<String, int[]> currentModuleMap = new HashMap<>();
             
             try (BufferedReader reader = new BufferedReader(new FileReader("src\\main\\java\\oopwj\\Data\\modules.txt"))) {
                 String line;
@@ -347,51 +345,42 @@ public class modules extends javax.swing.JFrame {
                     }
                 }
             } catch (IOException e) {
-                // File might not exist yet, that's okay
             }
             
-            // Build a map of current modules for quick lookup
             for (int i = 0; i < model.getRowCount(); i++) {
                 String moduleId = model.getValueAt(i, 0).toString();
-                currentModuleMap.put(moduleId, new int[]{i, 1});  // row index and exists flag
+                currentModuleMap.put(moduleId, new int[]{i, 1});
             }
             
-            // Now write back in original order, updating current academic leader's modules
             try (BufferedWriter writer = new BufferedWriter(new FileWriter("src\\main\\java\\oopwj\\Data\\modules.txt"))) {
-                // Process existing lines in order
                 for (String line : allLines) {
                     String[] parts = line.split(",");
                     if (parts.length >= 3) {
                         String moduleId = parts[0].trim();
                         String academicLeaderId = parts[2].trim();
                         
-                        // If this module belongs to the current academic leader, update it from model
                         if (academicLeaderId.equals(this.academicLeaderID)) {
                             int[] modelInfo = currentModuleMap.get(moduleId);
                             if (modelInfo != null && modelInfo[1] == 1) {
-                                // Found in model, write updated version
                                 int modelRow = modelInfo[0];
                                 String moduleName = model.getValueAt(modelRow, 1).toString();
                                 String lecturerName = model.getValueAt(modelRow, 2).toString();
                                 String lecturerId = lecturerNameToId.getOrDefault(lecturerName, lecturerName);
                                 writer.write(moduleId + "," + moduleName + "," + this.academicLeaderID + "," + lecturerId);
                                 writer.newLine();
-                                modelInfo[1] = 0;  // Mark as written
+                                modelInfo[1] = 0;
                             }
-                            // If not found in model, it was deleted, so skip it
                         } else {
-                            // This module belongs to another academic leader, keep as is
                             writer.write(line);
                             writer.newLine();
                         }
                     }
                 }
                 
-                // Write any new modules that weren't in the original file
                 for (int i = 0; i < model.getRowCount(); i++) {
                     String moduleId = model.getValueAt(i, 0).toString();
                     int[] modelInfo = currentModuleMap.get(moduleId);
-                    if (modelInfo != null && modelInfo[1] == 1) {  // Not yet written
+                    if (modelInfo != null && modelInfo[1] == 1) {
                         String moduleName = model.getValueAt(i, 1).toString();
                         String lecturerName = model.getValueAt(i, 2).toString();
                         String lecturerId = lecturerNameToId.getOrDefault(lecturerName, lecturerName);
@@ -418,21 +407,19 @@ public class modules extends javax.swing.JFrame {
                     if (parts.length >= 5) {
                         String id = parts[0].trim();
                         String name = parts[1].trim();
-                        String lecturerACID = parts[4].trim();  // Academic Leader ID
+                        String lecturerACID = parts[4].trim();
                         
-                        // Filter lecturers: only add lecturers under this Academic Leader
                         if (this.academicLeaderID != null && !lecturerACID.equals(this.academicLeaderID)) {
-                            continue;  // Skip lecturers not belonging to this AC
+                            continue;
                         }
                         
                         lecturers.add(name);
                         lecturerIdToName.put(id, name);
                         lecturerNameToId.put(name, id);
                     } else if (parts.length >= 2) {
-                        // For backward compatibility
                         String id = parts[0].trim();
                         String name = parts[1].trim();
-                        if (this.academicLeaderID == null) {  // Only add if no filter
+                        if (this.academicLeaderID == null) {
                             lecturers.add(name);
                             lecturerIdToName.put(id, name);
                             lecturerNameToId.put(name, id);
@@ -448,7 +435,6 @@ public class modules extends javax.swing.JFrame {
     private String getNextModuleId() {
         int maxId = 0;
         
-        // First, check all modules in the file (not just the current model)
         try (BufferedReader reader = new BufferedReader(new FileReader("src\\main\\java\\oopwj\\Data\\modules.txt"))) {
             String line;
             while ((line = reader.readLine()) != null) {
@@ -464,17 +450,15 @@ public class modules extends javax.swing.JFrame {
                                     maxId = numeric;
                                 }
                             } catch (NumberFormatException ignored) {
-                                // skip malformed ids
                             }
                         }
                     }
                 }
             }
         } catch (IOException e) {
-            // File might not exist yet, that's okay
+            logger.log(java.util.logging.Level.WARNING, "Unable to read modules file for ID generation", e);
         }
         
-        // Also check the current model in case new modules haven't been saved yet
         for (int i = 0; i < model.getRowCount(); i++) {
             Object value = model.getValueAt(i, 0);
             if (value != null) {
@@ -486,7 +470,6 @@ public class modules extends javax.swing.JFrame {
                             maxId = numeric;
                         }
                     } catch (NumberFormatException ignored) {
-                        // skip malformed ids
                     }
                 }
             }
@@ -538,15 +521,14 @@ public class modules extends javax.swing.JFrame {
         }
         //</editor-fold>
 
-        /* Create and display the form - Must login first */
         java.awt.EventQueue.invokeLater(() -> new oopwj.LoginFrame());
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JToggleButton Add;
-    private javax.swing.JToggleButton Delete;
-    private javax.swing.JToggleButton Edit;
     private javax.swing.JToggleButton Exit;
+    private javax.swing.JButton addModule;
+    private javax.swing.JButton deleteModule;
+    private javax.swing.JButton editModule;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JScrollPane jScrollPane1;

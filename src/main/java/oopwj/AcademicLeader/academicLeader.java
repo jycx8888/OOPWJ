@@ -16,18 +16,11 @@ public class academicLeader extends javax.swing.JFrame {
     private static final String ACADEMIC_LEADER_FILE = "src/main/java/oopwj/Data/academicLeader.txt";
     private String loggedInUserID;  // Store logged-in user ID
 
-    /**
-     * Creates new form MainPage
-     */
     public academicLeader() {
         initComponents();
         updateAcNameLabel();
     }
-    
-    /**
-     * Constructor with user session
-     * @param userID - The logged-in user's ID
-     */
+
     public academicLeader(String userID) {
         this.loggedInUserID = userID;
         initComponents();
@@ -35,17 +28,10 @@ public class academicLeader extends javax.swing.JFrame {
         logger.info("Academic Leader logged in: " + userID);
     }
     
-    /**
-     * Get the currently logged-in user ID
-     * @return userID or null if not logged in
-     */
     public String getLoggedInUserID() {
         return loggedInUserID;
     }
     
-    /**
-     * Clear user session (for logout)
-     */
     public void clearSession() {
         this.loggedInUserID = null;
         logger.info("Academic Leader session cleared");
@@ -94,56 +80,56 @@ public class academicLeader extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        modules = new javax.swing.JToggleButton();
-        generateReports = new javax.swing.JToggleButton();
         welcome = new javax.swing.JLabel();
-        logOut = new javax.swing.JToggleButton();
-        profile = new javax.swing.JToggleButton();
-        lecturerReview = new javax.swing.JToggleButton();
         acName = new javax.swing.JLabel();
+        profileNew = new javax.swing.JButton();
+        modulesNew = new javax.swing.JButton();
+        reportsNew = new javax.swing.JButton();
+        lecturerReviewNew = new javax.swing.JButton();
+        logoutNew = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-
-        modules.setText("Modules");
-        modules.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                modulesActionPerformed(evt);
-            }
-        });
-
-        generateReports.setText("Reports");
-        generateReports.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                generateReportsActionPerformed(evt);
-            }
-        });
 
         welcome.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
         welcome.setText("Welcome, Academic Leader");
 
-        logOut.setText("Log Out");
-        logOut.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                logOutActionPerformed(evt);
-            }
-        });
-
-        profile.setText("Profile");
-        profile.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                profileActionPerformed(evt);
-            }
-        });
-
-        lecturerReview.setText("Lecturer Review");
-        lecturerReview.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                lecturerReviewActionPerformed(evt);
-            }
-        });
-
         acName.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         acName.setText("jLabel1");
+
+        profileNew.setText("Profile");
+        profileNew.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                profileNewActionPerformed(evt);
+            }
+        });
+
+        modulesNew.setText("Modules");
+        modulesNew.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                modulesNewActionPerformed(evt);
+            }
+        });
+
+        reportsNew.setText("Reports");
+        reportsNew.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                reportsNewActionPerformed(evt);
+            }
+        });
+
+        lecturerReviewNew.setText("Lecturer Review");
+        lecturerReviewNew.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                lecturerReviewNewActionPerformed(evt);
+            }
+        });
+
+        logoutNew.setText("Log Out");
+        logoutNew.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                logoutNewActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -152,24 +138,20 @@ public class academicLeader extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(265, 265, 265)
+                        .addGap(264, 264, 264)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(modules, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(generateReports, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(logOut, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(lecturerReview)
-                                .addGap(0, 0, Short.MAX_VALUE))
-                            .addComponent(profile, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                            .addComponent(lecturerReviewNew, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(profileNew, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(modulesNew, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(reportsNew, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(logoutNew, javax.swing.GroupLayout.PREFERRED_SIZE, 113, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(174, 174, 174)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(welcome, javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(117, 117, 117)
-                                .addComponent(acName)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 104, javax.swing.GroupLayout.PREFERRED_SIZE)))))
-                .addContainerGap(174, Short.MAX_VALUE))
+                        .addGap(167, 167, 167)
+                        .addComponent(welcome))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(289, 289, 289)
+                        .addComponent(acName)))
+                .addContainerGap(168, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -178,37 +160,51 @@ public class academicLeader extends javax.swing.JFrame {
                 .addComponent(welcome)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(acName)
-                .addGap(31, 31, 31)
-                .addComponent(profile)
                 .addGap(28, 28, 28)
-                .addComponent(modules)
-                .addGap(27, 27, 27)
-                .addComponent(generateReports)
-                .addGap(27, 27, 27)
-                .addComponent(lecturerReview)
-                .addGap(26, 26, 26)
-                .addComponent(logOut)
-                .addContainerGap(40, Short.MAX_VALUE))
+                .addComponent(profileNew)
+                .addGap(30, 30, 30)
+                .addComponent(modulesNew)
+                .addGap(30, 30, 30)
+                .addComponent(reportsNew)
+                .addGap(30, 30, 30)
+                .addComponent(lecturerReviewNew)
+                .addGap(30, 30, 30)
+                .addComponent(logoutNew)
+                .addContainerGap(31, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void modulesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_modulesActionPerformed
+    private void profileNewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_profileNewActionPerformed
+        // TODO add your handling code here:
+        editProfileAC ed = new editProfileAC(this.loggedInUserID, this);
+        ed.setVisible(true);
+        this.setVisible(false);
+    }//GEN-LAST:event_profileNewActionPerformed
+
+    private void modulesNewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_modulesNewActionPerformed
         // TODO add your handling code here:
         modules m = new modules(this.loggedInUserID, this);
         m.setVisible(true);
         this.setVisible(false);
-    }//GEN-LAST:event_modulesActionPerformed
+    }//GEN-LAST:event_modulesNewActionPerformed
 
-    private void generateReportsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_generateReportsActionPerformed
+    private void reportsNewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_reportsNewActionPerformed
         // TODO add your handling code here:
         generateReports gr = new generateReports(this.loggedInUserID, this);
         gr.setVisible(true);
         this.setVisible(false);
-    }//GEN-LAST:event_generateReportsActionPerformed
+    }//GEN-LAST:event_reportsNewActionPerformed
 
-    private void logOutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_logOutActionPerformed
+    private void lecturerReviewNewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_lecturerReviewNewActionPerformed
+        // TODO add your handling code here:
+        lecturerReview lr = new lecturerReview(this.loggedInUserID, this);
+        lr.setVisible(true);
+        this.setVisible(false);
+    }//GEN-LAST:event_lecturerReviewNewActionPerformed
+
+    private void logoutNewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_logoutNewActionPerformed
         // TODO add your handling code here:
         int confirm = javax.swing.JOptionPane.showConfirmDialog(
             this,
@@ -219,25 +215,11 @@ public class academicLeader extends javax.swing.JFrame {
         );
         
         if (confirm == javax.swing.JOptionPane.YES_OPTION) {
-            clearSession();  // Clear user session
+            clearSession();
             this.dispose();
-            new oopwj.LoginFrame();  // Return to login page
+            new oopwj.LoginFrame();
         }
-    }//GEN-LAST:event_logOutActionPerformed
-
-    private void profileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_profileActionPerformed
-        // TODO add your handling code here:
-        editProfileAC ed = new editProfileAC(this.loggedInUserID, this);
-        ed.setVisible(true);
-        this.setVisible(false);
-    }//GEN-LAST:event_profileActionPerformed
-
-    private void lecturerReviewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_lecturerReviewActionPerformed
-        // TODO add your handling code here:
-        lecturerReview lr = new lecturerReview(this.loggedInUserID, this);
-        lr.setVisible(true);
-        this.setVisible(false);
-    }//GEN-LAST:event_lecturerReviewActionPerformed
+    }//GEN-LAST:event_logoutNewActionPerformed
 
     /**
      * @param args the command line arguments
@@ -260,17 +242,16 @@ public class academicLeader extends javax.swing.JFrame {
         }
         //</editor-fold>
 
-        /* Create and display the form - Must login first */
         java.awt.EventQueue.invokeLater(() -> new oopwj.LoginFrame());
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel acName;
-    private javax.swing.JToggleButton generateReports;
-    private javax.swing.JToggleButton lecturerReview;
-    private javax.swing.JToggleButton logOut;
-    private javax.swing.JToggleButton modules;
-    private javax.swing.JToggleButton profile;
+    private javax.swing.JButton lecturerReviewNew;
+    private javax.swing.JButton logoutNew;
+    private javax.swing.JButton modulesNew;
+    private javax.swing.JButton profileNew;
+    private javax.swing.JButton reportsNew;
     private javax.swing.JLabel welcome;
     // End of variables declaration//GEN-END:variables
 }

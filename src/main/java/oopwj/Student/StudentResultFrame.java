@@ -45,9 +45,9 @@ public class StudentResultFrame extends JFrame {
                 btn.setMaximumSize(new Dimension(400, 40));
                 btn.setAlignmentX(Component.CENTER_ALIGNMENT);
                 
-                // [Updated] Click -> Open Quiz Grade Selection
+                
                 btn.addActionListener(e -> {
-                    // Check if there are results
+                    
                     List<String[]> grades = service.getFinalGradesForModule(currentUser.getUserID(), courseID);
                     
                     if (grades.isEmpty()) {

@@ -36,16 +36,13 @@ public class StudentFrame extends JFrame {
 
         panel.add(Box.createRigidArea(new Dimension(0, 40))); 
 
-        // ==========================================
-        // 功能按钮
-        // ==========================================
-
+       
         JButton profileBtn = new JButton("Edit Profile");
         setupButton(profileBtn);
         panel.add(profileBtn);
         panel.add(Box.createRigidArea(new Dimension(0, 20)));
         
-        // [NEW] Timetable Button
+        
         JButton timetableBtn = new JButton("My Timetable");
         setupButton(timetableBtn);
         panel.add(timetableBtn);
@@ -80,9 +77,7 @@ public class StudentFrame extends JFrame {
         this.add(panel);
         setVisible(true);
 
-        // ==========================================
-        // 事件监听
-        // ==========================================
+        
 
         profileBtn.addActionListener(e -> {
             ProfileFrame pFrame = new ProfileFrame(user);
@@ -94,7 +89,7 @@ public class StudentFrame extends JFrame {
             });
         });
 
-        // [New] 打开课表页面
+        
         timetableBtn.addActionListener(e -> new TimetableFrame(user));
 
         registerBtn.addActionListener(e -> new RegisterClassFrame(user));

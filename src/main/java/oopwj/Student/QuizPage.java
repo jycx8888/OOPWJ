@@ -53,7 +53,7 @@ public class QuizPage extends JFrame {
         JPanel mainPanel = new JPanel(new BorderLayout(10, 10));
         mainPanel.setBorder(new EmptyBorder(20, 20, 20, 20));
 
-        // --- TOP PANEL ---
+        
         JPanel topPanel = new JPanel(new GridLayout(2, 1));
         JLabel courseLabel = new JLabel("Quiz: " + quizTitle + " (" + moduleID + ")", SwingConstants.CENTER);
         courseLabel.setFont(new Font("Arial", Font.BOLD, 16));
@@ -66,12 +66,12 @@ public class QuizPage extends JFrame {
         topPanel.add(sectionHeaderLabel);
         mainPanel.add(topPanel, BorderLayout.NORTH);
 
-        // --- CENTER: Question Container ---
+        
         questionContainer = new JPanel();
         questionContainer.setLayout(new BoxLayout(questionContainer, BoxLayout.Y_AXIS));
         mainPanel.add(questionContainer, BorderLayout.CENTER);
 
-        // --- BOTTOM: Navigation ---
+        
         JPanel bottomPanel = new JPanel(new BorderLayout());
         progressLabel = new JLabel("Question 1 / " + allQuestions.size());
         
@@ -109,7 +109,7 @@ public class QuizPage extends JFrame {
         String answer = "";
         
         if (currentQuestionType.equalsIgnoreCase("Objective")) {
-            // Find selected RadioButton from the container
+            
             Container container = (Container) currentInputComponent;
             answer = findSelectedRadio(container);
         } else {
@@ -122,7 +122,7 @@ public class QuizPage extends JFrame {
         else userAnswers.remove(qID);
     }
 
-    // Helper to find selected radio in nested panels
+    
     private String findSelectedRadio(Container container) {
         for (Component comp : container.getComponents()) {
             if (comp instanceof JRadioButton) {
@@ -149,20 +149,19 @@ public class QuizPage extends JFrame {
         
         progressLabel.setText("Question " + (currentIndex + 1) + " / " + allQuestions.size());
         
-        // 1. Question Text Area (Limited Height & White Background)
+        
         JTextArea qLabel = new JTextArea("Q" + (currentIndex + 1) + ". " + qText);
         qLabel.setWrapStyleWord(true); 
         qLabel.setLineWrap(true); 
         qLabel.setEditable(false);
-        // [CHANGE] Make background WHITE
+        
         qLabel.setBackground(Color.WHITE); 
-        // [CHANGE] Use Bold font for better contrast on white
+        
         qLabel.setFont(new Font("SansSerif", Font.BOLD, 16)); 
         qLabel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10)); 
         
-        // Wrap in ScrollPane to limit height (Max 150px)
+        
         JScrollPane qScroll = new JScrollPane(qLabel);
-        // [CHANGE] Add a light gray border to define the white box
         qScroll.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
         qScroll.setAlignmentX(Component.LEFT_ALIGNMENT);
         qScroll.setMaximumSize(new Dimension(Integer.MAX_VALUE, 150)); 
@@ -174,21 +173,21 @@ public class QuizPage extends JFrame {
         String savedAnswer = userAnswers.getOrDefault(qID, "");
 
         if (qType.equalsIgnoreCase("Objective")) {
-            // --- LAYOUT: 2 Columns ---
+            
             String optA = qData[3], optB = qData[4], optC = qData[5], optD = qData[6];
             
-            // Main Options Panel
+            
             JPanel optionsPanel = new JPanel(new GridLayout(1, 2, 20, 0)); // 1 Row, 2 Cols
             optionsPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
             optionsPanel.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 0));
 
-            // Left Column (A, B)
+            
             JPanel leftCol = new JPanel(new GridLayout(2, 1, 0, 15)); // Vertical spacing
             JRadioButton rbA = new JRadioButton("A. " + optA);
             JRadioButton rbB = new JRadioButton("B. " + optB);
             leftCol.add(rbA); leftCol.add(rbB);
 
-            // Right Column (C, D)
+            
             JPanel rightCol = new JPanel(new GridLayout(2, 1, 0, 15));
             JRadioButton rbC = new JRadioButton("C. " + optC);
             JRadioButton rbD = new JRadioButton("D. " + optD);
@@ -197,7 +196,7 @@ public class QuizPage extends JFrame {
             optionsPanel.add(leftCol);
             optionsPanel.add(rightCol);
 
-            // Logic
+            
             rbA.setActionCommand("A"); rbB.setActionCommand("B"); 
             rbC.setActionCommand("C"); rbD.setActionCommand("D");
             if(savedAnswer.equals("A")) rbA.setSelected(true); 
@@ -213,8 +212,8 @@ public class QuizPage extends JFrame {
             currentInputComponent = optionsPanel;
 
         } else {
-            // --- LAYOUT: Larger Answer Box ---
-            JTextArea t = new JTextArea(10, 20); // 10 rows
+            
+            JTextArea t = new JTextArea(10, 20); 
             t.setLineWrap(true); t.setWrapStyleWord(true);
             t.setText(savedAnswer);
             t.setFont(new Font("SansSerif", Font.PLAIN, 14));
