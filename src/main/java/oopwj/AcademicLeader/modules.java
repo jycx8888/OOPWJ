@@ -25,15 +25,15 @@ public class modules extends javax.swing.JFrame {
     private final List<String> lecturers = new ArrayList<>();
     private final Map<String, String> lecturerIdToName = new HashMap<>();
     private final Map<String, String> lecturerNameToId = new HashMap<>();
-    private String academicLeaderID;  // Store the logged-in Academic Leader ID
-    private academicLeader parentWindow;  // Store reference to parent window
+    private String academicLeaderID;
+    private academicLeader parentWindow;
     
     public modules() {
-        this(null, null);  // Default constructor for backward compatibility
+        this(null, null);
     }
     
     public modules(String academicLeaderID) {
-        this(academicLeaderID, null);  // Constructor with user ID only
+        this(academicLeaderID, null);
     }
     
     public modules(String academicLeaderID, academicLeader parentWindow) {
@@ -53,19 +53,16 @@ public class modules extends javax.swing.JFrame {
                 values[i] = values[i].trim();
             }
             
-            // Filter modules: only show modules under this Academic Leader
             if (values.length >= 3) {
-                String moduleACID = values[2];  // Academic Leader ID
+                String moduleACID = values[2];
                 
-                // If academicLeaderID is set, only show modules belonging to this AC
                 if (this.academicLeaderID != null && !moduleACID.equals(this.academicLeaderID)) {
-                    continue;  // Skip modules not belonging to this AC
+                    continue;
                 }
                 
                 String lecturerName = lecturerIdToName.getOrDefault(values[3], values[3]);
                 model.addRow(new Object[]{values[0], values[1], lecturerName});
             } else if (values.length == 2) {
-                // For backward compatibility, check if we should still display
                 if (this.academicLeaderID == null) {
                     model.addRow(new Object[]{values[0], values[1], "NONE"});
                 }
@@ -213,9 +210,9 @@ public class modules extends javax.swing.JFrame {
     private void ExitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ExitActionPerformed
         // TODO add your handling code here:
         if (parentWindow != null) {
-            parentWindow.setVisible(true);  // Return to parent window with session preserved
+            parentWindow.setVisible(true);
         } else {
-            academicLeader al = new academicLeader(academicLeaderID);  // Create with session ID
+            academicLeader al = new academicLeader(academicLeaderID);
             al.setVisible(true);
         }
         this.dispose();
@@ -336,9 +333,8 @@ public class modules extends javax.swing.JFrame {
 
     private void saveData () {
         try {
-            // First, read all existing modules from file and maintain order
             List<String> allLines = new ArrayList<>();
-            Map<String, int[]> currentModuleMap = new HashMap<>();  // moduleId -> [modelRowIndex, exists]
+            Map<String, int[]> currentModuleMap = new HashMap<>();
             
             try (BufferedReader reader = new BufferedReader(new FileReader("src\\main\\java\\oopwj\\Data\\modules.txt"))) {
                 String line;
@@ -349,51 +345,42 @@ public class modules extends javax.swing.JFrame {
                     }
                 }
             } catch (IOException e) {
-                // File might not exist yet, that's okay
             }
             
-            // Build a map of current modules for quick lookup
             for (int i = 0; i < model.getRowCount(); i++) {
                 String moduleId = model.getValueAt(i, 0).toString();
-                currentModuleMap.put(moduleId, new int[]{i, 1});  // row index and exists flag
+                currentModuleMap.put(moduleId, new int[]{i, 1});
             }
             
-            // Now write back in original order, updating current academic leader's modules
             try (BufferedWriter writer = new BufferedWriter(new FileWriter("src\\main\\java\\oopwj\\Data\\modules.txt"))) {
-                // Process existing lines in order
                 for (String line : allLines) {
                     String[] parts = line.split(",");
                     if (parts.length >= 3) {
                         String moduleId = parts[0].trim();
                         String academicLeaderId = parts[2].trim();
                         
-                        // If this module belongs to the current academic leader, update it from model
                         if (academicLeaderId.equals(this.academicLeaderID)) {
                             int[] modelInfo = currentModuleMap.get(moduleId);
                             if (modelInfo != null && modelInfo[1] == 1) {
-                                // Found in model, write updated version
                                 int modelRow = modelInfo[0];
                                 String moduleName = model.getValueAt(modelRow, 1).toString();
                                 String lecturerName = model.getValueAt(modelRow, 2).toString();
                                 String lecturerId = lecturerNameToId.getOrDefault(lecturerName, lecturerName);
                                 writer.write(moduleId + "," + moduleName + "," + this.academicLeaderID + "," + lecturerId);
                                 writer.newLine();
-                                modelInfo[1] = 0;  // Mark as written
+                                modelInfo[1] = 0;
                             }
-                            // If not found in model, it was deleted, so skip it
                         } else {
-                            // This module belongs to another academic leader, keep as is
                             writer.write(line);
                             writer.newLine();
                         }
                     }
                 }
                 
-                // Write any new modules that weren't in the original file
                 for (int i = 0; i < model.getRowCount(); i++) {
                     String moduleId = model.getValueAt(i, 0).toString();
                     int[] modelInfo = currentModuleMap.get(moduleId);
-                    if (modelInfo != null && modelInfo[1] == 1) {  // Not yet written
+                    if (modelInfo != null && modelInfo[1] == 1) {
                         String moduleName = model.getValueAt(i, 1).toString();
                         String lecturerName = model.getValueAt(i, 2).toString();
                         String lecturerId = lecturerNameToId.getOrDefault(lecturerName, lecturerName);
@@ -420,21 +407,19 @@ public class modules extends javax.swing.JFrame {
                     if (parts.length >= 5) {
                         String id = parts[0].trim();
                         String name = parts[1].trim();
-                        String lecturerACID = parts[4].trim();  // Academic Leader ID
+                        String lecturerACID = parts[4].trim();
                         
-                        // Filter lecturers: only add lecturers under this Academic Leader
                         if (this.academicLeaderID != null && !lecturerACID.equals(this.academicLeaderID)) {
-                            continue;  // Skip lecturers not belonging to this AC
+                            continue;
                         }
                         
                         lecturers.add(name);
                         lecturerIdToName.put(id, name);
                         lecturerNameToId.put(name, id);
                     } else if (parts.length >= 2) {
-                        // For backward compatibility
                         String id = parts[0].trim();
                         String name = parts[1].trim();
-                        if (this.academicLeaderID == null) {  // Only add if no filter
+                        if (this.academicLeaderID == null) {
                             lecturers.add(name);
                             lecturerIdToName.put(id, name);
                             lecturerNameToId.put(name, id);
@@ -450,7 +435,6 @@ public class modules extends javax.swing.JFrame {
     private String getNextModuleId() {
         int maxId = 0;
         
-        // First, check all modules in the file (not just the current model)
         try (BufferedReader reader = new BufferedReader(new FileReader("src\\main\\java\\oopwj\\Data\\modules.txt"))) {
             String line;
             while ((line = reader.readLine()) != null) {
@@ -466,17 +450,15 @@ public class modules extends javax.swing.JFrame {
                                     maxId = numeric;
                                 }
                             } catch (NumberFormatException ignored) {
-                                // skip malformed ids
                             }
                         }
                     }
                 }
             }
         } catch (IOException e) {
-            // File might not exist yet, that's okay
+            logger.log(java.util.logging.Level.WARNING, "Unable to read modules file for ID generation", e);
         }
         
-        // Also check the current model in case new modules haven't been saved yet
         for (int i = 0; i < model.getRowCount(); i++) {
             Object value = model.getValueAt(i, 0);
             if (value != null) {
@@ -488,7 +470,6 @@ public class modules extends javax.swing.JFrame {
                             maxId = numeric;
                         }
                     } catch (NumberFormatException ignored) {
-                        // skip malformed ids
                     }
                 }
             }
@@ -540,7 +521,6 @@ public class modules extends javax.swing.JFrame {
         }
         //</editor-fold>
 
-        /* Create and display the form - Must login first */
         java.awt.EventQueue.invokeLater(() -> new oopwj.LoginFrame());
     }
 

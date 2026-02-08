@@ -406,9 +406,9 @@ public class generateReports extends javax.swing.JFrame {
     private void exitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitActionPerformed
         // TODO add your handling code here:
         if (parentWindow != null) {
-            parentWindow.setVisible(true);  // Return to parent window with session preserved
+            parentWindow.setVisible(true);
         } else {
-            academicLeader al = new academicLeader(academicLeaderID);  // Create with session ID
+            academicLeader al = new academicLeader(academicLeaderID);
             al.setVisible(true);
         }
         this.dispose();
@@ -417,17 +417,17 @@ public class generateReports extends javax.swing.JFrame {
     private void modulesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_modulesActionPerformed
         String selectedModuleName = (String) modules.getSelectedItem();
         if (selectedModuleName == null || selectedModuleName.equals(MODULE_PLACEHOLDER)) {
-            selectedModuleId = null;  // Clear the selected module ID
+            selectedModuleId = null;
             resetQuizDropdown();
             return;
         }
 
-        selectedModuleId = moduleNameToId.get(selectedModuleName);  // Store the module ID
+        selectedModuleId = moduleNameToId.get(selectedModuleName);
         if (selectedModuleId != null) {
             loadQuizzesForModule(selectedModuleId);
             modules.setForeground(Color.BLACK);
         } else {
-            selectedModuleId = null;  // Clear if not found
+            selectedModuleId = null;
             resetQuizDropdown();
         }
     }//GEN-LAST:event_modulesActionPerformed
@@ -438,7 +438,7 @@ public class generateReports extends javax.swing.JFrame {
             quiz.setForeground(Color.BLACK);
             String quizId = quizNameToId.get(selectedQuizName);
             if (quizId != null && selectedModuleId != null) {
-                updateReportForQuiz(selectedModuleId, quizId);  // Pass both module ID and quiz ID
+                updateReportForQuiz(selectedModuleId, quizId);
             } else {
                 resetReportLabels();
             }
@@ -492,12 +492,10 @@ public class generateReports extends javax.swing.JFrame {
             return;
         }
         
-        // Open file chooser
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setDialogTitle("Save Report as PDF");
         fileChooser.setFileFilter(new FileNameExtensionFilter("PDF Documents (*.pdf)", "pdf"));
         
-        // Set default filename
         String defaultFileName = "Report_" + selectedModuleName.replaceAll("[^a-zA-Z0-9]", "_") + 
                                  "_" + selectedQuizName.replaceAll("[^a-zA-Z0-9]", "_") + ".pdf";
         fileChooser.setSelectedFile(new File(defaultFileName));
@@ -531,7 +529,7 @@ public class generateReports extends javax.swing.JFrame {
     private void loadModulesFromFile() {
         modules.removeAllItems();
         moduleNameToId.clear();
-        modules.addItem(MODULE_PLACEHOLDER);  // Always add placeholder as first item
+        modules.addItem(MODULE_PLACEHOLDER);
         try (BufferedReader reader = new BufferedReader(new FileReader("src\\main\\java\\oopwj\\Data\\modules.txt"))) {
             String line;
             while ((line = reader.readLine()) != null) {
@@ -541,11 +539,10 @@ public class generateReports extends javax.swing.JFrame {
                     if (parts.length >= 3) {
                         String moduleId = parts[0].trim();
                         String moduleName = parts[1].trim();
-                        String moduleACID = parts[2].trim();  // Academic Leader ID
+                        String moduleACID = parts[2].trim();
                         
-                        // Filter modules: only show modules under this Academic Leader
                         if (this.academicLeaderID != null && !moduleACID.equals(this.academicLeaderID)) {
-                            continue;  // Skip modules not belonging to this AC
+                            continue;
                         }
 
                         modules.addItem(moduleName);
@@ -557,13 +554,13 @@ public class generateReports extends javax.swing.JFrame {
             logger.log(java.util.logging.Level.WARNING, "Unable to load modules list", e);
             modules.addItem("Error loading modules");
         }
-        modules.setSelectedIndex(0);  // Set placeholder as default selection
+        modules.setSelectedIndex(0);
     }
 
     private void loadQuizzesForModule(String moduleId) {
         quiz.removeAllItems();
         quizNameToId.clear();
-        quiz.addItem(QUIZ_PLACEHOLDER);  // Always add placeholder as first item
+        quiz.addItem(QUIZ_PLACEHOLDER);
         try (BufferedReader reader = new BufferedReader(new FileReader("src\\main\\java\\oopwj\\Data\\Quiz.txt"))) {
             String line;
             while ((line = reader.readLine()) != null) {
@@ -586,7 +583,7 @@ public class generateReports extends javax.swing.JFrame {
             quiz.addItem("Error loading quiz");
         }
         quiz.setForeground(Color.GRAY);
-        quiz.setSelectedIndex(0);  // Set placeholder as default selection
+        quiz.setSelectedIndex(0);
     }
 
     private void loadStudentNamesFromFile() {
@@ -636,7 +633,7 @@ public class generateReports extends javax.swing.JFrame {
         Integer lowest = null;
         String highestStudentId = "";
         String lowestStudentId = "";
-        int[] gradeCounts = new int[7]; // A+, A, B+, B, C, D, F
+        int[] gradeCounts = new int[7];
 
         try (BufferedReader reader = new BufferedReader(new FileReader("src\\main\\java\\oopwj\\Data\\FinalGrade.txt"))) {
             String line;
@@ -648,12 +645,11 @@ public class generateReports extends javax.swing.JFrame {
                 String[] parts = trimmed.split(",");
                 if (parts.length >= 5) {
                     String studentId = parts[0].trim();
-                    String moduleIdInFile = parts[1].trim();  // Get module ID from file
+                    String moduleIdInFile = parts[1].trim();
                     String quizIdInFile = parts[2].trim();
                     String markStr = parts[3].trim();
                     String grade = parts[4].trim();
 
-                    // Check BOTH module ID and quiz ID match
                     if (!moduleIdInFile.equals(moduleId) || !quizIdInFile.equals(quizId)) {
                         continue;
                     }
@@ -721,16 +717,14 @@ public class generateReports extends javax.swing.JFrame {
         double passRateValue = (passedStudents * 100.0) / totalStudents;
         passRate.setText(String.format("%.2f%%", passRateValue));
         
-        // Set color based on pass rate
         if (passRateValue >= 70) {
-            passRate.setForeground(new Color(0, 128, 0));  // Green
+            passRate.setForeground(new Color(0, 128, 0));
         } else if (passRateValue >= 50) {
-            passRate.setForeground(new Color(255, 193, 7));  // Yellow
+            passRate.setForeground(new Color(255, 193, 7));
         } else {
-            passRate.setForeground(new Color(255, 0, 0));  // Red
+            passRate.setForeground(new Color(255, 0, 0));
         }
         
-        // Set student count label
         numberOfStudents.setText(passedStudents + " out of " + totalStudents + " students");
 
         updateGradeTable(gradeCounts);
@@ -932,7 +926,6 @@ public class generateReports extends javax.swing.JFrame {
             float leading = 1.5f * fontSize;
             
             try (PDPageContentStream contentStream = new PDPageContentStream(document, page)) {
-                // Title
                 contentStream.setFont(fontBold, 20);
                 contentStream.beginText();
                 contentStream.newLineAtOffset(margin, yPosition);
@@ -940,7 +933,6 @@ public class generateReports extends javax.swing.JFrame {
                 contentStream.endText();
                 yPosition -= leading * 2;
                 
-                // Date and Time
                 contentStream.setFont(fontRegular, 10);
                 contentStream.beginText();
                 contentStream.newLineAtOffset(margin, yPosition);
@@ -949,7 +941,6 @@ public class generateReports extends javax.swing.JFrame {
                 contentStream.endText();
                 yPosition -= leading * 2;
                 
-                // Module and Quiz Info
                 contentStream.setFont(fontBold, 14);
                 contentStream.beginText();
                 contentStream.newLineAtOffset(margin, yPosition);
@@ -963,7 +954,6 @@ public class generateReports extends javax.swing.JFrame {
                 contentStream.endText();
                 yPosition -= leading * 2;
                 
-                // Pass Rate Section
                 contentStream.setFont(fontBold, 12);
                 contentStream.beginText();
                 contentStream.newLineAtOffset(margin, yPosition);
@@ -986,7 +976,6 @@ public class generateReports extends javax.swing.JFrame {
                 contentStream.endText();
                 yPosition -= leading * 2;
                 
-                // Highest Mark Section
                 contentStream.setFont(fontBold, 12);
                 contentStream.beginText();
                 contentStream.newLineAtOffset(margin, yPosition);
@@ -1010,7 +999,6 @@ public class generateReports extends javax.swing.JFrame {
                 contentStream.endText();
                 yPosition -= leading * 2;
                 
-                // Lowest Mark Section
                 contentStream.setFont(fontBold, 12);
                 contentStream.beginText();
                 contentStream.newLineAtOffset(margin, yPosition);
@@ -1034,7 +1022,6 @@ public class generateReports extends javax.swing.JFrame {
                 contentStream.endText();
                 yPosition -= leading * 2;
                 
-                // Grade Distribution
                 contentStream.setFont(fontBold, 12);
                 contentStream.beginText();
                 contentStream.newLineAtOffset(margin, yPosition);
@@ -1057,7 +1044,6 @@ public class generateReports extends javax.swing.JFrame {
                 }
                 yPosition -= leading;
                 
-                // Feedback Section
                 if (!currentFeedbackList.isEmpty()) {
                     contentStream.setFont(fontBold, 12);
                     contentStream.beginText();
@@ -1072,14 +1058,13 @@ public class generateReports extends javax.swing.JFrame {
                         String lecId = entry.lecturerId;
                         String lecName = lecturerIdToName.getOrDefault(lecId, "Unknown");
                         
-                        // Check if we need a new page
                         if (yPosition < 100) {
                             contentStream.close();
                             page = new PDPage(PDRectangle.A4);
                             document.addPage(page);
                             PDPageContentStream newStream = new PDPageContentStream(document, page);
                             yPosition = page.getMediaBox().getHeight() - margin;
-                            return; // Exit and use newStream (simplified for this implementation)
+                            return;
                         }
                         
                         contentStream.beginText();
@@ -1088,7 +1073,6 @@ public class generateReports extends javax.swing.JFrame {
                         contentStream.endText();
                         yPosition -= leading;
                         
-                        // Split feedback text if too long
                         String feedbackText = entry.feedback.replace("<html>", "").replace("</html>", "")
                                                            .replace("<br>", " ").replace("&amp;", "&")
                                                            .replace("&lt;", "<").replace("&gt;", ">");
@@ -1139,13 +1123,11 @@ public class generateReports extends javax.swing.JFrame {
     }
     
     private void showStudentsByGradeDialog() {
-        // Create dialog
         javax.swing.JDialog dialog = new javax.swing.JDialog(this, "View Students by Grade", true);
         dialog.setSize(600, 500);
         dialog.setLocationRelativeTo(this);
         dialog.setLayout(new java.awt.BorderLayout(10, 10));
         
-        // Top panel with grade selection
         javax.swing.JPanel topPanel = new javax.swing.JPanel(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
         topPanel.setBorder(javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10));
         
@@ -1159,7 +1141,6 @@ public class generateReports extends javax.swing.JFrame {
         topPanel.add(gradeLabel);
         topPanel.add(gradeComboBox);
         
-        // Table panel
         String[] columnNames = {"Student ID", "Student Name", "Marks"};
         javax.swing.table.DefaultTableModel tableModel = new javax.swing.table.DefaultTableModel(columnNames, 0) {
             @Override
@@ -1176,31 +1157,26 @@ public class generateReports extends javax.swing.JFrame {
         javax.swing.JScrollPane scrollPane = new javax.swing.JScrollPane(studentTable);
         scrollPane.setBorder(javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10));
         
-        // Bottom panel with close button
         javax.swing.JPanel bottomPanel = new javax.swing.JPanel(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER));
         javax.swing.JButton closeButton = new javax.swing.JButton("Close");
         closeButton.addActionListener(e -> dialog.dispose());
         bottomPanel.add(closeButton);
         
-        // Add components to dialog
         dialog.add(topPanel, java.awt.BorderLayout.NORTH);
         dialog.add(scrollPane, java.awt.BorderLayout.CENTER);
         dialog.add(bottomPanel, java.awt.BorderLayout.SOUTH);
         
-        // Action listener for grade combo box
         gradeComboBox.addActionListener(e -> {
             String selectedGrade = (String) gradeComboBox.getSelectedItem();
             loadStudentsByGrade(tableModel, selectedGrade);
         });
         
-        // Load initial data for first grade
         loadStudentsByGrade(tableModel, grades[0]);
         
         dialog.setVisible(true);
     }
     
     private void loadStudentsByGrade(javax.swing.table.DefaultTableModel tableModel, String grade) {
-        // Clear existing rows
         tableModel.setRowCount(0);
         
         if (selectedModuleId == null) {
@@ -1217,7 +1193,6 @@ public class generateReports extends javax.swing.JFrame {
             return;
         }
         
-        // Read FinalGrade.txt and filter by grade
         try (BufferedReader reader = new BufferedReader(new FileReader("src\\main\\java\\oopwj\\Data\\FinalGrade.txt"))) {
             String line;
             while ((line = reader.readLine()) != null) {
@@ -1233,7 +1208,6 @@ public class generateReports extends javax.swing.JFrame {
                     String markStr = parts[3].trim();
                     String gradeInFile = parts[4].trim();
                     
-                    // Check if this record matches module, quiz, and grade
                     if (moduleIdInFile.equals(selectedModuleId) && 
                         quizIdInFile.equals(quizId) && 
                         gradeInFile.equalsIgnoreCase(grade)) {
@@ -1251,7 +1225,6 @@ public class generateReports extends javax.swing.JFrame {
                 JOptionPane.ERROR_MESSAGE);
         }
         
-        // Show message if no students found
         if (tableModel.getRowCount() == 0) {
             tableModel.addRow(new Object[]{"No students", "found with", "grade " + grade});
         }
@@ -1278,7 +1251,6 @@ public class generateReports extends javax.swing.JFrame {
         }
         //</editor-fold>
 
-        /* Create and display the form - Must login first */
         java.awt.EventQueue.invokeLater(() -> new oopwj.LoginFrame());
     }
 

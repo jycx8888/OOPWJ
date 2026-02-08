@@ -16,18 +16,11 @@ public class academicLeader extends javax.swing.JFrame {
     private static final String ACADEMIC_LEADER_FILE = "src/main/java/oopwj/Data/academicLeader.txt";
     private String loggedInUserID;  // Store logged-in user ID
 
-    /**
-     * Creates new form MainPage
-     */
     public academicLeader() {
         initComponents();
         updateAcNameLabel();
     }
-    
-    /**
-     * Constructor with user session
-     * @param userID - The logged-in user's ID
-     */
+
     public academicLeader(String userID) {
         this.loggedInUserID = userID;
         initComponents();
@@ -35,17 +28,10 @@ public class academicLeader extends javax.swing.JFrame {
         logger.info("Academic Leader logged in: " + userID);
     }
     
-    /**
-     * Get the currently logged-in user ID
-     * @return userID or null if not logged in
-     */
     public String getLoggedInUserID() {
         return loggedInUserID;
     }
     
-    /**
-     * Clear user session (for logout)
-     */
     public void clearSession() {
         this.loggedInUserID = null;
         logger.info("Academic Leader session cleared");
@@ -229,9 +215,9 @@ public class academicLeader extends javax.swing.JFrame {
         );
         
         if (confirm == javax.swing.JOptionPane.YES_OPTION) {
-            clearSession();  // Clear user session
+            clearSession();
             this.dispose();
-            new oopwj.LoginFrame();  // Return to login page
+            new oopwj.LoginFrame();
         }
     }//GEN-LAST:event_logoutNewActionPerformed
 
@@ -256,7 +242,6 @@ public class academicLeader extends javax.swing.JFrame {
         }
         //</editor-fold>
 
-        /* Create and display the form - Must login first */
         java.awt.EventQueue.invokeLater(() -> new oopwj.LoginFrame());
     }
 

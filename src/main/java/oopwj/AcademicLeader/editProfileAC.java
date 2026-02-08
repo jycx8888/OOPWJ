@@ -26,19 +26,11 @@ public class editProfileAC extends javax.swing.JFrame {
     private javax.swing.JFrame parentFrame;
     private String currentPassword;
 
-    /**
-     * Creates new form editProfileAC
-     */
     public editProfileAC() {
         initComponents();
         setupProfilePicturePanel();
     }
     
-    /**
-     * Constructor with user session
-     * @param userID - The logged-in user's ID
-     * @param parent - The parent frame
-     */
     public editProfileAC(String userID, javax.swing.JFrame parent) {
         this.loggedInUserID = userID;
         this.parentFrame = parent;
@@ -48,9 +40,6 @@ public class editProfileAC extends javax.swing.JFrame {
         loadProfilePicture();
     }
     
-    /**
-     * Load user data from academicLeader.txt
-     */
     private void loadUserData() {
         try (BufferedReader br = new BufferedReader(new FileReader("src/main/java/oopwj/Data/academicLeader.txt"))) {
             String line;
@@ -154,17 +143,6 @@ public class editProfileAC extends javax.swing.JFrame {
         return fileName.substring(dotIndex + 1).toLowerCase(Locale.ROOT);
     }
     
-    /**
-     * Validate password format
-     * Requirements:
-     * - Length: 7-14 characters
-     * - At least one lowercase letter
-     * - At least one uppercase letter
-     * - At least one number
-     * - At least one symbol (!@#$%^)
-     * @param password - The password to validate
-     * @return true if valid, false otherwise
-     */
     private boolean isValidPassword(String password) {
         if (password == null || password.length() < 7 || password.length() > 14) {
             return false;
@@ -186,31 +164,20 @@ public class editProfileAC extends javax.swing.JFrame {
             } else if (allowedSymbols.indexOf(c) != -1) {
                 hasSymbol = true;
             } else if (c == ',') {
-                return false; // Comma not allowed
+                return false;
             }
         }
         
         return hasLowerCase && hasUpperCase && hasDigit && hasSymbol;
     }
     
-    /**
-     * Validate name format
-     * @param name - The name to validate
-     * @return true if valid (only alphabets and spaces), false otherwise
-     */
     private boolean isValidName(String name) {
         if (name == null || name.trim().isEmpty()) {
             return false;
         }
-        // Only allow alphabets and spaces
         return name.matches("^[a-zA-Z ]+$");
     }
     
-    /**
-     * Update password in academicLeader.txt
-     * @param newPassword - The new password
-     * @return true if successful, false otherwise
-     */
     private boolean updatePassword(String newPassword) {
         List<String> lines = new ArrayList<>();
         boolean updated = false;
@@ -247,11 +214,6 @@ public class editProfileAC extends javax.swing.JFrame {
         return false;
     }
     
-    /**
-     * Update name in academicLeader.txt
-     * @param newName - The new name
-     * @return true if successful, false otherwise
-     */
     private boolean updateName(String newName) {
         List<String> lines = new ArrayList<>();
         boolean updated = false;
@@ -459,7 +421,6 @@ public class editProfileAC extends javax.swing.JFrame {
     }//GEN-LAST:event_ExitActionPerformed
 
     private void changePasswordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_changePasswordActionPerformed
-        // Step 1: Confirm current password
         JPasswordField passwordField = new JPasswordField();
         Object[] message = {
             "Enter your current password:", passwordField
@@ -471,13 +432,11 @@ public class editProfileAC extends javax.swing.JFrame {
         if (option == JOptionPane.OK_OPTION) {
             String enteredPassword = new String(passwordField.getPassword());
             
-            // Verify current password
             if (!enteredPassword.equals(currentPassword)) {
                 JOptionPane.showMessageDialog(this, "Wrong password!", "Error", JOptionPane.ERROR_MESSAGE);
-                return; // Return to allow re-entry
+                return;
             }
             
-            // Step 2: Enter new password
             boolean passwordChanged = false;
             while (!passwordChanged) {
                 JPasswordField newPasswordField = new JPasswordField();
@@ -503,7 +462,6 @@ public class editProfileAC extends javax.swing.JFrame {
                     String newPassword = new String(newPasswordField.getPassword());
                     String confirmPassword = new String(confirmPasswordField.getPassword());
                     
-                    // Validate password format
                     if (!isValidPassword(newPassword)) {
                         JOptionPane.showMessageDialog(this, 
                                 "<html>Invalid password format!<br/><br/>" +
@@ -514,18 +472,16 @@ public class editProfileAC extends javax.swing.JFrame {
                                 "- At least one number (0-9)<br/>" +
                                 "- At least one symbol (!@#$%^)</html>", 
                                 "Failed", JOptionPane.ERROR_MESSAGE);
-                        continue; // Loop again for re-entry
+                        continue;
                     }
                     
-                    // Check if passwords match
                     if (!newPassword.equals(confirmPassword)) {
                         JOptionPane.showMessageDialog(this, 
                                 "Passwords do not match!", 
                                 "Failed", JOptionPane.ERROR_MESSAGE);
-                        continue; // Loop again for re-entry
+                        continue;
                     }
                     
-                    // Update password
                     if (updatePassword(newPassword)) {
                         JOptionPane.showMessageDialog(this, 
                                 "Password changed successfully!", 
@@ -535,22 +491,20 @@ public class editProfileAC extends javax.swing.JFrame {
                         JOptionPane.showMessageDialog(this, 
                                 "Error updating password. Please try again.", 
                                 "Error", JOptionPane.ERROR_MESSAGE);
-                        passwordChanged = true; // Exit to prevent infinite loop
+                        passwordChanged = true;
                     }
                 } else {
-                    break; // User cancelled
+                    break; 
                 }
             }
         }
     }//GEN-LAST:event_changePasswordActionPerformed
 
     private void editProfileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editProfileActionPerformed
-        // Show popup to change name
         String currentName = NameLabel.getText();
         String newName = JOptionPane.showInputDialog(this, "Enter new name:", currentName);
         
         if (newName != null && !newName.trim().isEmpty()) {
-            // Validate name (only alphabets and spaces)
             if (!isValidName(newName)) {
                 JOptionPane.showMessageDialog(this, 
                         "Invalid name! Name can only contain alphabets and spaces.", 
@@ -558,7 +512,6 @@ public class editProfileAC extends javax.swing.JFrame {
                 return;
             }
             
-            // Update name in file
             if (updateName(newName.trim())) {
                 NameLabel.setText(newName.trim());
                 JOptionPane.showMessageDialog(this, 
@@ -630,7 +583,6 @@ public class editProfileAC extends javax.swing.JFrame {
         }
         //</editor-fold>
 
-        /* Create and display the form */
         java.awt.EventQueue.invokeLater(() -> new editProfileAC().setVisible(true));
     }
 
