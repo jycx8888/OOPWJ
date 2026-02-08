@@ -195,6 +195,7 @@ public class UpdateSchedule extends javax.swing.JDialog {
 
         jLabel2.setText("Module ID:");
 
+        dateChoose.setMinSelectableDate(new Date());
         dateChoose.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
             public void propertyChange(java.beans.PropertyChangeEvent evt) {
                 dateChoosePropertyChange(evt);

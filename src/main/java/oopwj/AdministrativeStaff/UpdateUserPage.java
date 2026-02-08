@@ -10,6 +10,8 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.HeadlessException;
 import java.io.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.*;
 
 /**
@@ -31,6 +33,7 @@ public class UpdateUserPage extends javax.swing.JDialog {
     
     private final String originalUsername;
     private final String originalId;
+    private final String originalRole;
     
     public UpdateUserPage(java.awt.Frame parent, boolean modal, String username, String userId, String password, String email, String role) {
         super(parent, modal);
@@ -67,6 +70,7 @@ public class UpdateUserPage extends javax.swing.JDialog {
         
         originalUsername = username;
         originalId = userId;
+        originalRole = role;
         
         txtId.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
             @Override
@@ -190,6 +194,45 @@ public class UpdateUserPage extends javax.swing.JDialog {
             }
         });
     }
+    
+    private void removeUserFromOldFile() throws IOException {
+        String oldFile = getFileByRole(originalRole);
+        File inputFile = new File(oldFile);
+        File tempFile = new File("users_temp.txt");
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(inputFile));
+             BufferedWriter writer = new BufferedWriter(new FileWriter(tempFile))) {
+
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] parts = line.split(",");
+                if (!(parts[0].equals(originalId) && parts[1].equals(originalUsername))) {
+                    writer.write(line);
+                    writer.newLine();
+                }
+            }
+        }
+
+        inputFile.delete();
+        tempFile.renameTo(inputFile);
+    }
+
+    private void addUserToNewFile(String username, String userId,String password, String email, String role)
+        throws IOException {
+
+    String newFile = getFileByRole(role);
+
+    try (PrintWriter out = new PrintWriter(new BufferedWriter(
+            new FileWriter(newFile, true)))) {
+
+        if ("Lecturer".equals(role)) {
+            out.println(userId + "," + username + "," + password + "," + email + ",None");
+        } else {
+            out.println(userId + "," + username + "," + password + "," + email);
+        }
+    }
+}
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -408,6 +451,24 @@ public class UpdateUserPage extends javax.swing.JDialog {
             return;
         }
         
+        boolean roleChanged = !role.equals(originalRole);
+        
+        if (roleChanged) {
+            try {
+                removeUserFromOldFile();
+                addUserToNewFile(username, userId, password, email, role);
+            } catch (IOException ex) {
+                JOptionPane.showMessageDialog(this, "Error updating user: " + ex.getMessage(), 
+                                          "Error", JOptionPane.ERROR_MESSAGE);
+            }
+            JOptionPane.showMessageDialog(this,
+                "User updated successfully!",
+                "Success",
+                JOptionPane.INFORMATION_MESSAGE);
+            this.dispose();
+            return;
+        }
+        
         String fileName = getFileByRole(role);
 
         try {
@@ -421,7 +482,7 @@ public class UpdateUserPage extends javax.swing.JDialog {
                 while ((line = reader.readLine()) != null) {
                     String[] parts = line.split(",");
                     if (parts[1].equals(originalUsername) && parts[0].equals(originalId)) {
-                        if ("Lecturer".equals(role) && parts.length >= 5) {
+                        if (role.equals("Lecturer") && parts.length >= 5) {
                             writer.write(userId + "," + username + "," + password + "," + email + "," + parts[4]);
                         } else {
                             writer.write(userId + "," + username + "," + password + "," + email);

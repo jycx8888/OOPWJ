@@ -458,6 +458,7 @@ public class AssignClassAndSchedule extends javax.swing.JFrame {
 
         jLabel3.setText("Search:");
 
+        dateChooseClass.setMinSelectableDate(new Date());
         dateChooseClass.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
             public void propertyChange(java.beans.PropertyChangeEvent evt) {
                 dateChooseClassPropertyChange(evt);
@@ -738,9 +739,22 @@ public class AssignClassAndSchedule extends javax.swing.JFrame {
             return;
         }
         
-        Date today = new Date();
-        if(selectedDate.before(today)){
-            JOptionPane.showMessageDialog(this, "Cannot assign classes for past dates");
+        Calendar calSelected = Calendar.getInstance();
+        calSelected.setTime(selectedDate);
+        calSelected.set(Calendar.HOUR_OF_DAY, 0);
+        calSelected.set(Calendar.MINUTE, 0);
+        calSelected.set(Calendar.SECOND, 0);
+        calSelected.set(Calendar.MILLISECOND, 0);
+
+        Calendar calToday = Calendar.getInstance();
+        calToday.set(Calendar.HOUR_OF_DAY, 0);
+        calToday.set(Calendar.MINUTE, 0);
+        calToday.set(Calendar.SECOND, 0);
+        calToday.set(Calendar.MILLISECOND, 0);
+
+        if (calSelected.before(calToday)) {
+            JOptionPane.showMessageDialog(this,
+                "Cannot assign classes for past dates");
             return;
         }
 
@@ -751,6 +765,16 @@ public class AssignClassAndSchedule extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this, "Start time must be before end time.");
             return;
         }
+        
+        long diffMillis = endTime.getTime() - startTime.getTime();
+        long diffMinutes = diffMillis / (60 * 1000);
+
+        if (diffMinutes < 10) {
+            JOptionPane.showMessageDialog(this,
+                "Class duration must be at least 10 minutes.");
+            return;
+        }
+
 
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
         SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
@@ -767,7 +791,6 @@ public class AssignClassAndSchedule extends javax.swing.JFrame {
                 String[] data = line.split(",");
                 if (data.length >= 6) {
                     String sClassId = data[0];
-                    String sModuleId = data[1];
                     String sDate = data[2];
                     String sStart = data[4];
                     String sEnd = data[5];
