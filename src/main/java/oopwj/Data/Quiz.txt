@@ -1,5 +1,0 @@
-QZ001,M001,data management quiz set
-QZ002,M001,Java quiz
-QZ003,M001,hi
-QZ004,M001,Quiz set 4
-QZ001,M002,new

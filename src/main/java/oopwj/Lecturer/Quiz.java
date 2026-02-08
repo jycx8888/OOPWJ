@@ -1220,6 +1220,11 @@ public class Quiz extends javax.swing.JFrame {
             String selectedModule = (String) jComboBox1.getSelectedItem();
             String[] moduleParts = selectedModule.split(" - ", 2); // Split into ID and name
             String moduleId = moduleParts[0].trim();
+            String quizIdForSave = resolveQuizIdForSave(moduleId);
+            if (quizIdForSave.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Please select a quiz before saving questions.", "Validation", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
 
             // Build the question line (without QuestionID, will be assigned during insertion)
             if (selectedTabIndex == 0) { // Objective tab
@@ -1232,7 +1237,7 @@ public class Quiz extends javax.swing.JFrame {
 
                 sb.append("TEMP") // Temporary ID, will be replaced
                   .append(",")
-                  .append(csvEscape(currentQuizID)).append(",") // Append QuizID at index[1]
+                                    .append(csvEscape(quizIdForSave)).append(",") // Append QuizID at index[1]
                   .append(csvEscape(moduleId)).append(",") // Append ModuleID at index[2]
                   .append(csvEscape(question)).append(",")
                   .append(csvEscape(a1)).append(",")
@@ -1250,7 +1255,7 @@ public class Quiz extends javax.swing.JFrame {
 
                 sb.append("TEMP")
                   .append(",")
-                  .append(csvEscape(currentQuizID)).append(",") // Append QuizID at index[1]
+                    .append(csvEscape(quizIdForSave)).append(",") // Append QuizID at index[1]
                   .append(csvEscape(moduleId)).append(",") // Append ModuleID at index[2]
                   .append(csvEscape(subjectiveQuestion)).append(",")
                   .append("Subjective");
@@ -1259,16 +1264,16 @@ public class Quiz extends javax.swing.JFrame {
             // Insert the single question and renumber
             java.util.List<String> singleQuestion = new java.util.ArrayList<>();
             singleQuestion.add(sb.toString());
-            java.util.List<String> assignedIds = insertQuestionsAndRenumber(quizFile, singleQuestion, currentQuizID);
+                java.util.List<String> assignedIds = insertQuestionsAndRenumber(quizFile, singleQuestion, quizIdForSave);
 
             // Save marks for the single question after final ID is assigned
             if (!assignedIds.isEmpty()) {
                 if (selectedTabIndex == 0) {
                     String marks = jTextField1.getText().trim();
-                    saveQuestionMarks(moduleId, currentQuizID, assignedIds.get(0), marks);
+                    saveQuestionMarks(moduleId, quizIdForSave, assignedIds.get(0), marks);
                 } else if (selectedTabIndex == 1) {
                     String marks = jTextField7.getText().trim();
-                    saveQuestionMarks(moduleId, currentQuizID, assignedIds.get(0), marks);
+                    saveQuestionMarks(moduleId, quizIdForSave, assignedIds.get(0), marks);
                 }
             }
 
@@ -1535,6 +1540,7 @@ public class Quiz extends javax.swing.JFrame {
         String selectedModule = (String) jComboBox1.getSelectedItem();
         String[] moduleParts = selectedModule.split(" - ", 2);
         String moduleId = moduleParts[0].trim();
+        String quizIdForSave = resolveQuizIdForSave(moduleId);
         
         // Get the current question ID from the label
         String questionIdLabel = jLabel1.getText(); // Format: "Question: X"
@@ -1546,7 +1552,7 @@ public class Quiz extends javax.swing.JFrame {
         // Build the updated question line
         StringBuilder updatedLine = new StringBuilder();
         updatedLine.append(questionId).append(",")
-                   .append(csvEscape(currentQuizID)).append(",")
+                   .append(csvEscape(quizIdForSave)).append(",")
                    .append(csvEscape(moduleId)).append(",");
         
         if (selectedTabIndex == 0) { // Objective tab
@@ -1600,9 +1606,10 @@ public class Quiz extends javax.swing.JFrame {
                 String lineModuleId = parts[2].trim().replaceAll("^\"|\"$", "");
                 
                 // Match by QuestionID, QuizID, and ModuleID
-                if (lineQuestionId.equals(questionId) && 
-                    lineQuizId.equals(currentQuizID) && 
-                    lineModuleId.equals(moduleId)) {
+                boolean quizIdMatches = lineQuizId.equals(quizIdForSave)
+                    || lineQuizId.equals(currentQuizID)
+                    || (!currentQuizTitle.isEmpty() && lineQuizId.equals(currentQuizTitle));
+                if (lineQuestionId.equals(questionId) && quizIdMatches && lineModuleId.equals(moduleId)) {
                     allLines.set(i, updatedLine.toString());
                     found = true;
                     break;
@@ -1785,6 +1792,21 @@ public class Quiz extends javax.swing.JFrame {
         return "";
     }
 
+    private String resolveQuizIdForSave(String moduleId) {
+        String quizId = currentQuizID != null ? currentQuizID.trim() : "";
+        if (quizId.startsWith("QZ")) {
+            return quizId;
+        }
+
+        String titleCandidate = currentQuizTitle != null ? currentQuizTitle.trim() : "";
+        if (titleCandidate.isEmpty()) {
+            titleCandidate = jTextField9.getText().trim();
+        }
+
+        String resolved = resolveQuizIdFromTitle(moduleId, titleCandidate.isEmpty() ? quizId : titleCandidate);
+        return resolved != null && !resolved.isEmpty() ? resolved : quizId;
+    }
+
     private int countQuestionsFor(String moduleId, String quizId) {
         if (moduleId == null || moduleId.isEmpty() || quizId == null || quizId.isEmpty()) {
             return 0;
@@ -1825,7 +1847,7 @@ public class Quiz extends javax.swing.JFrame {
         }
 
         int count = countQuestionsFor(moduleId, quizId);
-        String labelText = "Question: " + count;
+        String labelText = "Question: " + (count + 1);
         jLabel1.setText(labelText);
         jLabel7.setText(labelText);
     }
