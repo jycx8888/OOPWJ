@@ -215,8 +215,8 @@ public class editProfileL extends javax.swing.JFrame {
             String line;
             while ((line = br.readLine()) != null) {
                 String[] parts = line.split(",");
-                if (parts.length >= 4 && parts[0].equals(loggedInUserID)) {
-                    lines.add(parts[0] + "," + parts[1] + "," + newPassword + "," + parts[3]);
+                if (parts.length >= 5 && parts[0].equals(loggedInUserID)) {
+                    lines.add(parts[0] + "," + parts[1] + "," + newPassword + "," + parts[3] + "," + parts[4]);
                     updated = true;
                 } else {
                     lines.add(line);
@@ -251,8 +251,8 @@ public class editProfileL extends javax.swing.JFrame {
             String line;
             while ((line = br.readLine()) != null) {
                 String[] parts = line.split(",");
-                if (parts.length >= 4 && parts[0].equals(loggedInUserID)) {
-                    lines.add(parts[0] + "," + newName + "," + parts[2] + "," + parts[3]);
+                if (parts.length >= 5 && parts[0].equals(loggedInUserID)) {
+                    lines.add(parts[0] + "," + newName + "," + parts[2] + "," + parts[3] + "," + parts[4]);
                     updated = true;
                 } else {
                     lines.add(line);
