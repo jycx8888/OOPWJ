@@ -32,6 +32,7 @@ public class Grade_Assessment extends javax.swing.JFrame {
     private String lecturerID;
     private Lecturer_menu lecturerMenu;
     private TableRowSorter<TableModel> tableRowSorter;
+    private javax.swing.JLabel searchResultLabel;
 
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(Grade_Assessment.class.getName());
 
@@ -40,6 +41,8 @@ public class Grade_Assessment extends javax.swing.JFrame {
      */
     public Grade_Assessment() {
         initComponents();
+        initSearchResultLabel();
+        resetPanelLayoutForLabel();
         setLocationRelativeTo(null);
         clearTable();
         // No need for initLoadOnShow() here
@@ -57,6 +60,8 @@ public class Grade_Assessment extends javax.swing.JFrame {
         logger.log(java.util.logging.Level.INFO, "Grade_Assessment created with lecturerID: " + lecturerID);
         
         initComponents();
+        initSearchResultLabel();
+        resetPanelLayoutForLabel();
         setLocationRelativeTo(null);
         clearTable();
         
@@ -103,6 +108,69 @@ public class Grade_Assessment extends javax.swing.JFrame {
         ));
         resetTableSorter();
         hideHiddenColumns();
+    }
+
+    private void initSearchResultLabel() {
+        searchResultLabel = new javax.swing.JLabel("All Assessments");
+        searchResultLabel.setFont(new java.awt.Font("Segoe UI", java.awt.Font.PLAIN, 14));
+        searchResultLabel.setForeground(new java.awt.Color(0, 0, 0));
+    }
+
+    private void resetPanelLayoutForLabel() {
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(55, 55, 55)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 186, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton4))
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addGroup(jPanel1Layout.createSequentialGroup()
+                            .addComponent(jButton2)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jButton3)
+                            .addGap(168, 168, 168)
+                            .addComponent(jButton1))
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 585, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(55, Short.MAX_VALUE))
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(searchResultLabel)
+                .addGap(0, 0, Short.MAX_VALUE))
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addContainerGap(30, Short.MAX_VALUE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jButton4)
+                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(searchResultLabel)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 13, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 376, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(30, 30, 30)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jButton1)
+                    .addComponent(jButton2)
+                    .addComponent(jButton3))
+                .addGap(28, 28, 28))
+        );
+    }
+
+    private void setTableLabel(String labelText) {
+        if (searchResultLabel == null) {
+            return;
+        }
+        if (labelText == null || labelText.trim().isEmpty()) {
+            searchResultLabel.setText("All Assessments");
+        } else {
+            searchResultLabel.setText(labelText);
+        }
     }
 
     private void hideHiddenColumns() {
@@ -601,6 +669,7 @@ public class Grade_Assessment extends javax.swing.JFrame {
         resetTableSorter();
         hideHiddenColumns();
         applySearchFilter();
+        updateSearchResultLabel(jTextField1.getText());
         
         System.out.println("DEBUG: loadAssessmentAnswers() END");
     }
@@ -654,12 +723,14 @@ public class Grade_Assessment extends javax.swing.JFrame {
         String query = jTextField1.getText();
         if (query == null) {
             tableRowSorter.setRowFilter(null);
+            updateSearchResultLabel(null);
             return;
         }
 
         query = query.trim();
         if (query.isEmpty() || "Search".equalsIgnoreCase(query)) {
             tableRowSorter.setRowFilter(null);
+            updateSearchResultLabel("");
             return;
         }
 
@@ -668,6 +739,15 @@ public class Grade_Assessment extends javax.swing.JFrame {
             "(?i)" + escaped, 0, 1, 2, 3, 4, 5
         );
         tableRowSorter.setRowFilter(filter);
+        updateSearchResultLabel(query);
+    }
+
+    private void updateSearchResultLabel(String query) {
+        if (query == null || query.trim().isEmpty() || "Search".equalsIgnoreCase(query.trim())) {
+            setTableLabel("All Assessments");
+        } else {
+            setTableLabel("Search result of: \"" + query.trim() + "\"");
+        }
     }
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {
