@@ -1,13 +1,18 @@
 package oopwj;
 
-import java.awt.Component;
+import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
+import java.awt.Image;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.Box;
-import javax.swing.BoxLayout;
+import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -27,70 +32,109 @@ import oopwj.Student.StudentFrame;
 
 public class LoginFrame extends JFrame {
     
+    
+    Color bgLightBlue = new Color(235, 245, 251); 
+    Color btnBlue = new Color(51, 122, 183);      
+    Color btnRed = new Color(217, 83, 79);        
+    Color textDark = new Color(50, 50, 50);       
+    
     public LoginFrame(){
 
-        setSize(1000, 1000); 
-        setTitle("Login Page");
+        
+        setSize(900, 550); 
+        setTitle("APU Login Portal");
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
+        
+        
+        JPanel mainPanel = new JPanel(new GridLayout(1, 2));
+        this.add(mainPanel);
 
-        JPanel panel = new JPanel();
-        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-        panel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        JPanel leftPanel = new JPanel();
+        leftPanel.setBackground(Color.WHITE); 
+        leftPanel.setLayout(new GridBagLayout()); 
+        
+        GridBagConstraints gbcLeft = new GridBagConstraints();
+        gbcLeft.gridx = 0;
+        gbcLeft.gridy = 0;
+        gbcLeft.insets = new Insets(10, 10, 20, 10); 
 
         
-        panel.add(Box.createRigidArea(new Dimension(0, 20)));
-        JLabel titlelabel = new JLabel("Login Here!");
-        titlelabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        titlelabel.setFont(new Font("Arial", Font.BOLD, 20));
-        panel.add(titlelabel);
-        
-        panel.add(Box.createRigidArea(new Dimension(0, 20)));
-        
-        ImageIcon Logo = new ImageIcon(getClass().getResource("/oopwj/image/APU_Logo.png"));
-        JLabel logolabel = new JLabel(Logo);
-        logolabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        panel.add(logolabel);
-        
-        
-        panel.add(Box.createRigidArea(new Dimension(0, 30)));
+        ImageIcon originalLogo = new ImageIcon(getClass().getResource("/oopwj/image/APU_Logo.png"));
+        Image img = originalLogo.getImage();
+        Image newImg = img.getScaledInstance(300, 300, Image.SCALE_SMOOTH); 
+        ImageIcon scaledLogo = new ImageIcon(newImg);
 
-        JLabel userIDlabel = new JLabel("Enter your ID here:");
+        JLabel logoLabel = new JLabel(scaledLogo);
+        leftPanel.add(logoLabel, gbcLeft);
+
+        
+        gbcLeft.gridy = 1;
+        JLabel titleLabel = new JLabel("Login Here!");
+        titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 28));
+        titleLabel.setForeground(new Color(0, 0, 102)); 
+        leftPanel.add(titleLabel, gbcLeft);
+
+        mainPanel.add(leftPanel);
+
+        JPanel rightPanel = new JPanel();
+        rightPanel.setBackground(bgLightBlue); 
+        rightPanel.setLayout(new GridBagLayout());
+        
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(10, 10, 10, 10); 
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        
+        
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        JLabel idLabel = new JLabel("User ID:");
+        idLabel.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        idLabel.setForeground(textDark);
+        rightPanel.add(idLabel, gbc);
+
+        
+        gbc.gridy = 1;
         JTextField userIDtextfield = new JTextField();
-        userIDlabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        userIDtextfield.setAlignmentX(Component.CENTER_ALIGNMENT);
-        userIDtextfield.setMaximumSize(new Dimension(200, 30));
-        panel.add(userIDlabel);
-        panel.add(userIDtextfield);
-        
-        panel.add(Box.createRigidArea(new Dimension(0, 10)));
+        userIDtextfield.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        userIDtextfield.setPreferredSize(new Dimension(250, 40)); // Bigger box
+        rightPanel.add(userIDtextfield, gbc);
 
-        JLabel userPasswordlabel = new JLabel("Enter your Password here:");
-        JPasswordField userPasswordtextfield = new JPasswordField(); 
-        userPasswordlabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        userPasswordtextfield.setAlignmentX(Component.CENTER_ALIGNMENT);
-        userPasswordtextfield.setMaximumSize(new Dimension(200, 30));
-        panel.add(userPasswordlabel);
-        panel.add(userPasswordtextfield);
         
+        gbc.gridy = 2;
+        JLabel passLabel = new JLabel("Password:");
+        passLabel.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        passLabel.setForeground(textDark);
+        rightPanel.add(passLabel, gbc);
+
         
-        panel.add(Box.createRigidArea(new Dimension(0, 30)));
+        gbc.gridy = 3;
+        JPasswordField userPasswordtextfield = new JPasswordField();
+        userPasswordtextfield.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        userPasswordtextfield.setPreferredSize(new Dimension(250, 40));
+        rightPanel.add(userPasswordtextfield, gbc);
+
+        
+        gbc.gridy = 4;
+        gbc.insets = new Insets(30, 10, 10, 10); 
+        
+        JPanel buttonPanel = new JPanel(new GridLayout(1, 2, 10, 0)); 
+        buttonPanel.setBackground(bgLightBlue); 
+        buttonPanel.setOpaque(false);
 
         JButton enterButton = new JButton("Login");
-        enterButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-        enterButton.setMaximumSize(new Dimension(100, 40));
-        panel.add(enterButton);
+        styleButton(enterButton, btnBlue);
 
+        JButton backButton = new JButton("Exit");
+        styleButton(backButton, btnRed);
+
+        buttonPanel.add(enterButton);
+        buttonPanel.add(backButton);
         
-        panel.add(Box.createRigidArea(new Dimension(0, 10)));
-        JButton backButton = new JButton("Exit"); 
-        backButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-        panel.add(backButton);
+        rightPanel.add(buttonPanel, gbc);
 
-        this.add(panel);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setLocationRelativeTo(null);
-        setVisible(true);
+        mainPanel.add(rightPanel);
 
-        
 
         backButton.addActionListener(e -> System.exit(0)); 
 
@@ -105,6 +149,7 @@ public class LoginFrame extends JFrame {
                     return;
                 }
 
+                
                 AuthService auth = new AuthService();
                 User user = auth.LoginUser(userID, password);
                 
@@ -114,7 +159,6 @@ public class LoginFrame extends JFrame {
                     
                     dispose(); 
 
-                    
                     switch (role) {
                         case "Student":
                             new StudentFrame(user);
@@ -139,13 +183,23 @@ public class LoginFrame extends JFrame {
                 }
             }
         });
+        
+        setVisible(true);
+    }
+    //test
+    
+    private void styleButton(JButton btn, Color bgColor) {
+        btn.setBackground(bgColor);
+        btn.setForeground(Color.WHITE);
+        btn.setFocusPainted(false);
+        btn.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        btn.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
+        btn.setCursor(new Cursor(Cursor.HAND_CURSOR));
     }
 
     public static void main(String[] args) {
-
         SwingUtilities.invokeLater(() ->{
             new LoginFrame();
         });
     }
-
 }
