@@ -186,7 +186,7 @@ public class LoginFrame extends JFrame {
         
         setVisible(true);
     }
-    //test
+    
     
     private void styleButton(JButton btn, Color bgColor) {
         btn.setBackground(bgColor);
