@@ -1,3 +1,3 @@
-L101,lettuce,word,L101@mail.apu.edu.my,AC010
+L101,Lim Jun Jie,word,L101@mail.apu.edu.my
 L100,luggage,luglug,L100@mail.apu.edu.my,AC124
 L001,hey,you,L001@mail.apu.edu.my,AC010
