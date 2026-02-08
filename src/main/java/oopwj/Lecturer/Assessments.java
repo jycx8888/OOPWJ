@@ -1262,6 +1262,8 @@ public class Assessments extends javax.swing.JFrame {
         File quizFile = new File(projectRoot, "src\\main\\java\\oopwj\\data\\Quiz.txt");
         File questionFile = new File(projectRoot, "src\\main\\java\\oopwj\\data\\question.txt");
 
+        Map<String, String> quizSetFeedback = loadQuizSetFeedback(projectRoot);
+
         // Count questions per QuizID and ModuleID combination
         Map<String, Integer> questionCounts = new HashMap<>();
 
@@ -1284,7 +1286,7 @@ public class Assessments extends javax.swing.JFrame {
             }
         }
 
-        String[] columnNames = {"Module Name", "Quiz Name", "Total Questions"};
+        String[] columnNames = {"Module Name", "Quiz Name", "Total Questions", "Feedback"};
         List<Object[]> rows = new ArrayList<>();
 
         displayedQuizSetKeys.clear();
@@ -1306,8 +1308,9 @@ public class Assessments extends javax.swing.JFrame {
                         String moduleName = getModuleName(moduleID);
                         String key = quizID + "|" + moduleID;
                         int totalQuestions = questionCounts.getOrDefault(key, 0);
+                        String feedback = quizSetFeedback.getOrDefault(key, "Pending");
 
-                        rows.add(new Object[]{moduleName, quizName, totalQuestions});
+                        rows.add(new Object[]{moduleName, quizName, totalQuestions, feedback});
                         displayedQuizSetKeys.add(quizID + "|" + moduleID);
                     }
                 }
@@ -1326,6 +1329,44 @@ public class Assessments extends javax.swing.JFrame {
 
         originalQuizLines.clear();
         displayedQuizLineIndices.clear();
+    }
+
+    private Map<String, String> loadQuizSetFeedback(String projectRoot) {
+        Map<String, String> feedbackMap = new HashMap<>();
+        File quizFeedbackFile = new File(projectRoot, "src\\main\\java\\oopwj\\data\\QuizFeedback.txt");
+
+        if (!quizFeedbackFile.exists()) {
+            return feedbackMap;
+        }
+
+        try (BufferedReader br = new BufferedReader(new FileReader(quizFeedbackFile))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                String trimmedLine = line.trim();
+                if (trimmedLine.isEmpty() || trimmedLine.startsWith("#")) {
+                    continue;
+                }
+
+                String[] parts = trimmedLine.split(",", 4);
+                if (parts.length >= 3) {
+                    String moduleID = parts[0].trim();
+                    String quizID = parts[1].trim();
+                    String feedbackField = parts.length == 4 ? parts[3].trim() : parts[2].trim();
+                    String feedback = feedbackField;
+                    if (feedback.startsWith("\"") && feedback.endsWith("\"")) {
+                        feedback = feedback.substring(1, feedback.length() - 1).replace("\"\"", "\"");
+                    }
+                    String key = quizID + "|" + moduleID;
+                    if (!feedback.isEmpty()) {
+                        feedbackMap.put(key, feedback);
+                    }
+                }
+            }
+        } catch (IOException ex) {
+            logger.log(java.util.logging.Level.WARNING, "Error reading QuizFeedback.txt", ex);
+        }
+
+        return feedbackMap;
     }
     
     private void loadQuizzesByModuleID(String moduleID) {
