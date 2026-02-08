@@ -4,6 +4,8 @@
  */
 package oopwj.Lecturer;
 
+import java.awt.*;
+import javax.swing.*;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -61,6 +63,12 @@ public class Assessments extends javax.swing.JFrame {
         jButton4.addActionListener(this::jButton4ActionPerformed);
         jButton6.addActionListener(this::jButton6ActionPerformed);
         jComboBox1.addActionListener(this::jComboBox1ActionPerformed);
+        addHoverEffect(jButton1,new Color(220,80,80),new Color(220,80,80));
+        addHoverEffect(jButton2,new Color(70,130,180),new Color(70,130,180));
+        addHoverEffect(jButton3,new Color(70,130,180),new Color(70,130,180));
+        addHoverEffect(jButton4,new Color(70,130,180),new Color(70,130,180));
+        addHoverEffect(jButton5,new Color(70,130,180),new Color(70,130,180));
+        addHoverEffect(jButton6,new Color(70,130,180),new Color(70,130,180));
     }
 
     private void centerWindow() {
@@ -196,6 +204,29 @@ public class Assessments extends javax.swing.JFrame {
         }
     }
 
+    private void addHoverEffect(JButton btn, Color normal, Color hover) {
+        btn.setOpaque(true);
+        btn.setContentAreaFilled(true);
+        btn.setBorderPainted(false);
+        btn.setFocusPainted(false);
+
+        btn.setBackground(normal);
+        btn.setForeground(Color.WHITE);
+
+        btn.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseEntered(java.awt.event.MouseEvent e) {
+                btn.setBackground(hover);
+            }
+
+            @Override
+            public void mouseExited(java.awt.event.MouseEvent e) {
+                btn.setBackground(normal);
+            }
+        });
+    }
+
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -205,7 +236,22 @@ public class Assessments extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jPanel1 = new javax.swing.JPanel();
+        jPanel1 = new javax.swing.JPanel(){
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                Graphics2D g2 = (Graphics2D) g;
+
+                GradientPaint gp = new GradientPaint(
+                    0, 0, new Color(230, 240, 255),
+                    0, getHeight(), new Color(245, 247, 250)
+                );
+
+                g2.setPaint(gp);
+                g2.fillRect(0, 0, getWidth(), getHeight());
+            }
+
+        };
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
@@ -222,6 +268,7 @@ public class Assessments extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
+        jPanel1.setOpaque(false);
 
         jButton1.setText("Back");
 
