@@ -1378,6 +1378,32 @@ public class Assessments extends javax.swing.JFrame {
         
         return quizMarks;
     }
+
+    private Map<String, String> loadQuizFeedback(String projectRoot) {
+        Map<String, String> quizFeedback = new HashMap<>();
+        File feedbackFile = new File(projectRoot, "src\\main\\java\\oopwj\\data\\QuizFeedback.txt");
+
+        if (feedbackFile.exists()) {
+            try (BufferedReader br = new BufferedReader(new FileReader(feedbackFile))) {
+                String line;
+                while ((line = br.readLine()) != null) {
+                    String[] fields = parseCSV(line);
+                    if (fields.length >= 4) {
+                        String moduleID = fields[0].trim();
+                        String quizID = fields[1].trim();
+                        String feedback = fields[3].trim();
+                        if (!moduleID.isEmpty() && !quizID.isEmpty()) {
+                            quizFeedback.put(moduleID + "|" + quizID, feedback);
+                        }
+                    }
+                }
+            } catch (IOException ex) {
+                logger.log(java.util.logging.Level.WARNING, "Error reading QuizFeedback.txt", ex);
+            }
+        }
+
+        return quizFeedback;
+    }
     
     private String[] parseCSV(String line) {
         List<String> fields = new ArrayList<>();
@@ -1456,10 +1482,12 @@ public class Assessments extends javax.swing.JFrame {
             }
         }
 
-        String[] columnNames = {"Module Name", "Quiz Name", "Total Questions"};
+        String[] columnNames = {"Module Name", "Quiz Name", "Total Questions", "Feedback"};
         List<Object[]> rows = new ArrayList<>();
 
         displayedQuizSetKeys.clear();
+
+        Map<String, String> quizFeedback = loadQuizFeedback(projectRoot);
 
         if (quizFile.exists()) {
             try (BufferedReader br = new BufferedReader(new FileReader(quizFile))) {
@@ -1479,7 +1507,12 @@ public class Assessments extends javax.swing.JFrame {
                         String key = quizID + "|" + moduleID;
                         int totalQuestions = questionCounts.getOrDefault(key, 0);
 
-                        rows.add(new Object[]{moduleName, quizName, totalQuestions});
+                        String feedback = quizFeedback.getOrDefault(moduleID + "|" + quizID, "Pending");
+                        if (feedback.trim().isEmpty()) {
+                            feedback = "Pending";
+                        }
+
+                        rows.add(new Object[]{moduleName, quizName, totalQuestions, feedback});
                         displayedQuizSetKeys.add(quizID + "|" + moduleID);
                     }
                 }
