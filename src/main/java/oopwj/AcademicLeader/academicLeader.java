@@ -215,9 +215,9 @@ public class academicLeader extends javax.swing.JFrame {
         );
         
         if (confirm == javax.swing.JOptionPane.YES_OPTION) {
-            clearSession();  // Clear user session
+            clearSession();
             this.dispose();
-            new oopwj.LoginFrame();  // Return to login page
+            new oopwj.LoginFrame();
         }
     }//GEN-LAST:event_logoutNewActionPerformed
 
@@ -242,7 +242,6 @@ public class academicLeader extends javax.swing.JFrame {
         }
         //</editor-fold>
 
-        /* Create and display the form - Must login first */
         java.awt.EventQueue.invokeLater(() -> new oopwj.LoginFrame());
     }
 
