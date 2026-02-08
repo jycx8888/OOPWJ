@@ -2,7 +2,7 @@ S123,M001,QZ001,Q001,Subjective,Java is an object oriented programming language,
 S123,M001,QZ001,Q002,Objective,C,0
 S123,M001,QZ001,Q003,Subjective,2 plus 2 equals 4,1
 S123,M001,QZ001,Q004,Objective,A,0
-S123,M001,QZ001,Q005,Subjective,Earth rotation makes the sun appear in the east,0
+S123,M001,QZ001,Q005,Subjective,Earth rotation makes the sun appear in the east,2
 S123,M001,QZ001,Q006,Objective,A,0
 S123,M001,QZ001,Q007,Subjective,Multiply 5 by 5 to get 25,0
 S123,M001,QZ001,Q008,Objective,A,0
