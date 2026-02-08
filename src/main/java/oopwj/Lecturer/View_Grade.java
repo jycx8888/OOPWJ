@@ -26,6 +26,7 @@ public class View_Grade extends javax.swing.JFrame {
     public View_Grade() {
         initComponents();
         setLocationRelativeTo(null);
+        configureQuestionComboBox();
         configureObjectiveAutoMark();
         jButton1.addActionListener(this::jButton1ActionPerformed);
         jButton5.addActionListener(this::jButton5ActionPerformed);
@@ -41,6 +42,7 @@ public class View_Grade extends javax.swing.JFrame {
         this.studentID = studentID;
         initComponents();
         setLocationRelativeTo(null);
+        configureQuestionComboBox();
         configureObjectiveAutoMark();
         jButton1.addActionListener(this::jButton1ActionPerformed);
         jButton2.addActionListener(this::jButton2ActionPerformed);
@@ -72,6 +74,19 @@ public class View_Grade extends javax.swing.JFrame {
         jRadioButton2.setEnabled(false);
         jRadioButton1.setFocusable(false);
         jRadioButton2.setFocusable(false);
+    }
+
+    private void configureQuestionComboBox() {
+        jComboBox1.setRenderer(new javax.swing.DefaultListCellRenderer() {
+            @Override
+            public java.awt.Component getListCellRendererComponent(javax.swing.JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+                super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+                if (value instanceof String) {
+                    setText(buildQuestionDisplayText((String) value));
+                }
+                return this;
+            }
+        });
     }
 
     private void updateObjectiveAutoMark(String correctAnswer, String studentAnswer) {
@@ -204,7 +219,7 @@ public class View_Grade extends javax.swing.JFrame {
      */
     private void setupSpinnerValidation() {
         jSpinner2.addChangeListener(e -> {
-            String selectedQuestionID = (String) jComboBox1.getSelectedItem();
+            String selectedQuestionID = getSelectedQuestionId();
             if (selectedQuestionID != null && maxMarksMap.containsKey(selectedQuestionID)) {
                 int maxMarks = maxMarksMap.get(selectedQuestionID);
                 int currentValue = (Integer) jSpinner2.getValue();
@@ -231,7 +246,7 @@ public class View_Grade extends javax.swing.JFrame {
      */
     private void setupSpinnerChangeListener() {
         jSpinner2.addChangeListener(e -> {
-            String selectedQuestionID = (String) jComboBox1.getSelectedItem();
+            String selectedQuestionID = getSelectedQuestionId();
             if (selectedQuestionID != null && isSubjectiveQuestion(selectedQuestionID)) {
                 int marks = (Integer) jSpinner2.getValue();
                 subjectiveGrades.put(selectedQuestionID, marks);
@@ -596,7 +611,7 @@ public class View_Grade extends javax.swing.JFrame {
 
     private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox1ActionPerformed
         // Get the selected question ID from the combo box
-        String selectedQuestionID = (String) jComboBox1.getSelectedItem();
+        String selectedQuestionID = getSelectedQuestionId();
         if (selectedQuestionID == null || selectedQuestionID.isEmpty()) {
             return;
         }
@@ -873,7 +888,7 @@ public class View_Grade extends javax.swing.JFrame {
             gradedQuestions.addAll(objectiveGrades.keySet());
             
             for (int i = 0; i < jComboBox1.getItemCount(); i++) {
-                String questionID = (String) jComboBox1.getItemAt(i);
+                String questionID = getQuestionIdAt(i);
                 if (!gradedQuestions.contains(questionID)) {
                     message.append("- ").append(questionID).append("\n");
                 }
@@ -889,7 +904,7 @@ public class View_Grade extends javax.swing.JFrame {
     }
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {
-        String selectedQuestionID = (String) jComboBox1.getSelectedItem();
+        String selectedQuestionID = getSelectedQuestionId();
         if (selectedQuestionID == null || selectedQuestionID.isEmpty()) {
             return;
         }
@@ -917,7 +932,7 @@ public class View_Grade extends javax.swing.JFrame {
     }
 
     private void refreshCurrentQuestionDisplay() {
-        String selectedQuestionID = (String) jComboBox1.getSelectedItem();
+        String selectedQuestionID = getSelectedQuestionId();
         if (selectedQuestionID == null || selectedQuestionID.isEmpty()) {
             return;
         }
@@ -1111,6 +1126,36 @@ public class View_Grade extends javax.swing.JFrame {
         } catch (NumberFormatException e) {
             // If parsing fails, fall back to string comparison
             return q1.compareTo(q2);
+        }
+    }
+
+    private String getSelectedQuestionId() {
+        Object selected = jComboBox1.getSelectedItem();
+        if (selected instanceof String) {
+            return (String) selected;
+        }
+        return null;
+    }
+
+    private String getQuestionIdAt(int index) {
+        Object item = jComboBox1.getItemAt(index);
+        if (item instanceof String) {
+            return (String) item;
+        }
+        return null;
+    }
+
+    private String buildQuestionDisplayText(String questionID) {
+        String numericPart = questionID.replaceAll("[^0-9]", "");
+        if (numericPart.isEmpty()) {
+            return questionID;
+        }
+
+        try {
+            int number = Integer.parseInt(numericPart);
+            return "Question " + number;
+        } catch (NumberFormatException e) {
+            return questionID;
         }
     }
     
