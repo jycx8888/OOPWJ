@@ -105,7 +105,7 @@ public class CreateUserPage extends javax.swing.JDialog {
         try (BufferedReader br = new BufferedReader(new FileReader(f))) {
             String line;
             while ((line = br.readLine()) != null) {
-                String[] parts = line.split(",", -1);
+                String[] parts = line.split(",");
                 if (parts.length > 0 && parts[0].trim().equals(userId)) {
                     return true;
                 }
