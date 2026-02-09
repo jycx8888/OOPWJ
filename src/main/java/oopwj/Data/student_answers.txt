@@ -1,0 +1,10 @@
+S111,M002,QZ001,"Q001",Objective,A
+S111,M002,QZ001,"Q003",Objective,A
+S111,M002,QZ001,"Q005",Objective,A
+S111,M002,QZ001,Q002,Objective,A
+S111,M002,QZ001,Q003,Objective,A
+S111,M002,QZ001,Q005,Objective,A
+S111,M002,QZ001,"Q002",Subjective,vsdvsd
+S111,M002,QZ001,"Q004",Subjective,vdv
+S111,M002,QZ001,Q001,Subjective,vsac
+S111,M002,QZ001,Q004,Subjective,sdvsa

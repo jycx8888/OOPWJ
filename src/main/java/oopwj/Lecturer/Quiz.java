@@ -207,7 +207,7 @@ public class Quiz extends javax.swing.JFrame {
             if (quizTitle != null && !quizTitle.isEmpty()) {
                 jTextField9.setText(quizTitle);
                 currentQuizTitle = quizTitle;
-                jTextField9.setEditable(false);
+                jTextField9.setEditable(true);
             }
         }
 
@@ -226,7 +226,7 @@ public class Quiz extends javax.swing.JFrame {
         jButton5.setEnabled(false);    // Add Quiz Set button
         jButton6.setEnabled(false);    // Enter button
         jTabbedPane1.setEnabled(false); // Tab panel
-        jTextField9.setEditable(false); // Quiz title field
+        jTextField9.setEditable(true); // Quiz title field
 
         // Display the current QuestionID on jLabel1 and jLabel7 (for editing)
         if (questionId != null && !questionId.isEmpty()) {
@@ -344,7 +344,7 @@ public class Quiz extends javax.swing.JFrame {
         if (titleToShow != null && !titleToShow.isEmpty()) {
             jTextField9.setText(titleToShow);
             currentQuizTitle = titleToShow;
-            jTextField9.setEditable(false);
+            jTextField9.setEditable(true);
         }
 
         if (resolvedQuizId != null && !resolvedQuizId.isEmpty()) {
@@ -409,8 +409,8 @@ public class Quiz extends javax.swing.JFrame {
                 String line;
                 while ((line = br.readLine()) != null) {
                     String[] parts = line.split(",");
-                    if (parts.length > 2 && parts[2].trim().equals(moduleId)) { // ModuleID is at index[2]
-                        String questionId = parts[0].trim(); // QuestionID is at index[0]
+                    if (parts.length > 2 && stripQuotes(parts[2].trim()).equals(moduleId)) { // ModuleID is at index[2]
+                        String questionId = stripQuotes(parts[0].trim()); // QuestionID is at index[0]
                         if (questionId.startsWith("Q")) {
                             try {
                                 int id = Integer.parseInt(questionId.substring(1));
@@ -447,26 +447,26 @@ public class Quiz extends javax.swing.JFrame {
                 String[] parts = line.split(",");
                 if (parts.length == 10) {
                     // Objective question
-                    String moduleId = parts[0].trim();
-                    String moduleName = parts[1].trim();
-                    String questionId = parts[2].trim();
-                    String question = parts[3].trim();
-                    String ansA = parts[4].trim();
-                    String ansB = parts[5].trim();
-                    String ansC = parts[6].trim();
-                    String ansD = parts[7].trim();
-                    String correctAns = parts[8].trim();
-                    String type = parts[9].trim();
+                    String moduleId = stripQuotes(parts[0].trim());
+                    String moduleName = stripQuotes(parts[1].trim());
+                    String questionId = stripQuotes(parts[2].trim());
+                    String question = stripQuotes(parts[3].trim());
+                    String ansA = stripQuotes(parts[4].trim());
+                    String ansB = stripQuotes(parts[5].trim());
+                    String ansC = stripQuotes(parts[6].trim());
+                    String ansD = stripQuotes(parts[7].trim());
+                    String correctAns = stripQuotes(parts[8].trim());
+                    String type = stripQuotes(parts[9].trim());
 
                     // Process the objective question (e.g., add to UI or data structure)
                     System.out.println("Objective Question: " + question);
                 } else if (parts.length == 5) {
                     // Subjective question
-                    String moduleId = parts[0].trim();
-                    String moduleName = parts[1].trim();
-                    String questionId = parts[2].trim();
-                    String question = parts[3].trim();
-                    String type = parts[4].trim();
+                    String moduleId = stripQuotes(parts[0].trim());
+                    String moduleName = stripQuotes(parts[1].trim());
+                    String questionId = stripQuotes(parts[2].trim());
+                    String question = stripQuotes(parts[3].trim());
+                    String type = stripQuotes(parts[4].trim());
 
                     // Process the subjective question (e.g., add to UI or data structure)
                     System.out.println("Subjective Question: " + question);
@@ -498,25 +498,25 @@ public class Quiz extends javax.swing.JFrame {
                 String[] parts = line.split(",");
                 if (parts.length == 10) {
                     // Objective question
-                    String moduleId = parts[0].trim();
-                    String moduleName = parts[1].trim();
-                    String questionId = parts[2].trim();
-                    String question = parts[3].trim();
-                    String ansA = parts[4].trim();
-                    String ansB = parts[5].trim();
-                    String ansC = parts[6].trim();
-                    String ansD = parts[7].trim();
-                    String correctAns = parts[8].trim();
+                    String moduleId = stripQuotes(parts[0].trim());
+                    String moduleName = stripQuotes(parts[1].trim());
+                    String questionId = stripQuotes(parts[2].trim());
+                    String question = stripQuotes(parts[3].trim());
+                    String ansA = stripQuotes(parts[4].trim());
+                    String ansB = stripQuotes(parts[5].trim());
+                    String ansC = stripQuotes(parts[6].trim());
+                    String ansD = stripQuotes(parts[7].trim());
+                    String correctAns = stripQuotes(parts[8].trim());
 
                     // Add to table
                     model.addRow(new Object[]{moduleId, moduleName, questionId, question, "Objective"});
                 } else if (parts.length == 5) {
                     // Subjective question
-                    String moduleId = parts[0].trim();
-                    String moduleName = parts[1].trim();
-                    String questionId = parts[2].trim();
-                    String question = parts[3].trim();
-                    String type = parts[4].trim();
+                    String moduleId = stripQuotes(parts[0].trim());
+                    String moduleName = stripQuotes(parts[1].trim());
+                    String questionId = stripQuotes(parts[2].trim());
+                    String question = stripQuotes(parts[3].trim());
+                    String type = stripQuotes(parts[4].trim());
 
                     // Add to table with sequence 0,1,2,4,3
                     model.addRow(new Object[]{moduleId, moduleName, questionId, type, question});
@@ -918,7 +918,7 @@ public class Quiz extends javax.swing.JFrame {
 
         jButton5.setText("Add");
 
-        jButton6.setText("Enter");
+        jButton6.setText("Confirm");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -1029,8 +1029,8 @@ public class Quiz extends javax.swing.JFrame {
                 currentQuizTitle = quizTitle;
             }
             
-            // Make the title field read-only when an existing quiz is selected
-            jTextField9.setEditable(false);
+            // Keep the title field editable even when an existing quiz is selected
+            jTextField9.setEditable(true);
             
             // Display the next QuestionID on jLabel1 and jLabel7
             if (selectedModule != null && !selectedModule.isEmpty()) {
@@ -1050,6 +1050,20 @@ public class Quiz extends javax.swing.JFrame {
             return;
         }
         
+        String existingTitle = jTextField9.getText().trim();
+        if (!existingTitle.isEmpty()) {
+            int confirm = JOptionPane.showConfirmDialog(
+                    this,
+                    "A quiz title is already entered. Discard it and create a new quiz?",
+                    "Confirm",
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.WARNING_MESSAGE
+            );
+            if (confirm != JOptionPane.YES_OPTION) {
+                return;
+            }
+        }
+
         // Clear the title field and reset current quiz tracking for entering a new title
         jTextField9.setText("");
         // Make the title field editable for new quiz entry
@@ -1077,6 +1091,70 @@ public class Quiz extends javax.swing.JFrame {
         
         String[] moduleParts = selectedModule.split(" - ", 2);
         String moduleId = moduleParts[0].trim();
+
+        // If a quiz is already selected, update its title without creating a new QuizID
+        String existingQuizId = currentQuizID != null ? currentQuizID.trim() : "";
+        if (existingQuizId.isEmpty()) {
+            String selectedQuizId = getSelectedQuizId();
+            if (selectedQuizId != null && !selectedQuizId.trim().isEmpty()) {
+                existingQuizId = selectedQuizId.trim();
+            }
+        }
+        if (!existingQuizId.isEmpty()) {
+            String previousTitle = currentQuizTitle != null ? currentQuizTitle.trim() : "";
+            if (previousTitle.isEmpty()) {
+                String storedTitle = getQuizTitle(existingQuizId);
+                previousTitle = storedTitle != null ? storedTitle.trim() : "";
+            }
+
+            boolean titleChanged = !previousTitle.equals(quizTitle);
+            if (titleChanged) {
+                int confirm = JOptionPane.showConfirmDialog(
+                        this,
+                        "Update the quiz title to:\n" + quizTitle,
+                        "Confirm Title Update",
+                        JOptionPane.YES_NO_OPTION,
+                        JOptionPane.QUESTION_MESSAGE
+                );
+                if (confirm != JOptionPane.YES_OPTION) {
+                    return;
+                }
+            }
+
+            if (updateQuizTitleInFile(existingQuizId, moduleId, quizTitle)) {
+                currentQuizTitle = quizTitle;
+                JOptionPane.showMessageDialog(this, "Quiz title updated successfully!\nQuiz ID: " + existingQuizId + "\nTitle: " + quizTitle, "Success", JOptionPane.INFORMATION_MESSAGE);
+
+                // Refresh dropdown display and keep the same quiz selected
+                populateQuizDropdown(moduleId);
+                selectQuizById(existingQuizId);
+                updateQuestionCountLabels(moduleId, existingQuizId);
+            } else {
+                boolean updatedByTitle = false;
+                if (!previousTitle.isEmpty()) {
+                    String resolvedId = resolveQuizIdFromTitle(moduleId, previousTitle);
+                    if (resolvedId != null && !resolvedId.trim().isEmpty()) {
+                        existingQuizId = resolvedId.trim();
+                    }
+                    updatedByTitle = updateQuizTitleByTitle(moduleId, previousTitle, quizTitle);
+                }
+
+                if (updatedByTitle) {
+                    currentQuizTitle = quizTitle;
+                    JOptionPane.showMessageDialog(this, "Quiz title updated successfully!\nQuiz ID: " + existingQuizId + "\nTitle: " + quizTitle, "Success", JOptionPane.INFORMATION_MESSAGE);
+
+                    // Refresh dropdown display and keep the same quiz selected when possible
+                    populateQuizDropdown(moduleId);
+                    if (existingQuizId != null && !existingQuizId.trim().isEmpty()) {
+                        selectQuizById(existingQuizId);
+                    }
+                    updateQuestionCountLabels(moduleId, existingQuizId);
+                } else {
+                    JOptionPane.showMessageDialog(this, "Failed to update quiz title.", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+            return;
+        }
         
         // Generate new QuizID
         String newQuizId = generateNextQuizId(moduleId);
@@ -1244,45 +1322,45 @@ public class Quiz extends javax.swing.JFrame {
                 return;
             }
 
-            // Build the question line (without QuestionID, will be assigned during insertion)
-            if (selectedTabIndex == 0) { // Objective tab
-                String question = jTextArea1.getText().trim();
-                String a1 = a.getText().trim();
-                String a2 = b.getText().trim();
-                String a3 = c.getText().trim();
-                String a4 = d.getText().trim();
-                String marks = jTextField1.getText().trim();
+                        // Build the question line (without QuestionID, will be assigned during insertion)
+                        if (selectedTabIndex == 0) { // Objective tab
+                                String question = jTextArea1.getText().trim();
+                                String a1 = a.getText().trim();
+                                String a2 = b.getText().trim();
+                                String a3 = c.getText().trim();
+                                String a4 = d.getText().trim();
+                                String marks = jTextField1.getText().trim();
 
-                sb.append("TEMP") // Temporary ID, will be replaced
-                  .append(",")
+                                sb.append(csvEscape("TEMP")) // Temporary ID, will be replaced
+                                    .append(",")
                                     .append(csvEscape(quizIdForSave)).append(",") // Append QuizID at index[1]
-                  .append(csvEscape(moduleId)).append(",") // Append ModuleID at index[2]
-                  .append(csvEscape(question)).append(",")
-                  .append(csvEscape(a1)).append(",")
-                  .append(csvEscape(a2)).append(",")
-                  .append(csvEscape(a3)).append(",")
-                  .append(csvEscape(a4)).append(",")
-                  .append(csvEscape(correctAnswer)).append(",")
-                  .append("Objective");
+                                    .append(csvEscape(moduleId)).append(",") // Append ModuleID at index[2]
+                                    .append(csvQuote(question)).append(",")
+                                    .append(csvEscape(a1)).append(",")
+                                    .append(csvEscape(a2)).append(",")
+                                    .append(csvEscape(a3)).append(",")
+                                    .append(csvEscape(a4)).append(",")
+                                    .append(csvEscape(correctAnswer)).append(",")
+                                    .append(csvEscape("Objective"));
 
-                // Save marks (will update with correct ID after insertion)
-                // Note: marks will be saved with the final QuestionID after renumbering
-            } else if (selectedTabIndex == 1) { // Subjective tab
-                String subjectiveQuestion = jTextArea2.getText().trim();
-                String marks = jTextField7.getText().trim();
+                                // Save marks (will update with correct ID after insertion)
+                                // Note: marks will be saved with the final QuestionID after renumbering
+                        } else if (selectedTabIndex == 1) { // Subjective tab
+                                String subjectiveQuestion = jTextArea2.getText().trim();
+                                String marks = jTextField7.getText().trim();
 
-                sb.append("TEMP")
-                  .append(",")
-                    .append(csvEscape(quizIdForSave)).append(",") // Append QuizID at index[1]
-                  .append(csvEscape(moduleId)).append(",") // Append ModuleID at index[2]
-                  .append(csvEscape(subjectiveQuestion)).append(",")
-                  .append("Subjective");
-            }
+                                sb.append(csvEscape("TEMP"))
+                                    .append(",")
+                                    .append(csvEscape(quizIdForSave)).append(",") // Append QuizID at index[1]
+                                    .append(csvEscape(moduleId)).append(",") // Append ModuleID at index[2]
+                                    .append(csvQuote(subjectiveQuestion)).append(",")
+                                    .append(csvEscape("Subjective"));
+                        }
 
             // Insert the single question and renumber
             java.util.List<String> singleQuestion = new java.util.ArrayList<>();
             singleQuestion.add(sb.toString());
-                java.util.List<String> assignedIds = insertQuestionsAndRenumber(quizFile, singleQuestion, quizIdForSave);
+            java.util.List<String> assignedIds = insertQuestionsAndRenumber(quizFile, singleQuestion, quizIdForSave);
 
             // Save marks for the single question after final ID is assigned
             if (!assignedIds.isEmpty()) {
@@ -1459,6 +1537,22 @@ public class Quiz extends javax.swing.JFrame {
         return value.replace("\"", "");
     }
 
+    private String csvQuote(String s) {
+        if (s == null) return "\"\"";
+        String value = s.replace("\r", "").replace("\n", " ").trim();
+        value = value.replace("\"", "");
+        return "\"" + value + "\"";
+    }
+
+    private String stripQuotes(String s) {
+        if (s == null) return "";
+        String value = s.trim();
+        if (value.length() >= 2 && value.startsWith("\"") && value.endsWith("\"")) {
+            return value.substring(1, value.length() - 1);
+        }
+        return value;
+    }
+
     private boolean isValidMarks(String marks) {
         if (marks == null || marks.trim().isEmpty()) {
             return false;
@@ -1499,7 +1593,7 @@ public class Quiz extends javax.swing.JFrame {
         if (!newQuestions.isEmpty()) {
             String[] firstNewParts = newQuestions.get(0).split(",", -1);
             if (firstNewParts.length >= 3) {
-                targetModuleID = firstNewParts[2].trim().replaceAll("^\"|\"$", "");
+                targetModuleID = stripQuotes(firstNewParts[2].trim());
             }
         }
         
@@ -1509,8 +1603,8 @@ public class Quiz extends javax.swing.JFrame {
             String line = allLines.get(i);
             String[] parts = line.split(",", -1);
             if (parts.length >= 3) {
-                String quizId = parts[1].trim().replaceAll("^\"|\"$", "");
-                String moduleId = parts[2].trim().replaceAll("^\"|\"$", "");
+                String quizId = stripQuotes(parts[1].trim());
+                String moduleId = stripQuotes(parts[2].trim());
                 if (quizId.equals(targetQuizID) && moduleId.equals(targetModuleID)) {
                     insertionIndex = i + 1;
                     break;
@@ -1532,14 +1626,14 @@ public class Quiz extends javax.swing.JFrame {
             String line = allLines.get(i);
             String[] parts = line.split(",", -1);
             if (parts.length >= 3) {
-                String quizId = parts[1].trim().replaceAll("^\"|\"$", "");
-                String moduleId = parts[2].trim().replaceAll("^\"|\"$", "");
+                String quizId = stripQuotes(parts[1].trim());
+                String moduleId = stripQuotes(parts[2].trim());
                 
                 // Only renumber if it belongs to BOTH the target QuizID AND ModuleID
                 if (quizId.equals(targetQuizID) && moduleId.equals(targetModuleID)) {
                     questionCounter++;
                     String newQuestionId = String.format("Q%03d", questionCounter);
-                    parts[0] = newQuestionId;
+                    parts[0] = csvEscape(newQuestionId);
                     allLines.set(i, String.join(",", parts));
                 }
             }
@@ -1560,7 +1654,7 @@ public class Quiz extends javax.swing.JFrame {
             for (int i = start; i < end; i++) {
                 String[] parts = allLines.get(i).split(",", -1);
                 if (parts.length >= 1) {
-                    assignedIds.add(parts[0].trim());
+                    assignedIds.add(stripQuotes(parts[0].trim()));
                 }
             }
         }
@@ -1586,9 +1680,9 @@ public class Quiz extends javax.swing.JFrame {
         
         // Build the updated question line
         StringBuilder updatedLine = new StringBuilder();
-        updatedLine.append(questionId).append(",")
-                   .append(csvEscape(quizIdForSave)).append(",")
-                   .append(csvEscape(moduleId)).append(",");
+         updatedLine.append(csvEscape(questionId)).append(",")
+             .append(csvEscape(quizIdForSave)).append(",")
+             .append(csvEscape(moduleId)).append(",");
         
         if (selectedTabIndex == 0) { // Objective tab
             String question = jTextArea1.getText().trim();
@@ -1598,13 +1692,13 @@ public class Quiz extends javax.swing.JFrame {
             String a4 = d.getText().trim();
             String marks = jTextField1.getText().trim();
             
-            updatedLine.append(csvEscape(question)).append(",")
+            updatedLine.append(csvQuote(question)).append(",")
                        .append(csvEscape(a1)).append(",")
                        .append(csvEscape(a2)).append(",")
                        .append(csvEscape(a3)).append(",")
                        .append(csvEscape(a4)).append(",")
                        .append(csvEscape(correctAnswer)).append(",")
-                       .append("Objective");
+                       .append(csvEscape("Objective"));
             
             // Update marks in TotalQuizMark.txt
             saveQuestionMarks(moduleId, quizIdForSave, questionId, marks);
@@ -1612,8 +1706,8 @@ public class Quiz extends javax.swing.JFrame {
             String subjectiveQuestion = jTextArea2.getText().trim();
             String marks = jTextField7.getText().trim();
             
-            updatedLine.append(csvEscape(subjectiveQuestion)).append(",")
-                       .append("Subjective");
+            updatedLine.append(csvQuote(subjectiveQuestion)).append(",")
+                       .append(csvEscape("Subjective"));
             
             // Update marks in TotalQuizMark.txt
             saveQuestionMarks(moduleId, quizIdForSave, questionId, marks);
@@ -1636,9 +1730,9 @@ public class Quiz extends javax.swing.JFrame {
             String line = allLines.get(i);
             String[] parts = line.split(",", -1);
             if (parts.length >= 3) {
-                String lineQuestionId = parts[0].trim();
-                String lineQuizId = parts[1].trim().replaceAll("^\"|\"$", "");
-                String lineModuleId = parts[2].trim().replaceAll("^\"|\"$", "");
+                String lineQuestionId = stripQuotes(parts[0].trim());
+                String lineQuizId = stripQuotes(parts[1].trim());
+                String lineModuleId = stripQuotes(parts[2].trim());
                 
                 // Match by QuestionID, QuizID, and ModuleID
                 boolean quizIdMatches = lineQuizId.equals(quizIdForSave)
@@ -1721,6 +1815,141 @@ public class Quiz extends javax.swing.JFrame {
             logger.log(java.util.logging.Level.SEVERE, "Error writing to Quiz.txt", ex);
             return false;
         }
+    }
+
+    private boolean updateQuizTitleInFile(String quizId, String moduleId, String title) {
+        String projectRoot = System.getProperty("user.dir");
+        File quizFile = new File(projectRoot, "src\\main\\java\\oopwj\\data\\Quiz.txt");
+
+        if (!quizFile.exists()) {
+            return false;
+        }
+
+        java.util.List<String> allLines = new java.util.ArrayList<>();
+        String targetQuizId = normalizeToken(quizId);
+        String targetModuleId = normalizeToken(moduleId);
+        boolean updated = false;
+        int quizIdMatchCount = 0;
+        int quizIdMatchIndex = -1;
+        String quizIdMatchModuleId = "";
+
+        try (BufferedReader br = new BufferedReader(new FileReader(quizFile))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] parts = line.split(",", 3); // QuizID, ModuleID, Title
+                if (parts.length >= 2) {
+                    String lineQuizId = normalizeToken(parts[0]);
+                    String lineModuleId = normalizeToken(parts[1]);
+                    if (lineQuizId.equals(targetQuizId)) {
+                        quizIdMatchCount++;
+                        if (quizIdMatchIndex == -1) {
+                            quizIdMatchIndex = allLines.size();
+                            quizIdMatchModuleId = lineModuleId;
+                        }
+                    }
+                    if (lineQuizId.equals(targetQuizId) && lineModuleId.equals(targetModuleId)) {
+                        String newLine = lineQuizId + "," + lineModuleId + "," + csvEscape(title);
+                        allLines.add(newLine);
+                        updated = true;
+                        continue;
+                    }
+                }
+                allLines.add(line);
+            }
+        } catch (IOException ex) {
+            logger.log(java.util.logging.Level.SEVERE, "Error reading Quiz.txt", ex);
+            return false;
+        }
+
+        if (!updated && quizIdMatchCount == 1 && quizIdMatchIndex >= 0) {
+            String fallbackLine = targetQuizId + "," + quizIdMatchModuleId + "," + csvEscape(title);
+            allLines.set(quizIdMatchIndex, fallbackLine);
+            updated = true;
+        }
+
+        if (!updated) {
+            return false;
+        }
+
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(quizFile))) {
+            for (String line : allLines) {
+                bw.write(line);
+                bw.newLine();
+            }
+        } catch (IOException ex) {
+            logger.log(java.util.logging.Level.SEVERE, "Error writing Quiz.txt", ex);
+            return false;
+        }
+
+        return true;
+    }
+
+    private boolean updateQuizTitleByTitle(String moduleId, String oldTitle, String newTitle) {
+        if (oldTitle == null || oldTitle.trim().isEmpty()) {
+            return false;
+        }
+
+        String projectRoot = System.getProperty("user.dir");
+        File quizFile = new File(projectRoot, "src\\main\\java\\oopwj\\data\\Quiz.txt");
+
+        if (!quizFile.exists()) {
+            return false;
+        }
+
+        String targetModuleId = normalizeToken(moduleId);
+        String targetOldTitle = normalizeToken(oldTitle);
+
+        java.util.List<String> allLines = new java.util.ArrayList<>();
+        boolean updated = false;
+
+        try (BufferedReader br = new BufferedReader(new FileReader(quizFile))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] parts = line.split(",", 3); // QuizID, ModuleID, Title
+                if (parts.length >= 3) {
+                    String lineQuizId = normalizeToken(parts[0]);
+                    String lineModuleId = normalizeToken(parts[1]);
+                    String lineTitle = normalizeToken(parts[2]);
+                    if (lineModuleId.equals(targetModuleId) && lineTitle.equals(targetOldTitle)) {
+                        String newLine = lineQuizId + "," + lineModuleId + "," + csvEscape(newTitle);
+                        allLines.add(newLine);
+                        updated = true;
+                        continue;
+                    }
+                }
+                allLines.add(line);
+            }
+        } catch (IOException ex) {
+            logger.log(java.util.logging.Level.SEVERE, "Error reading Quiz.txt", ex);
+            return false;
+        }
+
+        if (!updated) {
+            return false;
+        }
+
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(quizFile))) {
+            for (String line : allLines) {
+                bw.write(line);
+                bw.newLine();
+            }
+        } catch (IOException ex) {
+            logger.log(java.util.logging.Level.SEVERE, "Error writing Quiz.txt", ex);
+            return false;
+        }
+
+        return true;
+    }
+
+    private String normalizeToken(String value) {
+        if (value == null) {
+            return "";
+        }
+        String trimmed = value.trim();
+        if (!trimmed.isEmpty() && trimmed.charAt(0) == '\uFEFF') {
+            return trimmed.substring(1);
+        }
+        return trimmed;
     }
     
     /**
@@ -1860,8 +2089,8 @@ public class Quiz extends javax.swing.JFrame {
             while ((line = br.readLine()) != null) {
                 String[] fields = line.split(",", -1);
                 if (fields.length >= 3) {
-                    String qQuizId = fields[1].trim();
-                    String qModuleId = fields[2].trim();
+                    String qQuizId = stripQuotes(fields[1].trim());
+                    String qModuleId = stripQuotes(fields[2].trim());
                     if (qModuleId.equals(moduleId) && qQuizId.equals(quizId)) {
                         count++;
                     }
@@ -1904,9 +2133,9 @@ public class Quiz extends javax.swing.JFrame {
                 while ((line = br.readLine()) != null) {
                     String[] fields = line.split(",", -1);
                     if (fields.length >= 3) {
-                        String questionId = fields[0].trim();
-                        String qQuizId = fields[1].trim();
-                        String qModuleId = fields[2].trim();
+                        String questionId = stripQuotes(fields[0].trim());
+                        String qQuizId = stripQuotes(fields[1].trim());
+                        String qModuleId = stripQuotes(fields[2].trim());
                         
                         // Check if this question belongs to the current module and quiz
                         if (qModuleId.equals(moduleId) && qQuizId.equals(quizId)) {

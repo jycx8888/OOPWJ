@@ -1,0 +1,10 @@
+Q001,QZ001,M001,"Which database normal form removes transitive dependencies?","1NF","2NF","3NF","BCNF",C,Objective
+Q002,QZ001,M001,"Explain the concept of normalization in databases. Why is 3NF used, and what problems does it solve?",Subjective
+Q003,QZ001,M001,"Which SQL command is used to remove a table and all its data permanently?","DELETE","DROP","TRUNCATE","REMOVE",B,Objective
+Q004,QZ001,M001,"What is a primary key in a relational database, and why is it important?",Subjective
+Q005,QZ001,M001,"Which of the following is a valid join type in SQL?","INNER","LEFT","RIGHT","ALL OF THE ABOVE",D,Objective
+Q001,QZ001,M002,"What is encapsulation in OOP?",Subjective
+Q002,QZ001,M002,"Which keyword is used in Java to inherit a class?","extends","implements","inherit","base",A,Objective
+Q003,QZ001,M002,"Which concept allows methods with the same name but different parameters?","Overriding","Overloading","Hiding","Casting",B,Objective
+Q004,QZ001,M002,"Explain the difference between an interface and an abstract class.",Subjective
+Q005,QZ001,M002,"Which access modifier allows visibility within the same package and subclasses?","private","protected","public","default",B,Objective

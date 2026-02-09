@@ -26,6 +26,7 @@ public class View_Grade extends javax.swing.JFrame {
     public View_Grade() {
         initComponents();
         setLocationRelativeTo(null);
+        configureQuestionComboBox();
         configureObjectiveAutoMark();
         jButton1.addActionListener(this::jButton1ActionPerformed);
         jButton5.addActionListener(this::jButton5ActionPerformed);
@@ -41,6 +42,7 @@ public class View_Grade extends javax.swing.JFrame {
         this.studentID = studentID;
         initComponents();
         setLocationRelativeTo(null);
+        configureQuestionComboBox();
         configureObjectiveAutoMark();
         jButton1.addActionListener(this::jButton1ActionPerformed);
         jButton2.addActionListener(this::jButton2ActionPerformed);
@@ -72,6 +74,19 @@ public class View_Grade extends javax.swing.JFrame {
         jRadioButton2.setEnabled(false);
         jRadioButton1.setFocusable(false);
         jRadioButton2.setFocusable(false);
+    }
+
+    private void configureQuestionComboBox() {
+        jComboBox1.setRenderer(new javax.swing.DefaultListCellRenderer() {
+            @Override
+            public java.awt.Component getListCellRendererComponent(javax.swing.JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+                super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+                if (value instanceof String) {
+                    setText(buildQuestionDisplayText((String) value));
+                }
+                return this;
+            }
+        });
     }
 
     private void updateObjectiveAutoMark(String correctAnswer, String studentAnswer) {
@@ -204,7 +219,7 @@ public class View_Grade extends javax.swing.JFrame {
      */
     private void setupSpinnerValidation() {
         jSpinner2.addChangeListener(e -> {
-            String selectedQuestionID = (String) jComboBox1.getSelectedItem();
+            String selectedQuestionID = getSelectedQuestionId();
             if (selectedQuestionID != null && maxMarksMap.containsKey(selectedQuestionID)) {
                 int maxMarks = maxMarksMap.get(selectedQuestionID);
                 int currentValue = (Integer) jSpinner2.getValue();
@@ -231,7 +246,7 @@ public class View_Grade extends javax.swing.JFrame {
      */
     private void setupSpinnerChangeListener() {
         jSpinner2.addChangeListener(e -> {
-            String selectedQuestionID = (String) jComboBox1.getSelectedItem();
+            String selectedQuestionID = getSelectedQuestionId();
             if (selectedQuestionID != null && isSubjectiveQuestion(selectedQuestionID)) {
                 int marks = (Integer) jSpinner2.getValue();
                 subjectiveGrades.put(selectedQuestionID, marks);
@@ -596,7 +611,7 @@ public class View_Grade extends javax.swing.JFrame {
 
     private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox1ActionPerformed
         // Get the selected question ID from the combo box
-        String selectedQuestionID = (String) jComboBox1.getSelectedItem();
+        String selectedQuestionID = getSelectedQuestionId();
         if (selectedQuestionID == null || selectedQuestionID.isEmpty()) {
             return;
         }
@@ -604,7 +619,7 @@ public class View_Grade extends javax.swing.JFrame {
         // Load question data from question.txt
         loadQuestionData(selectedQuestionID);
         
-        // Load student answer from answers.txt
+        // Load student answer from student_answers.txt
         loadStudentAnswer(selectedQuestionID);
         
         // Update spinner max value and label for subjective questions
@@ -710,15 +725,15 @@ public class View_Grade extends javax.swing.JFrame {
     }
     
     /**
-     * Loads student answer from answers.txt and displays it
+    * Loads student answer from student_answers.txt and displays it
      */
     private void loadStudentAnswer(String questionID) {
         String projectRoot = System.getProperty("user.dir");
-        String answersFilePath = projectRoot + "\\src\\main\\java\\oopwj\\data\\answers.txt";
+        String answersFilePath = projectRoot + "\\src\\main\\java\\oopwj\\data\\student_answers.txt";
         
         java.io.File answersFile = new java.io.File(answersFilePath);
         if (!answersFile.exists()) {
-            logger.log(java.util.logging.Level.SEVERE, "answers.txt not found");
+            logger.log(java.util.logging.Level.SEVERE, "student_answers.txt not found");
             return;
         }
         
@@ -755,7 +770,7 @@ public class View_Grade extends javax.swing.JFrame {
                 }
             }
         } catch (java.io.IOException e) {
-            logger.log(java.util.logging.Level.SEVERE, "Error reading answers.txt: " + e.getMessage(), e);
+            logger.log(java.util.logging.Level.SEVERE, "Error reading student_answers.txt: " + e.getMessage(), e);
         }
     }
     
@@ -873,7 +888,7 @@ public class View_Grade extends javax.swing.JFrame {
             gradedQuestions.addAll(objectiveGrades.keySet());
             
             for (int i = 0; i < jComboBox1.getItemCount(); i++) {
-                String questionID = (String) jComboBox1.getItemAt(i);
+                String questionID = getQuestionIdAt(i);
                 if (!gradedQuestions.contains(questionID)) {
                     message.append("- ").append(questionID).append("\n");
                 }
@@ -889,7 +904,7 @@ public class View_Grade extends javax.swing.JFrame {
     }
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {
-        String selectedQuestionID = (String) jComboBox1.getSelectedItem();
+        String selectedQuestionID = getSelectedQuestionId();
         if (selectedQuestionID == null || selectedQuestionID.isEmpty()) {
             return;
         }
@@ -917,7 +932,7 @@ public class View_Grade extends javax.swing.JFrame {
     }
 
     private void refreshCurrentQuestionDisplay() {
-        String selectedQuestionID = (String) jComboBox1.getSelectedItem();
+        String selectedQuestionID = getSelectedQuestionId();
         if (selectedQuestionID == null || selectedQuestionID.isEmpty()) {
             return;
         }
@@ -1113,19 +1128,49 @@ public class View_Grade extends javax.swing.JFrame {
             return q1.compareTo(q2);
         }
     }
+
+    private String getSelectedQuestionId() {
+        Object selected = jComboBox1.getSelectedItem();
+        if (selected instanceof String) {
+            return (String) selected;
+        }
+        return null;
+    }
+
+    private String getQuestionIdAt(int index) {
+        Object item = jComboBox1.getItemAt(index);
+        if (item instanceof String) {
+            return (String) item;
+        }
+        return null;
+    }
+
+    private String buildQuestionDisplayText(String questionID) {
+        String numericPart = questionID.replaceAll("[^0-9]", "");
+        if (numericPart.isEmpty()) {
+            return questionID;
+        }
+
+        try {
+            int number = Integer.parseInt(numericPart);
+            return "Question " + number;
+        } catch (NumberFormatException e) {
+            return questionID;
+        }
+    }
     
     /**
-     * Loads subjective question answers from answers.txt for the current student/module/quiz
+    * Loads subjective question answers from student_answers.txt for the current student/module/quiz
      * Returns map of questionID -> answer
      */
     private java.util.Map<String, String> loadSubjectiveAnswers() {
         java.util.Map<String, String> answers = new java.util.HashMap<>();
         String projectRoot = System.getProperty("user.dir");
-        String answersFilePath = projectRoot + "\\src\\main\\java\\oopwj\\data\\answers.txt";
+        String answersFilePath = projectRoot + "\\src\\main\\java\\oopwj\\data\\student_answers.txt";
         
         java.io.File answersFile = new java.io.File(answersFilePath);
         if (!answersFile.exists()) {
-            logger.log(java.util.logging.Level.WARNING, "answers.txt not found at: " + answersFilePath);
+            logger.log(java.util.logging.Level.WARNING, "student_answers.txt not found at: " + answersFilePath);
             return answers;
         }
         
@@ -1154,9 +1199,9 @@ public class View_Grade extends javax.swing.JFrame {
                     }
                 }
             }
-            logger.log(java.util.logging.Level.INFO, "Loaded " + answers.size() + " subjective answers from answers.txt");
+            logger.log(java.util.logging.Level.INFO, "Loaded " + answers.size() + " subjective answers from student_answers.txt");
         } catch (java.io.IOException e) {
-            logger.log(java.util.logging.Level.SEVERE, "Error reading answers.txt: " + e.getMessage(), e);
+            logger.log(java.util.logging.Level.SEVERE, "Error reading student_answers.txt: " + e.getMessage(), e);
         }
         
         return answers;
@@ -1172,7 +1217,7 @@ public class View_Grade extends javax.swing.JFrame {
         
         java.io.File gradeFile = new java.io.File(gradeFilePath);
         
-        // Load student answers for subjective questions from answers.txt
+        // Load student answers for subjective questions from student_answers.txt
         java.util.Map<String, String> subjectiveAnswers = loadSubjectiveAnswers();
         
         // Separate lists for different types of lines
@@ -1297,7 +1342,7 @@ public class View_Grade extends javax.swing.JFrame {
         
         String projectRoot = System.getProperty("user.dir");
         String questionFilePath = projectRoot + "\\src\\main\\java\\oopwj\\data\\question.txt";
-        String answersFilePath = projectRoot + "\\src\\main\\java\\oopwj\\data\\answers.txt";
+        String answersFilePath = projectRoot + "\\src\\main\\java\\oopwj\\data\\student_answers.txt";
         String totalQuizMarkPath = projectRoot + "\\src\\main\\java\\oopwj\\data\\TotalQuizMark.txt";
         String gradeFilePath = projectRoot + "\\src\\main\\java\\oopwj\\data\\Grade.txt";
         
@@ -1404,7 +1449,7 @@ public class View_Grade extends javax.swing.JFrame {
     }
     
     /**
-     * Loads student answers from answers.txt
+    * Loads student answers from student_answers.txt
      * Returns map of questionID -> studentAnswer
      */
     private java.util.Map<String, String> loadStudentAnswers(String answersFilePath, String studentID, String moduleID, String quizID) {
@@ -1412,7 +1457,7 @@ public class View_Grade extends javax.swing.JFrame {
         
         java.io.File answersFile = new java.io.File(answersFilePath);
         if (!answersFile.exists()) {
-            logger.log(java.util.logging.Level.WARNING, "answers.txt not found at: " + answersFilePath);
+            logger.log(java.util.logging.Level.WARNING, "student_answers.txt not found at: " + answersFilePath);
             return studentAnswers;
         }
         
@@ -1439,7 +1484,7 @@ public class View_Grade extends javax.swing.JFrame {
                 }
             }
         } catch (java.io.IOException e) {
-            logger.log(java.util.logging.Level.SEVERE, "Error reading answers.txt: " + e.getMessage(), e);
+            logger.log(java.util.logging.Level.SEVERE, "Error reading student_answers.txt: " + e.getMessage(), e);
         }
         
         return studentAnswers;

@@ -4,6 +4,8 @@
  */
 package oopwj.Lecturer;
 
+import java.awt.*;
+import javax.swing.*;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -61,6 +63,12 @@ public class Assessments extends javax.swing.JFrame {
         jButton4.addActionListener(this::jButton4ActionPerformed);
         jButton6.addActionListener(this::jButton6ActionPerformed);
         jComboBox1.addActionListener(this::jComboBox1ActionPerformed);
+        addHoverEffect(jButton1,new Color(220,80,80),new Color(220,80,80));
+        addHoverEffect(jButton2,new Color(70,130,180),new Color(70,130,180));
+        addHoverEffect(jButton3,new Color(70,130,180),new Color(70,130,180));
+        addHoverEffect(jButton4,new Color(70,130,180),new Color(70,130,180));
+        addHoverEffect(jButton5,new Color(70,130,180),new Color(70,130,180));
+        addHoverEffect(jButton6,new Color(70,130,180),new Color(70,130,180));
     }
 
     private void centerWindow() {
@@ -196,6 +204,29 @@ public class Assessments extends javax.swing.JFrame {
         }
     }
 
+    private void addHoverEffect(JButton btn, Color normal, Color hover) {
+        btn.setOpaque(true);
+        btn.setContentAreaFilled(true);
+        btn.setBorderPainted(false);
+        btn.setFocusPainted(false);
+
+        btn.setBackground(normal);
+        btn.setForeground(Color.WHITE);
+
+        btn.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseEntered(java.awt.event.MouseEvent e) {
+                btn.setBackground(hover);
+            }
+
+            @Override
+            public void mouseExited(java.awt.event.MouseEvent e) {
+                btn.setBackground(normal);
+            }
+        });
+    }
+
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -205,7 +236,22 @@ public class Assessments extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jPanel1 = new javax.swing.JPanel();
+        jPanel1 = new javax.swing.JPanel(){
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                Graphics2D g2 = (Graphics2D) g;
+
+                GradientPaint gp = new GradientPaint(
+                    0, 0, new Color(230, 240, 255),
+                    0, getHeight(), new Color(245, 247, 250)
+                );
+
+                g2.setPaint(gp);
+                g2.fillRect(0, 0, getWidth(), getHeight());
+            }
+
+        };
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
@@ -222,6 +268,7 @@ public class Assessments extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
+        jPanel1.setOpaque(false);
 
         jButton1.setText("Back");
 
@@ -1013,25 +1060,33 @@ public class Assessments extends javax.swing.JFrame {
         // Module selection
         javax.swing.JLabel moduleLabel = new javax.swing.JLabel("Select Module:");
         javax.swing.JComboBox<String> moduleComboBox = new javax.swing.JComboBox<>();
+        java.util.Map<String, String> moduleDisplayToId = new java.util.HashMap<>();
         java.util.List<String> sortedModuleIDs = new java.util.ArrayList<>(lecturerModules.keySet());
         java.util.Collections.sort(sortedModuleIDs, String.CASE_INSENSITIVE_ORDER);
         for (String moduleID : sortedModuleIDs) {
-            moduleComboBox.addItem(moduleID);
+            String moduleName = lecturerModules.getOrDefault(moduleID, moduleID);
+            String display = moduleName != null && !moduleName.trim().isEmpty() ? moduleName.trim() : moduleID;
+            moduleDisplayToId.put(display, moduleID);
+            moduleComboBox.addItem(display);
         }
         moduleComboBox.setSelectedIndex(-1); // Show nothing by default
         
         // Quiz selection
         javax.swing.JLabel quizLabel = new javax.swing.JLabel("Select Quiz:");
         javax.swing.JComboBox<String> quizComboBox = new javax.swing.JComboBox<>();
+        java.util.Map<String, String> quizDisplayToId = new java.util.HashMap<>();
         quizComboBox.setSelectedIndex(-1); // Show nothing by default
         
         // Update quiz list when module is selected
         moduleComboBox.addActionListener(e -> {
             quizComboBox.removeAllItems();
-            String selectedModule = (String) moduleComboBox.getSelectedItem();
-            if (selectedModule != null && !selectedModule.isEmpty()) {
-                loadQuizzesForFeedback(selectedModule, quizComboBox);
+            quizDisplayToId.clear();
+            String selectedModuleDisplay = (String) moduleComboBox.getSelectedItem();
+            String selectedModuleId = moduleDisplayToId.get(selectedModuleDisplay);
+            if (selectedModuleId == null || selectedModuleId.trim().isEmpty()) {
+                return;
             }
+            loadQuizzesForFeedback(selectedModuleId, quizComboBox, quizDisplayToId);
         });
         
         // Buttons
@@ -1039,11 +1094,13 @@ public class Assessments extends javax.swing.JFrame {
         javax.swing.JButton cancelButton = new javax.swing.JButton("Cancel");
         
         submitButton.addActionListener(e -> {
-            String selectedModule = (String) moduleComboBox.getSelectedItem();
-            String selectedQuiz = (String) quizComboBox.getSelectedItem();
+            String selectedModuleDisplay = (String) moduleComboBox.getSelectedItem();
+            String selectedQuizDisplay = (String) quizComboBox.getSelectedItem();
+            String selectedModuleId = moduleDisplayToId.get(selectedModuleDisplay);
+            String selectedQuizId = quizDisplayToId.get(selectedQuizDisplay);
             
-            if (selectedModule == null || selectedModule.isEmpty() || 
-                selectedQuiz == null || selectedQuiz.isEmpty()) {
+            if (selectedModuleId == null || selectedModuleId.trim().isEmpty() ||
+                selectedQuizId == null || selectedQuizId.trim().isEmpty()) {
                 JOptionPane.showMessageDialog(dialog,
                     "Please select both module and quiz.",
                     "Selection Required",
@@ -1052,7 +1109,7 @@ public class Assessments extends javax.swing.JFrame {
             }
             
             // Open Feedback window for quiz set feedback with parent reference
-            Feedback feedbackWindow = new Feedback(selectedModule, selectedQuiz, lecturerID, true, this);
+            Feedback feedbackWindow = new Feedback(selectedModuleId, selectedQuizId, lecturerID, true, this);
             feedbackWindow.setVisible(true);
             dialog.dispose();
             // Close the Assessments window
@@ -1131,11 +1188,14 @@ public class Assessments extends javax.swing.JFrame {
         return new String[]{moduleId, quizId};
     }
     
-    private void loadQuizzesForFeedback(String moduleID, javax.swing.JComboBox<String> quizComboBox) {
+    private void loadQuizzesForFeedback(String moduleID,
+        javax.swing.JComboBox<String> quizComboBox,
+        java.util.Map<String, String> quizDisplayToId) {
         String projectRoot = System.getProperty("user.dir");
         File quizFile = new File(projectRoot, "src\\main\\java\\oopwj\\data\\Quiz.txt");
         
         quizComboBox.removeAllItems();
+        quizDisplayToId.clear();
         
         if (quizFile.exists()) {
             try (BufferedReader br = new BufferedReader(new FileReader(quizFile))) {
@@ -1146,7 +1206,10 @@ public class Assessments extends javax.swing.JFrame {
                         String quizModuleID = fields[1].trim();
                         if (quizModuleID.equals(moduleID)) {
                             String quizID = fields[0].trim();
-                            quizComboBox.addItem(quizID);
+                            String quizTitle = fields[2].trim();
+                            String display = quizTitle.isEmpty() ? quizID : quizTitle;
+                            quizDisplayToId.put(display, quizID);
+                            quizComboBox.addItem(display);
                         }
                     }
                 }
@@ -1362,6 +1425,32 @@ public class Assessments extends javax.swing.JFrame {
         
         return quizMarks;
     }
+
+    private Map<String, String> loadQuizFeedback(String projectRoot) {
+        Map<String, String> quizFeedback = new HashMap<>();
+        File feedbackFile = new File(projectRoot, "src\\main\\java\\oopwj\\data\\QuizFeedback.txt");
+
+        if (feedbackFile.exists()) {
+            try (BufferedReader br = new BufferedReader(new FileReader(feedbackFile))) {
+                String line;
+                while ((line = br.readLine()) != null) {
+                    String[] fields = parseCSV(line);
+                    if (fields.length >= 4) {
+                        String moduleID = fields[0].trim();
+                        String quizID = fields[1].trim();
+                        String feedback = fields[3].trim();
+                        if (!moduleID.isEmpty() && !quizID.isEmpty()) {
+                            quizFeedback.put(moduleID + "|" + quizID, feedback);
+                        }
+                    }
+                }
+            } catch (IOException ex) {
+                logger.log(java.util.logging.Level.WARNING, "Error reading QuizFeedback.txt", ex);
+            }
+        }
+
+        return quizFeedback;
+    }
     
     private String[] parseCSV(String line) {
         List<String> fields = new ArrayList<>();
@@ -1440,10 +1529,12 @@ public class Assessments extends javax.swing.JFrame {
             }
         }
 
-        String[] columnNames = {"Module Name", "Quiz Name", "Total Questions"};
+        String[] columnNames = {"Module Name", "Quiz Name", "Total Questions", "Feedback"};
         List<Object[]> rows = new ArrayList<>();
 
         displayedQuizSetKeys.clear();
+
+        Map<String, String> quizFeedback = loadQuizFeedback(projectRoot);
 
         if (quizFile.exists()) {
             try (BufferedReader br = new BufferedReader(new FileReader(quizFile))) {
@@ -1463,7 +1554,12 @@ public class Assessments extends javax.swing.JFrame {
                         String key = quizID + "|" + moduleID;
                         int totalQuestions = questionCounts.getOrDefault(key, 0);
 
-                        rows.add(new Object[]{moduleName, quizName, totalQuestions});
+                        String feedback = quizFeedback.getOrDefault(moduleID + "|" + quizID, "Pending");
+                        if (feedback.trim().isEmpty()) {
+                            feedback = "Pending";
+                        }
+
+                        rows.add(new Object[]{moduleName, quizName, totalQuestions, feedback});
                         displayedQuizSetKeys.add(quizID + "|" + moduleID);
                     }
                 }

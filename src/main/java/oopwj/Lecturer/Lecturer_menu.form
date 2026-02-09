@@ -44,7 +44,11 @@
         <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
           <Color blue="ff" green="ff" red="cc" type="rgb"/>
         </Property>
+        <Property name="opaque" type="boolean" value="false"/>
       </Properties>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new javax.swing.JPanel(){&#xa;    @Override&#xa;        protected void paintComponent(Graphics g) {&#xa;            super.paintComponent(g);&#xa;            Graphics2D g2 = (Graphics2D) g;&#xa;&#xa;            GradientPaint gp = new GradientPaint(&#xa;                0, 0, new Color(230, 240, 255),&#xa;                0, getHeight(), new Color(245, 247, 250)&#xa;            );&#xa;&#xa;            g2.setPaint(gp);&#xa;            g2.fillRect(0, 0, getWidth(), getHeight());&#xa;        }&#xa;}"/>
+      </AuxValues>
 
       <Layout>
         <DimensionLayout dim="0">
