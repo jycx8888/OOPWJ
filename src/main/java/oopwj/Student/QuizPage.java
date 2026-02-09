@@ -254,7 +254,7 @@ public class QuizPage extends JFrame {
         btn.setFocusPainted(false);
         btn.setHorizontalAlignment(SwingConstants.LEFT);
         btn.setBorder(BorderFactory.createCompoundBorder(
-            new LineBorder(new Color(200, 200, 200), 1, true),
+            new LineBorder(new Color(200, 200, 200), 2, true),
             new EmptyBorder(10, 20, 10, 20)
         ));
         btn.setCursor(new Cursor(Cursor.HAND_CURSOR));
@@ -263,7 +263,10 @@ public class QuizPage extends JFrame {
         if (saved.equals(letter)) {
             btn.setSelected(true);
             btn.setBackground(new Color(230, 242, 255)); 
-            btn.setBorder(new LineBorder(new Color(0, 120, 215), 2, true));
+            btn.setBorder(BorderFactory.createCompoundBorder(
+                new LineBorder(new Color(0, 120, 215), 2, true),
+                new EmptyBorder(10, 20, 10, 20)
+            ));
         }
 
         btn.addActionListener(e -> {
@@ -280,10 +283,16 @@ public class QuizPage extends JFrame {
                 JToggleButton b = (JToggleButton) c;
                 if (b.isSelected()) {
                     b.setBackground(new Color(230, 242, 255));
-                    b.setBorder(new LineBorder(new Color(0, 120, 215), 2, true));
+                    b.setBorder(BorderFactory.createCompoundBorder(
+                        new LineBorder(new Color(0, 120, 215), 2, true),
+                        new EmptyBorder(10, 20, 10, 20)
+                    ));
                 } else {
                     b.setBackground(Color.WHITE);
-                    b.setBorder(new LineBorder(new Color(200, 200, 200), 1, true));
+                    b.setBorder(BorderFactory.createCompoundBorder(
+                        new LineBorder(new Color(200, 200, 200), 2, true),
+                        new EmptyBorder(10, 20, 10, 20)
+                    ));
                 }
             }
         }
