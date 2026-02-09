@@ -1,9 +1,7 @@
-<<<<<<< HEAD
 S223,M001,QZ001,Q001,Objective,C,0
 S223,M001,QZ001,Q002,Subjective,test,4
 S223,M001,QZ001,Q003,Objective,B,0
 S223,M001,QZ001,Q004,Subjective,test,5
-=======
 S111,M002,QZ001,Q001,Subjective,testing,1
 S111,M002,QZ001,Q002,Objective,A,0
 S111,M002,QZ001,Q003,Objective,B,0
@@ -14,4 +12,3 @@ S200,M002,QZ001,Q002,Objective,A,0
 S200,M002,QZ001,Q003,Objective,B,1
 S200,M002,QZ001,Q004,Subjective,ddd,5
 S200,M002,QZ001,Q005,Objective,B,1
->>>>>>> 0b5f81519b39ca670d5aa20f3fedc9ac3282f228
