@@ -1074,6 +1074,10 @@ public class Quiz extends javax.swing.JFrame {
         quizIdsForDropdown.clear();
         // Also clear all input fields as with the Clear button
         clearInputFields();
+
+        // Reset question number label
+        jLabel1.setText("Question:");
+        jLabel7.setText("Question:");
     }//GEN-LAST:event_jButton5ActionPerformed
 
     private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {
@@ -1539,6 +1543,9 @@ public class Quiz extends javax.swing.JFrame {
         jTextField7.setText("");
         answerGroup.clearSelection();
         correctAnswer = "";
+        // Also reset question number label
+        jLabel1.setText("Question:");
+        jLabel7.setText("Question:");
     }
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {
