@@ -1,17 +1,7 @@
 package oopwj.Model;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.io.*;
+import java.util.*;
 
 public class StudentService {
 
@@ -230,19 +220,45 @@ public class StudentService {
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             String line;
             while ((line = reader.readLine()) != null) {
-                String[] parts = line.split(",");
+                // FIX 1: Split by comma but ignore commas inside quotes
+                String[] parts = line.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)");
+                
                 if (parts.length < 5) continue; 
+                
+                // Clean up quotes from the data if present
+                for(int i=0; i<parts.length; i++) {
+                    parts[i] = parts[i].trim().replace("\"", "");
+                }
+
                 if (parts[1].trim().equalsIgnoreCase(quizID)
                     && parts[2].trim().equalsIgnoreCase(moduleID)) {
+                    
                     String qID = parts[0].trim();
                     String qText = parts[3].trim();
                     String type = parts[parts.length - 1].trim();
 
+                    // FIX 2: Check for "Subjective" or "Objective" (handling "Objectjective" typo)
                     if (type.equalsIgnoreCase("Subjective")) {
                         subjectiveList.add(new String[]{qID, qText, "Subjective"});
-                    } else if (type.equalsIgnoreCase("Objective")) {
-                        if (parts.length >= 10) {
-                            objectiveList.add(new String[]{qID, qText, "Objective", parts[4].trim(), parts[5].trim(), parts[6].trim(), parts[7].trim()});
+                    } 
+                    else if (type.toUpperCase().startsWith("OBJECT") || type.toUpperCase().contains("OBJECT")) {
+                        // This handles "Objective" and "Objectjective"
+                        if (parts.length >= 8) { // Minimum required for objective (QID, Quiz, Mod, Text, A, B, C, D, Ans, Type)
+                           // Note: parts length depends on how many options. 
+                           // Assuming standard format: QID,Quiz,Mod,Text,A,B,C,D,Ans,Type -> 10 parts
+                           // But with regex split, we can trust the columns better.
+                           
+                           // Find the index of the answer (second to last)
+                           String ans = parts[parts.length - 2];
+                           
+                           // Assuming 4 options (A,B,C,D) are before the Answer
+                           // Index 4, 5, 6, 7
+                           if(parts.length >= 9) {
+                               objectiveList.add(new String[]{
+                                   qID, qText, "Objective", 
+                                   parts[4], parts[5], parts[6], parts[7]
+                               });
+                           }
                         }
                     }
                 }
@@ -264,6 +280,30 @@ public class StudentService {
             }
             return true;
         } catch (IOException e) { e.printStackTrace(); return false; }
+    }
+
+    // FIX 3: Added moduleID to checking logic
+    public boolean hasAttemptedQuiz(String studentID, String moduleID, String quizID) {
+        File file = new File(ANSWER_FILE);
+        if (!file.exists()) return false;
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] parts = line.split(",");
+                // Format: StudentID, ModuleID, QuizID, QuestionID, Type, Answer
+                if (parts.length >= 3) {
+                    // Check Student AND Module AND Quiz
+                    if (parts[0].trim().equals(studentID) && 
+                        parts[1].trim().equals(moduleID) && 
+                        parts[2].trim().equals(quizID)) {
+                        return true;
+                    }
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
     public List<String[]> getFinalGradesForModule(String studentID, String moduleID) {

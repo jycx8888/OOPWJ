@@ -7,3 +7,7 @@ S123,M002,Object Oriented Programming with Java
 S111,M002,Object Oriented Programming with Java
 S111,M001,Data Management
 S111,M006,Programming With Python
+S130,M001,Data Management
+S130,M002,Object Oriented Programming with Java
+S200,M002,Object Oriented Programming with Java
+S200,M001,Data Management

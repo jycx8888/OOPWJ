@@ -45,19 +45,15 @@ public class QuizMenu extends JFrame {
                 btn.setMaximumSize(new Dimension(400, 40));
                 btn.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-                
                 btn.addActionListener(e -> {
                     System.out.println("[DEBUG] Clicked course: " + courseID);
                     
-                    
                     List<String[]> quizzes = service.getQuizzesForModule(courseID);
-                    
                     
                     if (quizzes != null && !quizzes.isEmpty()) {
                         new QuizPaperSelectionFrame(currentUser, courseID, courseName, quizzes);
                         dispose(); 
                     } else {
-                        
                         JOptionPane.showMessageDialog(this, 
                             "No active quizzes found for " + courseID + ".\n(Check Console for details)", 
                             "No Quizzes", JOptionPane.INFORMATION_MESSAGE);
