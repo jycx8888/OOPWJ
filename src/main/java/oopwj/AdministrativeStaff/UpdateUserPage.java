@@ -121,7 +121,7 @@ public class UpdateUserPage extends javax.swing.JDialog {
     }
 }
     
-    private boolean idExists(String userId) {
+    private boolean idExists(String userId, String originalId) {
         String[] files = {
             "src\\main\\java\\oopwj\\Data\\student.txt",
             "src\\main\\java\\oopwj\\Data\\lecturer.txt",
@@ -138,6 +138,9 @@ public class UpdateUserPage extends javax.swing.JDialog {
                 while ((line = br.readLine()) != null) {
                     String[] parts = line.split(",");
                     if (parts.length > 0 && parts[0].trim().equals(userId)) {
+                        if (userId.equals(originalId)) {
+                            return false;
+                        }
                         return true;
                     }
                 }
@@ -150,6 +153,7 @@ public class UpdateUserPage extends javax.swing.JDialog {
         }
         return false;
     }
+
 
     private boolean isValidPassword(String password) {
         if (password == null || password.length() < 7 || password.length() > 14) {
@@ -450,7 +454,7 @@ public class UpdateUserPage extends javax.swing.JDialog {
             return;
         }
         
-        if (idExists(userId)) {
+        if (idExists(userId, originalId)) {
             JOptionPane.showMessageDialog(this,
                 "User ID already exists. Please use a different ID.",
                 "Duplicate ID",
