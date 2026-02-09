@@ -131,6 +131,7 @@ public class academicLeader extends javax.swing.JFrame {
         reports = new javax.swing.JButton();
         lecturerReview = new javax.swing.JButton();
         logout = new javax.swing.JButton();
+        welcome1 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -138,7 +139,7 @@ public class academicLeader extends javax.swing.JFrame {
         jPanel1.setRequestFocusEnabled(false);
 
         welcome.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
-        welcome.setText("Welcome, Academic Leader");
+        welcome.setText("Academic Leader Dashboard");
 
         acName.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         acName.setText("jLabel1");
@@ -193,6 +194,9 @@ public class academicLeader extends javax.swing.JFrame {
             }
         });
 
+        welcome1.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        welcome1.setText("Welcome");
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -207,14 +211,17 @@ public class academicLeader extends javax.swing.JFrame {
                         .addComponent(reports, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(logout, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addComponent(acName)
-                    .addComponent(welcome))
-                .addContainerGap(272, Short.MAX_VALUE))
+                    .addComponent(welcome)
+                    .addComponent(welcome1))
+                .addContainerGap(266, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap(40, Short.MAX_VALUE)
+                .addContainerGap(33, Short.MAX_VALUE)
                 .addComponent(welcome)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(welcome1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(acName)
                 .addGap(18, 18, 18)
@@ -234,9 +241,7 @@ public class academicLeader extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -324,5 +329,6 @@ public class academicLeader extends javax.swing.JFrame {
     private javax.swing.JButton profile;
     private javax.swing.JButton reports;
     private javax.swing.JLabel welcome;
+    private javax.swing.JLabel welcome1;
     // End of variables declaration//GEN-END:variables
 }

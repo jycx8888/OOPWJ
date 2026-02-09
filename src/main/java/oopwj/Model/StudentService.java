@@ -211,7 +211,7 @@ public class StudentService {
         return quizList;
     }
 
-    public List<String[]> getQuizDetails(String quizID) {
+    public List<String[]> getQuizDetails(String quizID, String moduleID) {
         List<String[]> objectiveList = new ArrayList<>();
         List<String[]> subjectiveList = new ArrayList<>();
         File file = new File(QUESTION_FILE);
@@ -222,7 +222,8 @@ public class StudentService {
             while ((line = reader.readLine()) != null) {
                 String[] parts = line.split(",");
                 if (parts.length < 5) continue; 
-                if (parts[1].trim().equalsIgnoreCase(quizID)) {
+                if (parts[1].trim().equalsIgnoreCase(quizID)
+                    && parts[2].trim().equalsIgnoreCase(moduleID)) {
                     String qID = parts[0].trim();
                     String qText = parts[3].trim();
                     String type = parts[parts.length - 1].trim();

@@ -1191,20 +1191,29 @@ public class generateReports extends javax.swing.JFrame {
         dialog.setSize(600, 500);
         dialog.setLocationRelativeTo(this);
         dialog.setLayout(new java.awt.BorderLayout(10, 10));
-        
+
         javax.swing.JPanel topPanel = new javax.swing.JPanel(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
         topPanel.setBorder(javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        
+
         javax.swing.JLabel gradeLabel = new javax.swing.JLabel("Select Grade: ");
         gradeLabel.setFont(new java.awt.Font("Segoe UI", java.awt.Font.BOLD, 14));
-        
+
         String[] grades = {"A+", "A", "B+", "B", "C", "D", "F"};
         javax.swing.JComboBox<String> gradeComboBox = new javax.swing.JComboBox<>(grades);
         gradeComboBox.setPreferredSize(new java.awt.Dimension(100, 25));
-        
+
+        javax.swing.JLabel sortLabel = new javax.swing.JLabel("Sort By: ");
+        sortLabel.setFont(new java.awt.Font("Segoe UI", java.awt.Font.BOLD, 14));
+
+        String[] sortOptions = {"Marks: High to Low", "Marks: Low to High", "Name: A-Z", "Name: Z-A"};
+        javax.swing.JComboBox<String> sortComboBox = new javax.swing.JComboBox<>(sortOptions);
+        sortComboBox.setPreferredSize(new java.awt.Dimension(170, 25));
+
         topPanel.add(gradeLabel);
         topPanel.add(gradeComboBox);
-        
+        topPanel.add(sortLabel);
+        topPanel.add(sortComboBox);
+
         String[] columnNames = {"Student ID", "Student Name", "Marks"};
         javax.swing.table.DefaultTableModel tableModel = new javax.swing.table.DefaultTableModel(columnNames, 0) {
             @Override
@@ -1212,51 +1221,61 @@ public class generateReports extends javax.swing.JFrame {
                 return false;
             }
         };
-        
+
         javax.swing.JTable studentTable = new javax.swing.JTable(tableModel);
         studentTable.getTableHeader().setFont(new java.awt.Font("Segoe UI", java.awt.Font.BOLD, 12));
         studentTable.setFont(new java.awt.Font("Segoe UI", java.awt.Font.PLAIN, 12));
         studentTable.setRowHeight(25);
-        
+
         javax.swing.JScrollPane scrollPane = new javax.swing.JScrollPane(studentTable);
         scrollPane.setBorder(javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        
+
         javax.swing.JPanel bottomPanel = new javax.swing.JPanel(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER));
         javax.swing.JButton closeButton = new javax.swing.JButton("Close");
         closeButton.addActionListener(e -> dialog.dispose());
         bottomPanel.add(closeButton);
-        
+
         dialog.add(topPanel, java.awt.BorderLayout.NORTH);
         dialog.add(scrollPane, java.awt.BorderLayout.CENTER);
         dialog.add(bottomPanel, java.awt.BorderLayout.SOUTH);
-        
-        gradeComboBox.addActionListener(e -> {
+
+        List<StudentGradeEntry> studentRows = new ArrayList<>();
+
+        Runnable reload = new Runnable() {
+            @Override
+            public void run() {
             String selectedGrade = (String) gradeComboBox.getSelectedItem();
-            loadStudentsByGrade(tableModel, selectedGrade);
-        });
-        
-        loadStudentsByGrade(tableModel, grades[0]);
-        
+            loadStudentsByGrade(tableModel, selectedGrade, studentRows);
+            applyStudentSort(tableModel, studentRows, (String) sortComboBox.getSelectedItem());
+            }
+        };
+
+        gradeComboBox.addActionListener(e -> reload.run());
+        sortComboBox.addActionListener(e -> applyStudentSort(tableModel, studentRows, (String) sortComboBox.getSelectedItem()));
+
+        reload.run();
+
         dialog.setVisible(true);
     }
-    
-    private void loadStudentsByGrade(javax.swing.table.DefaultTableModel tableModel, String grade) {
+
+    private void loadStudentsByGrade(javax.swing.table.DefaultTableModel tableModel, String grade, List<StudentGradeEntry> results) {
         tableModel.setRowCount(0);
-        
+        results.clear();
+
         if (selectedModuleId == null) {
             return;
         }
-        
+
         String selectedQuizName = (String) quiz.getSelectedItem();
         if (selectedQuizName == null || selectedQuizName.equals(QUIZ_PLACEHOLDER)) {
             return;
         }
-        
+
         String quizId = quizNameToId.get(selectedQuizName);
         if (quizId == null) {
             return;
         }
-        
+
         try (BufferedReader reader = new BufferedReader(new FileReader("src\\main\\java\\oopwj\\Data\\FinalGrade.txt"))) {
             String line;
             while ((line = reader.readLine()) != null) {
@@ -1271,26 +1290,81 @@ public class generateReports extends javax.swing.JFrame {
                     String quizIdInFile = parts[2].trim();
                     String markStr = parts[3].trim();
                     String gradeInFile = parts[4].trim();
-                    
-                    if (moduleIdInFile.equals(selectedModuleId) && 
-                        quizIdInFile.equals(quizId) && 
+
+                    if (moduleIdInFile.equals(selectedModuleId) &&
+                        quizIdInFile.equals(quizId) &&
                         gradeInFile.equalsIgnoreCase(grade)) {
-                        
+
                         String studentName = studentIdToName.getOrDefault(studentId, "Unknown");
-                        tableModel.addRow(new Object[]{studentId, studentName, markStr});
+                        results.add(new StudentGradeEntry(studentId, studentName, markStr));
                     }
                 }
             }
         } catch (IOException e) {
             logger.log(java.util.logging.Level.WARNING, "Unable to load student grades", e);
-            JOptionPane.showMessageDialog(this, 
-                "Error loading student data: " + e.getMessage(), 
-                "Error", 
+            JOptionPane.showMessageDialog(this,
+                "Error loading student data: " + e.getMessage(),
+                "Error",
                 JOptionPane.ERROR_MESSAGE);
         }
-        
-        if (tableModel.getRowCount() == 0) {
-            tableModel.addRow(new Object[]{"No students", "found with", "grade " + grade});
+    }
+
+    private void applyStudentSort(javax.swing.table.DefaultTableModel tableModel,
+                                  List<StudentGradeEntry> rows,
+                                  String sortOption) {
+        tableModel.setRowCount(0);
+
+        if (rows.isEmpty()) {
+            tableModel.addRow(new Object[]{"No students", "found with", "selected grade"});
+            return;
+        }
+
+        List<StudentGradeEntry> sorted = new ArrayList<>(rows);
+        java.util.Comparator<StudentGradeEntry> comparator;
+
+        if ("Marks: High to Low".equals(sortOption)) {
+            comparator = java.util.Comparator.comparingInt((StudentGradeEntry entry) -> entry.mark)
+                .reversed()
+                .thenComparing(entry -> entry.studentName, String.CASE_INSENSITIVE_ORDER);
+        } else if ("Marks: Low to High".equals(sortOption)) {
+            comparator = java.util.Comparator.comparingInt((StudentGradeEntry entry) -> entry.mark)
+                .thenComparing(entry -> entry.studentName, String.CASE_INSENSITIVE_ORDER);
+        } else if ("Name: A-Z".equals(sortOption)) {
+            comparator = java.util.Comparator.comparing((StudentGradeEntry entry) -> entry.studentName,
+                String.CASE_INSENSITIVE_ORDER).reversed()
+                .thenComparingInt(entry -> entry.mark).reversed();
+        } else {
+            comparator = java.util.Comparator.comparing((StudentGradeEntry entry) -> entry.studentName,
+                String.CASE_INSENSITIVE_ORDER)
+                .thenComparingInt(entry -> entry.mark).reversed();
+        }
+
+        sorted.sort(comparator);
+
+        for (StudentGradeEntry entry : sorted) {
+            tableModel.addRow(new Object[]{entry.studentId, entry.studentName, entry.markText});
+        }
+    }
+
+    private static class StudentGradeEntry {
+        private final String studentId;
+        private final String studentName;
+        private final String markText;
+        private final int mark;
+
+        private StudentGradeEntry(String studentId, String studentName, String markText) {
+            this.studentId = studentId;
+            this.studentName = studentName;
+            this.markText = markText;
+            int parsed = -1;
+            if (markText != null && !markText.isEmpty()) {
+                try {
+                    parsed = Integer.parseInt(markText);
+                } catch (NumberFormatException ex) {
+                    parsed = -1;
+                }
+            }
+            this.mark = parsed;
         }
     }
 
