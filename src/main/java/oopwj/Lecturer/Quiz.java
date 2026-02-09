@@ -1072,6 +1072,8 @@ public class Quiz extends javax.swing.JFrame {
         currentQuizTitle = "";
         jComboBox2.removeAllItems();
         quizIdsForDropdown.clear();
+        // Also clear all input fields as with the Clear button
+        clearInputFields();
     }//GEN-LAST:event_jButton5ActionPerformed
 
     private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {
@@ -1307,6 +1309,13 @@ public class Quiz extends javax.swing.JFrame {
                 // reset session count after saving
                 sessionQuestionCount = 0;
 
+                String selectedModuleForLabel = (String) jComboBox1.getSelectedItem();
+                if (selectedModuleForLabel != null && !selectedModuleForLabel.isEmpty() && currentQuizID != null && !currentQuizID.isEmpty()) {
+                    String[] modulePartsForLabel = selectedModuleForLabel.split(" - ", 2);
+                    String moduleIdForLabel = modulePartsForLabel[0].trim();
+                    updateQuestionCountLabels(moduleIdForLabel, currentQuizID);
+                }
+
                 JOptionPane.showMessageDialog(this, "Quiz saved successfully", "Saved", JOptionPane.INFORMATION_MESSAGE);
                 return; // Exit without processing form fields
             }
@@ -1372,6 +1381,8 @@ public class Quiz extends javax.swing.JFrame {
                     saveQuestionMarks(moduleId, quizIdForSave, assignedIds.get(0), marks);
                 }
             }
+
+            updateQuestionCountLabels(moduleId, quizIdForSave);
 
         } catch (Exception ex) {
             logger.log(java.util.logging.Level.SEVERE, null, ex);
@@ -1516,7 +1527,7 @@ public class Quiz extends javax.swing.JFrame {
         correctAnswer = "D";
     }
 
-    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {
+    private void clearInputFields() {
         // Clear all form fields
         jTextArea1.setText("");
         jTextArea2.setText("");
@@ -1528,6 +1539,10 @@ public class Quiz extends javax.swing.JFrame {
         jTextField7.setText("");
         answerGroup.clearSelection();
         correctAnswer = "";
+    }
+
+    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {
+        clearInputFields();
     }
 
     // Helper: normalize a field without adding quotes
