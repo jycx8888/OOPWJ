@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 S111,M002,QZ001,"Q001",Objective,A
 S111,M002,QZ001,"Q003",Objective,A
 S111,M002,QZ001,"Q005",Objective,A
@@ -25,3 +26,5 @@ S200,M002,QZ001,Q003,Objective,B
 S200,M002,QZ001,Q005,Objective,B
 S200,M002,QZ001,Q001,Subjective,asd
 S200,M002,QZ001,Q004,Subjective,ddd
+=======
+>>>>>>> b646ed6a063d941a11543aa2d673b5f115218db1
