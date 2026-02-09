@@ -8,3 +8,5 @@ Q002,QZ001,M002,"Which keyword is used in Java to inherit a class?","extends","i
 Q003,QZ001,M002,"Which concept allows methods with the same name but different parameters?","Overriding","Overloading","Hiding","Casting",B,Objective
 Q004,QZ001,M002,"Explain the difference between an interface and an abstract class.",Subjective
 Q005,QZ001,M002,"Which access modifier allows visibility within the same package and subclasses?","private","protected","public","default",B,Objective
+Q001,QZ002,M001,"dbdf",bsd,vdv,dv dc xvc,c,A,Objective
+Q002,QZ002,M001,"bfbfb",Subjective
