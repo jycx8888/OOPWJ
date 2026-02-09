@@ -120,17 +120,37 @@ public class UpdateUserPage extends javax.swing.JDialog {
         txtEmail.setText("");
     }
 }
+    
+    private boolean idExists(String userId) {
+        String[] files = {
+            "src\\main\\java\\oopwj\\Data\\student.txt",
+            "src\\main\\java\\oopwj\\Data\\lecturer.txt",
+            "src\\main\\java\\oopwj\\Data\\academicLeader.txt",
+            "src\\main\\java\\oopwj\\Data\\admin.txt"
+        };
 
-    /**
-     * Validate password format based on editProfileAC
-     * Requirements:
-     * - Length: 7-14 characters
-     * - At least one lowercase letter
-     * - At least one uppercase letter
-     * - At least one number
-     * - At least one symbol (!@#$%^)
-     * - Comma is not allowed
-     */
+        for (String file : files) {
+            File f = new File(file);
+            if (!f.exists()) continue;
+
+            try (BufferedReader br = new BufferedReader(new FileReader(f))) {
+                String line;
+                while ((line = br.readLine()) != null) {
+                    String[] parts = line.split(",");
+                    if (parts.length > 0 && parts[0].trim().equals(userId)) {
+                        return true;
+                    }
+                }
+            } catch (IOException e) {
+                JOptionPane.showMessageDialog(this,
+                    "Error reading file: " + file,
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
+            }
+        }
+        return false;
+    }
+
     private boolean isValidPassword(String password) {
         if (password == null || password.length() < 7 || password.length() > 14) {
             return false;
@@ -427,6 +447,14 @@ public class UpdateUserPage extends javax.swing.JDialog {
 
         if (!isValidPassword(password)) {
             showPasswordValidationMessage();
+            return;
+        }
+        
+        if (idExists(userId)) {
+            JOptionPane.showMessageDialog(this,
+                "User ID already exists. Please use a different ID.",
+                "Duplicate ID",
+                JOptionPane.ERROR_MESSAGE);
             return;
         }
 
