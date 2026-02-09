@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-S111,M002,QZ001,84,A+,"This student did a great job"
-=======
 S111,M002,QZ001,46,D,"This student did a great job"
->>>>>>> 0b5f81519b39ca670d5aa20f3fedc9ac3282f228
 S111,M002,QZ002,44,D,"bad as hell"
 S122,M001,QZ001,89,A+,""
 S123,M001,QZ001,7,F,"This student failed"
