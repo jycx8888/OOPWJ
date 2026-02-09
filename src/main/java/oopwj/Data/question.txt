@@ -8,3 +8,10 @@ Q002,QZ001,M002,"Which keyword is used in Java to inherit a class?","extends","i
 Q003,QZ001,M002,"Which concept allows methods with the same name but different parameters?","Overriding","Overloading","Hiding","Casting",B,Objective
 Q004,QZ001,M002,"Explain the difference between an interface and an abstract class.",Subjective
 Q005,QZ001,M002,"Which access modifier allows visibility within the same package and subclasses?","private","protected","public","default",B,Objective
+Q001,QZ002,M002,"testing",test,test 2,test 3,test 4,C,Objective
+Q002,QZ002,M002,"testing 3",a,b,c,d,B,Objective
+Q003,QZ002,M002,"asdfgh",Subjective
+Q004,QZ002,M002,"12345",Subjective
+Q005,QZ002,M002,"asdfghjk",5,4,2,3,A,Objective
+Q006,QZ002,M002,"asdaasf",4,2,1,4,D,Objective
+Q007,QZ002,M002,"6",Subjective

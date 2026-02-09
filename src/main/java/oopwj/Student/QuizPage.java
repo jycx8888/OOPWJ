@@ -32,6 +32,7 @@ public class QuizPage extends JFrame {
     private JButton finishBtn;
     private JComponent currentInputComponent;
     private String currentQuestionType;
+    private String currentQuestionID;
 
     public QuizPage(User user, String moduleID, String moduleName, String quizID, String quizTitle) {
         this.currentUser = user;
@@ -45,7 +46,7 @@ public class QuizPage extends JFrame {
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
 
-        this.allQuestions = service.getQuizDetails(quizID);
+        this.allQuestions = service.getQuizDetails(quizID, moduleID);
         
         if (allQuestions.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Error: No questions found for " + quizID);
@@ -135,11 +136,10 @@ public class QuizPage extends JFrame {
     }
 
     private void saveCurrentAnswer() {
-        if (currentInputComponent == null) return;
-        String[] qData = allQuestions.get(currentIndex);
-        String qID = qData[0];
+        if (currentInputComponent == null || currentQuestionID == null) return;
+
         String answer = "";
-        
+
         if ("Objective".equalsIgnoreCase(currentQuestionType)) {
             Container container = (Container) currentInputComponent;
             answer = findSelectedToggle(container);
@@ -148,10 +148,13 @@ public class QuizPage extends JFrame {
             JTextArea area = (JTextArea) scroll.getViewport().getView();
             answer = area.getText().trim();
         }
-        
-        if (!answer.isEmpty()) userAnswers.put(qID, answer);
-        else userAnswers.remove(qID);
+
+        if (!answer.isEmpty())
+            userAnswers.put(currentQuestionID, answer);
+        else
+            userAnswers.remove(currentQuestionID);
     }
+
 
     private String findSelectedToggle(Container container) {
         for (Component comp : container.getComponents()) {
@@ -171,6 +174,7 @@ public class QuizPage extends JFrame {
         String qText = qData[1];
         String qType = qData[2];
         this.currentQuestionType = qType;
+        this.currentQuestionID = qID;
         
         if (qType.equalsIgnoreCase("Objective")) sectionHeaderLabel.setText("Section A: Objective");
         else sectionHeaderLabel.setText("Section B: Subjective");
@@ -263,7 +267,6 @@ public class QuizPage extends JFrame {
         }
 
         btn.addActionListener(e -> {
-            userAnswers.put(allQuestions.get(currentIndex)[0], letter);
             updateButtonStyles((Container) btn.getParent());
         });
 
