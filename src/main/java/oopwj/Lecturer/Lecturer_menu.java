@@ -19,6 +19,7 @@ public class Lecturer_menu extends javax.swing.JFrame {
 
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(Lecturer_menu.class.getName());
     private String lecturerID;
+    private static final String LECTURER_FILE = "src/main/java/oopwj/Data/lecturer.txt";
 
     /**
      * Creates new form Lecturer_menu
@@ -32,7 +33,7 @@ public class Lecturer_menu extends javax.swing.JFrame {
         initComponents();
         centerWindow();
         setupListeners();
-        loadWelcomeName();
+        updateLNameLabel();
         addHoverEffect(editProfile,new Color(70,130,180),new Color(70,130,180));
         addHoverEffect(Assessmentsbutton,new Color(70,130,180),new Color(70,130,180));
         addHoverEffect(GradeAssessmentButton,new Color(70,130,180),new Color(70,130,180));
@@ -47,32 +48,39 @@ public class Lecturer_menu extends javax.swing.JFrame {
     private void setupListeners() {
         Assessmentsbutton.addActionListener(this::AssessmentsbuttonActionPerformed);
     }
-
-    private void loadWelcomeName() {
-        if (lecturerID == null || lecturerID.trim().isEmpty()) {
-            welcome.setText("Welcome");
-            return;
+    
+    private void updateLNameLabel() {
+        String name = getLecturerNameById(lecturerID);
+        if (name == null || name.isEmpty()) {
+            LName.setText("Academic Leader");
+        } else {
+            LName.setText("Logged in as: " + name);
+        }
+    }
+    
+    private String getLecturerNameById(String userID) {
+        if (userID == null || userID.isEmpty()) {
+            return null;
         }
 
-        String lecturerName = null;
-        try (BufferedReader br = new BufferedReader(new FileReader("src/main/java/oopwj/Data/lecturer.txt"))) {
+        try (java.io.BufferedReader reader = new java.io.BufferedReader(new java.io.FileReader(LECTURER_FILE))) {
             String line;
-            while ((line = br.readLine()) != null) {
+            while ((line = reader.readLine()) != null) {
+                if (line.trim().isEmpty()) {
+                    continue;
+                }
                 String[] parts = line.split(",");
-                if (parts.length >= 2 && parts[0].equals(lecturerID)) {
-                    lecturerName = parts[1];
-                    break;
+                if (parts.length < 2) {
+                    continue;
+                }
+                if (parts[0].trim().equalsIgnoreCase(userID.trim())) {
+                    return parts[1].trim();
                 }
             }
-        } catch (IOException e) {
-            logger.log(java.util.logging.Level.SEVERE, "Error loading lecturer data", e);
+        } catch (java.io.IOException e) {
+            logger.warning("Failed to read academic leader data: " + e.getMessage());
         }
-
-        if (lecturerName == null || lecturerName.trim().isEmpty()) {
-            welcome.setText("Welcome");
-        } else {
-            welcome.setText("Welcome, " + lecturerName.trim());
-        }
+        return null;
     }
     
     public void clearSession() {
@@ -112,6 +120,7 @@ public class Lecturer_menu extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jMenuItem1 = new javax.swing.JMenuItem();
         jPanel1 = new javax.swing.JPanel(){
             @Override
             protected void paintComponent(Graphics g) {
@@ -133,28 +142,38 @@ public class Lecturer_menu extends javax.swing.JFrame {
         logOut = new javax.swing.JButton();
         jButton1 = new javax.swing.JButton();
         welcome = new javax.swing.JLabel();
+        LName = new javax.swing.JLabel();
+        welcome1 = new javax.swing.JLabel();
+
+        jMenuItem1.setText("jMenuItem1");
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         jPanel1.setBackground(new java.awt.Color(204, 255, 255));
         jPanel1.setOpaque(false);
+        jPanel1.setPreferredSize(new java.awt.Dimension(450, 510));
 
+        editProfile.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         editProfile.setText("Edit Profile");
         editProfile.setAlignmentX(0.5F);
         editProfile.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         editProfile.addActionListener(this::editProfileActionPerformed);
 
+        Assessmentsbutton.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         Assessmentsbutton.setText("Assessments");
         Assessmentsbutton.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
+        GradeAssessmentButton.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         GradeAssessmentButton.setText("Grade Assessment");
         GradeAssessmentButton.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         GradeAssessmentButton.addActionListener(this::GradeAssessmentButtonActionPerformed);
 
+        logOut.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         logOut.setText("Log Out");
         logOut.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         logOut.addActionListener(this::logOutActionPerformed);
 
+        jButton1.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jButton1.setText("Timetable");
         jButton1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         jButton1.addActionListener(this::jButton1ActionPerformed);
@@ -162,32 +181,40 @@ public class Lecturer_menu extends javax.swing.JFrame {
         welcome.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
         welcome.setText("Welcome");
 
+        LName.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        LName.setText("jLabel1");
+
+        welcome1.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        welcome1.setText("Lecturer Dashboard");
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(63, 63, 63)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(179, 179, 179)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                .addComponent(editProfile, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(Assessmentsbutton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(GradeAssessmentButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(logOut, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(155, 155, 155)
-                        .addComponent(welcome)))
-                .addContainerGap(177, Short.MAX_VALUE))
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                        .addComponent(logOut, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(editProfile, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(Assessmentsbutton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(GradeAssessmentButton, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(welcome)
+                    .addComponent(LName, javax.swing.GroupLayout.PREFERRED_SIZE, 198, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(welcome1))
+                .addContainerGap(328, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap(73, Short.MAX_VALUE)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(56, 56, 56)
+                .addComponent(welcome1)
+                .addGap(18, 18, 18)
                 .addComponent(welcome)
-                .addGap(50, 50, 50)
+                .addGap(18, 18, 18)
+                .addComponent(LName)
+                .addGap(18, 18, 18)
                 .addComponent(editProfile)
                 .addGap(18, 18, 18)
                 .addComponent(Assessmentsbutton)
@@ -197,22 +224,18 @@ public class Lecturer_menu extends javax.swing.JFrame {
                 .addComponent(jButton1)
                 .addGap(18, 18, 18)
                 .addComponent(logOut)
-                .addGap(100, 100, 100))
+                .addContainerGap(64, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 612, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 450, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
 
         pack();
@@ -288,10 +311,13 @@ public class Lecturer_menu extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton Assessmentsbutton;
     private javax.swing.JButton GradeAssessmentButton;
+    private javax.swing.JLabel LName;
     private javax.swing.JButton editProfile;
     private javax.swing.JButton jButton1;
+    private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JButton logOut;
     private javax.swing.JLabel welcome;
+    private javax.swing.JLabel welcome1;
     // End of variables declaration//GEN-END:variables
 }
