@@ -233,7 +233,7 @@ public class QuizPage extends JFrame {
             
             JScrollPane s = new JScrollPane(t); 
             s.setBorder(new LineBorder(new Color(200, 200, 200)));
-            s.setAlignmentX(Component.LEFT_ALIGNMENT);
+            s.setAlignmentX(Component.CENTER_ALIGNMENT);
             
             contentArea.add(s); 
             currentInputComponent = s;
