@@ -4,13 +4,17 @@
  */
 package oopwj.Lecturer;
 
-import java.awt.*;
-import javax.swing.*;
+import java.awt.Color;
+import java.awt.GradientPaint;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+
+import javax.swing.JButton;
 
 /**
  *
@@ -247,6 +251,10 @@ public class Feedback extends javax.swing.JFrame {
                     "Error",
                     javax.swing.JOptionPane.ERROR_MESSAGE);
                 return;
+            }
+            // Refresh quiz sets table in parent window if available
+            if (parentWindow != null && parentWindow instanceof oopwj.Lecturer.Assessments) {
+                ((oopwj.Lecturer.Assessments) parentWindow).refreshTableData();
             }
         } else {
             // Save student feedback
