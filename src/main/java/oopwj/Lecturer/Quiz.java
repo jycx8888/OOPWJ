@@ -1307,6 +1307,13 @@ public class Quiz extends javax.swing.JFrame {
                 // reset session count after saving
                 sessionQuestionCount = 0;
 
+                String selectedModuleForLabel = (String) jComboBox1.getSelectedItem();
+                if (selectedModuleForLabel != null && !selectedModuleForLabel.isEmpty() && currentQuizID != null && !currentQuizID.isEmpty()) {
+                    String[] modulePartsForLabel = selectedModuleForLabel.split(" - ", 2);
+                    String moduleIdForLabel = modulePartsForLabel[0].trim();
+                    updateQuestionCountLabels(moduleIdForLabel, currentQuizID);
+                }
+
                 JOptionPane.showMessageDialog(this, "Quiz saved successfully", "Saved", JOptionPane.INFORMATION_MESSAGE);
                 return; // Exit without processing form fields
             }
@@ -1372,6 +1379,8 @@ public class Quiz extends javax.swing.JFrame {
                     saveQuestionMarks(moduleId, quizIdForSave, assignedIds.get(0), marks);
                 }
             }
+
+            updateQuestionCountLabels(moduleId, quizIdForSave);
 
         } catch (Exception ex) {
             logger.log(java.util.logging.Level.SEVERE, null, ex);
