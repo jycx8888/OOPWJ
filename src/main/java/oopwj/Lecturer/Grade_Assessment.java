@@ -28,6 +28,28 @@ import javax.swing.table.TableRowSorter;
  * @author User
  */
 public class Grade_Assessment extends javax.swing.JFrame {
+    // Adds a hover effect to a JButton
+    private void addHoverEffect(javax.swing.JButton btn, java.awt.Color normal, java.awt.Color hover) {
+        btn.setOpaque(true);
+        btn.setContentAreaFilled(true);
+        btn.setBorderPainted(false);
+        btn.setFocusPainted(false);
+
+        btn.setBackground(normal);
+        btn.setForeground(java.awt.Color.WHITE);
+
+        btn.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseEntered(java.awt.event.MouseEvent e) {
+                btn.setBackground(hover);
+            }
+
+            @Override
+            public void mouseExited(java.awt.event.MouseEvent e) {
+                btn.setBackground(normal);
+            }
+        });
+    }
 
     private String lecturerID;
     private Lecturer_menu lecturerMenu;
@@ -41,6 +63,19 @@ public class Grade_Assessment extends javax.swing.JFrame {
      */
     public Grade_Assessment() {
         initComponents();
+        // Set button colors (except Back button)
+        java.awt.Color customColor = new java.awt.Color(70, 130, 180);
+        jButton2.setBackground(customColor);
+        jButton3.setBackground(customColor);
+        jButton4.setBackground(customColor);
+        // Set Back button color
+        jButton1.setBackground(new java.awt.Color(220, 80, 80));
+
+        // Add hover effects
+        addHoverEffect(jButton2, customColor, new java.awt.Color(100, 149, 237)); // steel blue to cornflower blue
+        addHoverEffect(jButton3, customColor, new java.awt.Color(100, 149, 237));
+        addHoverEffect(jButton4, customColor, new java.awt.Color(100, 149, 237));
+        addHoverEffect(jButton1, new java.awt.Color(220, 80, 80), new java.awt.Color(255, 99, 71)); // red to tomato
         initSearchResultLabel();
         resetPanelLayoutForLabel();
         setLocationRelativeTo(null);
@@ -60,6 +95,19 @@ public class Grade_Assessment extends javax.swing.JFrame {
         logger.log(java.util.logging.Level.INFO, "Grade_Assessment created with lecturerID: " + lecturerID);
         
         initComponents();
+        // Set button colors (except Back button)
+        java.awt.Color customColor = new java.awt.Color(70, 130, 180);
+        jButton2.setBackground(customColor);
+        jButton3.setBackground(customColor);
+        jButton4.setBackground(customColor);
+        // Set Back button color
+        jButton1.setBackground(new java.awt.Color(220, 80, 80));
+
+        // Add hover effects
+        addHoverEffect(jButton2, customColor, new java.awt.Color(100, 149, 237));
+        addHoverEffect(jButton3, customColor, new java.awt.Color(100, 149, 237));
+        addHoverEffect(jButton4, customColor, new java.awt.Color(100, 149, 237));
+        addHoverEffect(jButton1, new java.awt.Color(220, 80, 80), new java.awt.Color(255, 99, 71));
         initSearchResultLabel();
         resetPanelLayoutForLabel();
         setLocationRelativeTo(null);
