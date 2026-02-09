@@ -1072,6 +1072,8 @@ public class Quiz extends javax.swing.JFrame {
         currentQuizTitle = "";
         jComboBox2.removeAllItems();
         quizIdsForDropdown.clear();
+        // Also clear all input fields as with the Clear button
+        clearInputFields();
     }//GEN-LAST:event_jButton5ActionPerformed
 
     private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {
@@ -1525,7 +1527,7 @@ public class Quiz extends javax.swing.JFrame {
         correctAnswer = "D";
     }
 
-    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {
+    private void clearInputFields() {
         // Clear all form fields
         jTextArea1.setText("");
         jTextArea2.setText("");
@@ -1537,6 +1539,10 @@ public class Quiz extends javax.swing.JFrame {
         jTextField7.setText("");
         answerGroup.clearSelection();
         correctAnswer = "";
+    }
+
+    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {
+        clearInputFields();
     }
 
     // Helper: normalize a field without adding quotes
