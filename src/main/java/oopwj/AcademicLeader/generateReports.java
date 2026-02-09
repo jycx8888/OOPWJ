@@ -1329,7 +1329,7 @@ public class generateReports extends javax.swing.JFrame {
         } else if ("Marks: Low to High".equals(sortOption)) {
             comparator = java.util.Comparator.comparingInt((StudentGradeEntry entry) -> entry.mark)
                 .thenComparing(entry -> entry.studentName, String.CASE_INSENSITIVE_ORDER);
-        } else if ("Name: Z-A".equals(sortOption)) {
+        } else if ("Name: A-Z".equals(sortOption)) {
             comparator = java.util.Comparator.comparing((StudentGradeEntry entry) -> entry.studentName,
                 String.CASE_INSENSITIVE_ORDER).reversed()
                 .thenComparingInt(entry -> entry.mark).reversed();
