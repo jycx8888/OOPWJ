@@ -275,7 +275,6 @@ public class AssignClassAndSchedule extends javax.swing.JFrame {
     scheduleDaySorter = new TableRowSorter<>((DefaultTableModel) scheduleTable.getModel());
     scheduleTable.setRowSorter(scheduleDaySorter);
 
-    // Text search
     searchSchedule.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
         @Override
         public void insertUpdate(javax.swing.event.DocumentEvent e) { applyScheduleFilter(); }
@@ -374,7 +373,19 @@ public class AssignClassAndSchedule extends javax.swing.JFrame {
             }
         });
     }
+    
+    private Date normalizeTime(Date time) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(time);
 
+        Calendar base = Calendar.getInstance();
+        base.set(Calendar.HOUR_OF_DAY, cal.get(Calendar.HOUR_OF_DAY));
+        base.set(Calendar.MINUTE, cal.get(Calendar.MINUTE));
+        base.set(Calendar.SECOND, 0);
+        base.set(Calendar.MILLISECOND, 0);
+
+        return base.getTime();
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -758,11 +769,12 @@ public class AssignClassAndSchedule extends javax.swing.JFrame {
             return;
         }
 
-        Date startTime = (Date) spinnerMin.getValue();
-        Date endTime = (Date) spinnerMax.getValue();
+        Date startTime = normalizeTime((Date) spinnerMin.getValue());
+        Date endTime   = normalizeTime((Date) spinnerMax.getValue());
 
         if (!startTime.before(endTime)) {
-            JOptionPane.showMessageDialog(this, "Start time must be before end time.");
+            JOptionPane.showMessageDialog(this,
+                "Start time must be before end time.");
             return;
         }
         
@@ -796,9 +808,8 @@ public class AssignClassAndSchedule extends javax.swing.JFrame {
                     String sEnd = data[5];
 
                     if (sClassId.equals(classroomId) && sDate.equals(dateStr)) {
-                        Date existingStart = timeFormat.parse(sStart);
-                        Date existingEnd = timeFormat.parse(sEnd);
-
+                        Date existingStart = normalizeTime(timeFormat.parse(sStart));
+                        Date existingEnd   = normalizeTime(timeFormat.parse(sEnd));
                         if (!endTime.before(existingStart) && !startTime.after(existingEnd)) {
                             conflictFound = true;
                             break;
