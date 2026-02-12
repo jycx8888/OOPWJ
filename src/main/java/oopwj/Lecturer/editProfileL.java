@@ -580,6 +580,9 @@ public class editProfileL extends javax.swing.JFrame {
         // TODO add your handling code here:
         this.dispose();
         if (parentFrame != null) {
+            if (parentFrame instanceof Lecturer_menu) {
+                ((Lecturer_menu) parentFrame).refreshUserDisplay();
+            }
             parentFrame.setVisible(true);
         }
     }//GEN-LAST:event_exitActionPerformed

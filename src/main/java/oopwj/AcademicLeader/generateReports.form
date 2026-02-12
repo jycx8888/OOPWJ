@@ -403,24 +403,14 @@
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" attributes="0">
+                      <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Group type="102" alignment="0" attributes="0">
-                              <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
-                              <Group type="103" groupAlignment="0" attributes="0">
-                                  <Group type="102" attributes="0">
-                                      <Component id="LecturerID" min="-2" pref="51" max="-2" attributes="0"/>
-                                      <EmptySpace max="-2" attributes="0"/>
-                                      <Component id="lecturerName" min="-2" pref="128" max="-2" attributes="0"/>
-                                  </Group>
-                                  <Component id="feedback" min="-2" pref="513" max="-2" attributes="0"/>
-                              </Group>
+                          <Group type="102" attributes="0">
+                              <Component id="LecturerID" min="-2" pref="51" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="lecturerName" min="-2" pref="128" max="-2" attributes="0"/>
                           </Group>
-                          <Group type="102" alignment="0" attributes="0">
-                              <EmptySpace min="-2" pref="178" max="-2" attributes="0"/>
-                              <Component id="previousFeedback" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace min="-2" pref="36" max="-2" attributes="0"/>
-                              <Component id="nextFeedback" min="-2" max="-2" attributes="0"/>
-                          </Group>
+                          <Component id="feedback" min="-2" pref="513" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace pref="19" max="32767" attributes="0"/>
                   </Group>
@@ -436,12 +426,7 @@
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="feedback" min="-2" pref="39" max="-2" attributes="0"/>
-                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="previousFeedback" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="nextFeedback" alignment="3" min="-2" max="-2" attributes="0"/>
-                      </Group>
-                      <EmptySpace max="32767" attributes="0"/>
+                      <EmptySpace pref="45" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -466,22 +451,6 @@
             <Component class="javax.swing.JLabel" name="feedback">
               <Properties>
                 <Property name="text" type="java.lang.String" value="jLabel7"/>
-              </Properties>
-            </Component>
-            <Component class="javax.swing.JButton" name="previousFeedback">
-              <Properties>
-                <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                  <Font name="Segoe UI" size="14" style="1"/>
-                </Property>
-                <Property name="text" type="java.lang.String" value="Previous"/>
-              </Properties>
-            </Component>
-            <Component class="javax.swing.JButton" name="nextFeedback">
-              <Properties>
-                <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                  <Font name="Segoe UI" size="14" style="1"/>
-                </Property>
-                <Property name="text" type="java.lang.String" value="Next"/>
               </Properties>
             </Component>
           </SubComponents>

@@ -72,10 +72,7 @@ public class generateReports extends javax.swing.JFrame {
         resetQuizDropdown();
         setDefaultPlaceholders();
         resetReportLabels();
-        setupFeedbackNavigation();
         addHoverEffect(viewStudent, new Color(70,130,180), new Color(100,149,237));
-        addHoverEffect(previousFeedback, new Color(70,130,180), new Color(100,149,237));
-        addHoverEffect(nextFeedback, new Color(70,130,180), new Color(100,149,237));
         addHoverEffect(exportToPDF, new Color(70,130,180), new Color(100,149,237));
         addHoverEffect(exit, new Color(220,80,80), new Color(255,120,120));
     }
@@ -150,8 +147,6 @@ public class generateReports extends javax.swing.JFrame {
         LecturerID = new javax.swing.JLabel();
         lecturerName = new javax.swing.JLabel();
         feedback = new javax.swing.JLabel();
-        previousFeedback = new javax.swing.JButton();
-        nextFeedback = new javax.swing.JButton();
         modules = new javax.swing.JComboBox<>();
         jLabel1 = new javax.swing.JLabel();
         exit = new javax.swing.JButton();
@@ -316,31 +311,18 @@ public class generateReports extends javax.swing.JFrame {
 
         feedback.setText("jLabel7");
 
-        previousFeedback.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        previousFeedback.setText("Previous");
-
-        nextFeedback.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        nextFeedback.setText("Next");
-
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
         jPanel4Layout.setHorizontalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
+                .addGap(12, 12, 12)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel4Layout.createSequentialGroup()
-                        .addGap(12, 12, 12)
-                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel4Layout.createSequentialGroup()
-                                .addComponent(LecturerID, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(lecturerName, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(feedback, javax.swing.GroupLayout.PREFERRED_SIZE, 513, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(jPanel4Layout.createSequentialGroup()
-                        .addGap(178, 178, 178)
-                        .addComponent(previousFeedback)
-                        .addGap(36, 36, 36)
-                        .addComponent(nextFeedback)))
+                        .addComponent(LecturerID, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(lecturerName, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(feedback, javax.swing.GroupLayout.PREFERRED_SIZE, 513, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(19, Short.MAX_VALUE))
         );
         jPanel4Layout.setVerticalGroup(
@@ -352,11 +334,7 @@ public class generateReports extends javax.swing.JFrame {
                     .addComponent(lecturerName))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(feedback, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(previousFeedback)
-                    .addComponent(nextFeedback))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(45, Short.MAX_VALUE))
         );
 
         modules.addActionListener(new java.awt.event.ActionListener() {
@@ -837,12 +815,6 @@ public class generateReports extends javax.swing.JFrame {
         updateGradeTable(new int[7]);
     }
 
-    private void setupFeedbackNavigation() {
-        previousFeedback.addActionListener(evt -> showPreviousFeedback());
-        nextFeedback.addActionListener(evt -> showNextFeedback());
-        resetFeedbackSection();
-    }
-
     private void updateFeedbackForQuiz(String moduleId, String quizId) {
         currentFeedbackList.clear();
         currentFeedbackIndex = -1;
@@ -890,31 +862,12 @@ public class generateReports extends javax.swing.JFrame {
         LecturerID.setText(lecturerId);
         lecturerName.setText(lecturerIdToName.getOrDefault(lecturerId, "Unknown"));
         feedback.setText(formatMultilineLabel(entry.feedback));
-
-        previousFeedback.setEnabled(currentFeedbackIndex > 0);
-        nextFeedback.setEnabled(currentFeedbackIndex < currentFeedbackList.size() - 1);
-    }
-
-    private void showPreviousFeedback() {
-        if (currentFeedbackIndex > 0) {
-            currentFeedbackIndex--;
-            updateFeedbackDisplay();
-        }
-    }
-
-    private void showNextFeedback() {
-        if (currentFeedbackIndex < currentFeedbackList.size() - 1) {
-            currentFeedbackIndex++;
-            updateFeedbackDisplay();
-        }
     }
 
     private void resetFeedbackSection() {
         LecturerID.setText("");
         lecturerName.setText("");
         feedback.setText("");
-        previousFeedback.setEnabled(false);
-        nextFeedback.setEnabled(false);
     }
 
     private String formatMultilineLabel(String text) {
@@ -1412,10 +1365,8 @@ public class generateReports extends javax.swing.JFrame {
     private javax.swing.JLabel lecturerName;
     private javax.swing.JLabel lowestMark;
     private javax.swing.JComboBox<String> modules;
-    private javax.swing.JButton nextFeedback;
     private javax.swing.JLabel numberOfStudents;
     private javax.swing.JLabel passRate;
-    private javax.swing.JButton previousFeedback;
     private javax.swing.JComboBox<String> quiz;
     private javax.swing.JTable studentGrade;
     private javax.swing.JLabel studentIDHighest;

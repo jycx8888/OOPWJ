@@ -57,6 +57,10 @@ public class Lecturer_menu extends javax.swing.JFrame {
             LName.setText("Logged in as: " + name);
         }
     }
+
+    public void refreshUserDisplay() {
+        updateLNameLabel();
+    }
     
     private String getLecturerNameById(String userID) {
         if (userID == null || userID.isEmpty()) {

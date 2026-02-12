@@ -579,6 +579,9 @@ public class editProfileAC extends javax.swing.JFrame {
         // TODO add your handling code here:
         this.dispose();
         if (parentFrame != null) {
+            if (parentFrame instanceof academicLeader) {
+                ((academicLeader) parentFrame).refreshUserDisplay();
+            }
             parentFrame.setVisible(true);
         }
     }//GEN-LAST:event_exitActionPerformed

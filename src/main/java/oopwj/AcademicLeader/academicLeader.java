@@ -75,6 +75,10 @@ public class academicLeader extends javax.swing.JFrame {
         }
     }
 
+    public void refreshUserDisplay() {
+        updateAcNameLabel();
+    }
+
     private String getAcademicLeaderNameById(String userID) {
         if (userID == null || userID.isEmpty()) {
             return null;

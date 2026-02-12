@@ -3,3 +3,4 @@ S124,M001,L101,this lecturer is Terrible! he will attend late to the class and t
 S223,M001,L101,He is a good lecturer
 S223,M001,L101,He is a patient lecturer, I like it
 S001,M001,L101,The Best Lecturer Ever
+S001,M001,L101,Thank you to him
