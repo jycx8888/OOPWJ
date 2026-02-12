@@ -12,3 +12,4 @@ S130,M002,Object Oriented Programming with Java
 S200,M002,Object Oriented Programming with Java
 S200,M001,Data Management
 S223,M001,Data Management
+S001,M001,Data Management

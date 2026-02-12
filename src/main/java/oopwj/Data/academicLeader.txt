@@ -1,2 +1,2 @@
-AC010,Mervin Ooi,Hihi@1234,AC010@mail.apu.edu.my
+AC010,Justin Ng,Hihi@1234,AC010@mail.apu.edu.my
 AC124,Kum,123,AC124@mail.apu.edu.my
