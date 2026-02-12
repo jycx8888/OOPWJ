@@ -1549,6 +1549,37 @@ public class Quiz extends javax.swing.JFrame {
     }
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {
+        // Validation: check if any input fields are non-empty
+        boolean hasData = false;
+        int selectedTabIndex = jTabbedPane1.getSelectedIndex();
+        if (selectedTabIndex == 0) { // Objective tab
+            if (!jTextArea1.getText().trim().isEmpty() ||
+                !a.getText().trim().isEmpty() ||
+                !b.getText().trim().isEmpty() ||
+                !c.getText().trim().isEmpty() ||
+                !d.getText().trim().isEmpty() ||
+                !jTextField1.getText().trim().isEmpty() ||
+                answerGroup.getSelection() != null) {
+                hasData = true;
+            }
+        } else if (selectedTabIndex == 1) { // Subjective tab
+            if (!jTextArea2.getText().trim().isEmpty() ||
+                !jTextField7.getText().trim().isEmpty()) {
+                hasData = true;
+            }
+        }
+        if (hasData) {
+            int confirm = JOptionPane.showConfirmDialog(
+                this,
+                "There is data in the input fields. Are you sure you want to clear all fields?",
+                "Confirm Clear",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.WARNING_MESSAGE
+            );
+            if (confirm != JOptionPane.YES_OPTION) {
+                return;
+            }
+        }
         clearInputFields();
     }
 
