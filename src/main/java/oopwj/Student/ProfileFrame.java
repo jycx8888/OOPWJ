@@ -1,15 +1,20 @@
 package oopwj.Student;
 
-import oopwj.Model.User;
-import oopwj.Model.StudentService;
-
-import javax.swing.*;
-import javax.swing.border.Border;
-import javax.swing.border.CompoundBorder;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.LineBorder;
-import javax.swing.filechooser.FileNameExtensionFilter;
-import java.awt.*;
+import java.awt.BasicStroke;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Image;
+import java.awt.Insets;
+import java.awt.RenderingHints;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Ellipse2D;
@@ -21,6 +26,26 @@ import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.Locale;
 
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
+import javax.swing.border.CompoundBorder;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.LineBorder;
+import javax.swing.filechooser.FileNameExtensionFilter;
+
+import oopwj.Model.StudentService;
+import oopwj.Model.User;
+
 public class ProfileFrame extends JFrame {
 
     private static final String PROFILE_IMAGE_DIR = "src/main/java/oopwj/image";
@@ -31,7 +56,6 @@ public class ProfileFrame extends JFrame {
     private User currentUser; 
     private StudentService service;
 
-    // UI Colors
     private Color bgGrey = new Color(245, 247, 250);
     private Color cardWhite = Color.WHITE;
     private Color textDark = new Color(50, 50, 50);
@@ -57,14 +81,12 @@ public class ProfileFrame extends JFrame {
         gbc.fill = GridBagConstraints.BOTH;
         gbc.insets = new Insets(0, 15, 0, 15);
 
-        // --- Left Column (Avatar) ---
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.weightx = 0.3;
         gbc.weighty = 1.0;
         contentPanel.add(createAvatarPanel(), gbc);
 
-        // --- Right Column (Info & Courses) ---
         gbc.gridx = 1;
         gbc.weightx = 0.7;
         contentPanel.add(createRightPanel(), gbc);
@@ -82,7 +104,6 @@ public class ProfileFrame extends JFrame {
             new EmptyBorder(40, 20, 40, 20)
         ));
 
-        // Circular Image Label
         imageLabel = new JLabel() {
             @Override
             protected void paintComponent(Graphics g) {
@@ -94,7 +115,7 @@ public class ProfileFrame extends JFrame {
                     getIcon().paintIcon(this, g2, 0, 0);
                     g2.setColor(new Color(230,230,230));
                     g2.setStroke(new BasicStroke(2));
-                    g2.draw(circle); // Draw border
+                    g2.draw(circle); 
                     g2.dispose();
                 } else {
                     super.paintComponent(g);
@@ -105,9 +126,7 @@ public class ProfileFrame extends JFrame {
         imageLabel.setMaximumSize(new Dimension(180, 180));
         imageLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        // Load Image
         if (!loadSavedProfileImage()) {
-            // Placeholder logic if needed, or default
              ImageIcon defaultIcon = loadAndScaleImage("src/main/java/oopwj/image/default_profile.png", 180, 180);
              if(defaultIcon != null) imageLabel.setIcon(defaultIcon);
         }
@@ -115,7 +134,6 @@ public class ProfileFrame extends JFrame {
         panel.add(imageLabel);
         panel.add(Box.createVerticalStrut(20));
 
-        // Text Button for Upload
         JLabel uploadLink = new JLabel("Change Avatar");
         uploadLink.setFont(new Font("Segoe UI", Font.BOLD, 14));
         uploadLink.setForeground(accentBlue);
@@ -130,7 +148,6 @@ public class ProfileFrame extends JFrame {
 
         panel.add(uploadLink);
         
-        // Push everything to top/center
         panel.add(Box.createVerticalGlue());
 
         return panel;
@@ -141,7 +158,6 @@ public class ProfileFrame extends JFrame {
         rightContainer.setLayout(new BoxLayout(rightContainer, BoxLayout.Y_AXIS));
         rightContainer.setBackground(bgGrey);
 
-        // 1. Personal Info Card
         JPanel infoCard = new JPanel(new GridBagLayout());
         infoCard.setBackground(cardWhite);
         infoCard.setBorder(new CompoundBorder(
@@ -153,9 +169,8 @@ public class ProfileFrame extends JFrame {
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.anchor = GridBagConstraints.WEST;
-        gbc.insets = new Insets(8, 0, 8, 15); // Gap between label and value
+        gbc.insets = new Insets(8, 0, 8, 15);
 
-        // -- ID --
         gbc.gridx = 0; gbc.gridy = 0; gbc.weightx = 0;
         infoCard.add(createLabel("Student ID:"), gbc);
         
@@ -163,7 +178,6 @@ public class ProfileFrame extends JFrame {
         JLabel idVal = createValueLabel(currentUser.getUserID());
         infoCard.add(idVal, gbc);
 
-        // -- Name --
         gbc.gridx = 0; gbc.gridy = 1; gbc.weightx = 0;
         infoCard.add(createLabel("Full Name:"), gbc);
 
@@ -186,27 +200,24 @@ public class ProfileFrame extends JFrame {
         namePanel.add(editLink);
         infoCard.add(namePanel, gbc);
 
-        // -- Email --
         gbc.gridx = 0; gbc.gridy = 2; gbc.weightx = 0;
         infoCard.add(createLabel("Email:"), gbc);
 
         gbc.gridx = 1; gbc.weightx = 1.0;
         infoCard.add(createValueLabel(currentUser.getEmail()), gbc);
 
-        // -- Separator --
         gbc.gridx = 0; gbc.gridy = 3; gbc.gridwidth = 2;
         gbc.insets = new Insets(20, 0, 20, 0);
         JSeparator sep = new JSeparator();
         sep.setForeground(new Color(240, 240, 240));
         infoCard.add(sep, gbc);
 
-        // -- Change Password Button --
         gbc.gridy = 4; gbc.gridwidth = 2;
         gbc.insets = new Insets(0, 0, 0, 0);
         JButton changePassBtn = new JButton("Change Password");
         changePassBtn.setFont(new Font("Segoe UI", Font.BOLD, 13));
         changePassBtn.setForeground(Color.WHITE);
-        changePassBtn.setBackground(new Color(100, 100, 100)); // Dark grey button
+        changePassBtn.setBackground(new Color(100, 100, 100));
         changePassBtn.setFocusPainted(false);
         changePassBtn.setBorder(new EmptyBorder(8, 15, 8, 15));
         changePassBtn.addActionListener(e -> handlePasswordChange());
@@ -217,9 +228,8 @@ public class ProfileFrame extends JFrame {
         infoCard.add(btnWrapper, gbc);
 
         rightContainer.add(infoCard);
-        rightContainer.add(Box.createVerticalStrut(20)); // Gap between cards
+        rightContainer.add(Box.createVerticalStrut(20));
 
-        // 2. Courses Card
         JPanel coursesCard = new JPanel(new BorderLayout());
         coursesCard.setBackground(cardWhite);
         coursesCard.setBorder(new CompoundBorder(
@@ -234,7 +244,6 @@ public class ProfileFrame extends JFrame {
         courseTitle.setBorder(new EmptyBorder(0, 0, 15, 0));
         coursesCard.add(courseTitle, BorderLayout.NORTH);
 
-        // Course List Container
         JPanel courseListPanel = new JPanel();
         courseListPanel.setLayout(new BoxLayout(courseListPanel, BoxLayout.Y_AXIS));
         courseListPanel.setBackground(cardWhite);
@@ -252,13 +261,11 @@ public class ProfileFrame extends JFrame {
             }
         }
 
-        // Scroll for courses if too many
         JScrollPane scroll = new JScrollPane(courseListPanel);
         scroll.setBorder(null);
         scroll.getVerticalScrollBar().setUnitIncrement(10);
         coursesCard.add(scroll, BorderLayout.CENTER);
 
-        // Make sure the course card takes up remaining space nicely
         coursesCard.setPreferredSize(new Dimension(0, 250));
 
         rightContainer.add(coursesCard);
@@ -266,7 +273,6 @@ public class ProfileFrame extends JFrame {
         return rightContainer;
     }
 
-    // --- Helper UI Components ---
 
     private JLabel createLabel(String text) {
         JLabel l = new JLabel(text);
@@ -284,16 +290,15 @@ public class ProfileFrame extends JFrame {
 
     private JPanel createCoursePill(String courseInfo) {
         JPanel p = new JPanel(new BorderLayout());
-        p.setBackground(new Color(248, 249, 250)); // Very light grey
+        p.setBackground(new Color(248, 249, 250));
         p.setBorder(new LineBorder(new Color(230, 230, 230), 1, true));
         p.setMaximumSize(new Dimension(Integer.MAX_VALUE, 50));
         p.setPreferredSize(new Dimension(0, 50));
 
-        JLabel icon = new JLabel("📚"); // Book Emoji as Icon
+        JLabel icon = new JLabel("📚");
         icon.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 20));
         icon.setBorder(new EmptyBorder(0, 15, 0, 10));
         
-        // Parse course info (Code, Name) if comma separated
         String display = courseInfo;
         String[] parts = courseInfo.split(",");
         if(parts.length >= 2) {
@@ -310,7 +315,6 @@ public class ProfileFrame extends JFrame {
         return p;
     }
 
-    // --- Logic Implementation (Same as before, just wired to new UI) ---
 
     private void handleImageUpload() {
         JFileChooser fileChooser = new JFileChooser();
@@ -398,7 +402,6 @@ public class ProfileFrame extends JFrame {
         }
     }
 
-    // --- Utility Methods ---
 
     private ImageIcon loadAndScaleImage(String path, int w, int h) {
          try {

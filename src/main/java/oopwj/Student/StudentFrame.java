@@ -1,15 +1,31 @@
 package oopwj.Student;
 
-import oopwj.Model.User;
-import oopwj.LoginFrame;
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.border.EmptyBorder;
+
+import oopwj.LoginFrame;
+import oopwj.Model.User;
 
 public class StudentFrame extends JFrame {
 
@@ -17,12 +33,12 @@ public class StudentFrame extends JFrame {
     private JLabel welcomeLabel;
 
     
-    private Color headerBlue = new Color(0, 60, 100);    // Top Bar
-    private Color bgGrey = new Color(240, 242, 245);      // Main Background
-    private Color cardBg = Color.WHITE;                   // Card Background
-    private Color textTitle = new Color(33, 37, 41);      // Dark Grey Title
-    private Color textDesc = new Color(108, 117, 125);    // Light Grey Description
-    private Color hoverBorder = new Color(0, 123, 255);   // Blue highlight on hover
+    private Color headerBlue = new Color(0, 60, 100);
+    private Color bgGrey = new Color(240, 242, 245);
+    private Color cardBg = Color.WHITE;
+    private Color textTitle = new Color(33, 37, 41);
+    private Color textDesc = new Color(108, 117, 125);
+    private Color hoverBorder = new Color(0, 123, 255);
 
     public StudentFrame(User user) {
         this.user = user;
@@ -50,7 +66,7 @@ public class StudentFrame extends JFrame {
         
         JButton logoutBtn = new JButton("Logout");
         logoutBtn.setFocusPainted(false);
-        logoutBtn.setBackground(new Color(220, 53, 69)); // Red color
+        logoutBtn.setBackground(new Color(220, 53, 69));
         logoutBtn.setForeground(Color.WHITE);
         logoutBtn.setFont(new Font("Segoe UI", Font.BOLD, 14));
         logoutBtn.setCursor(new Cursor(Cursor.HAND_CURSOR));
@@ -140,7 +156,7 @@ public class StudentFrame extends JFrame {
         
         JScrollPane scrollPane = new JScrollPane(cardsPanel);
         scrollPane.setBorder(null);
-        scrollPane.getVerticalScrollBar().setUnitIncrement(20); // Faster scrolling
+        scrollPane.getVerticalScrollBar().setUnitIncrement(20);
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         
         add(scrollPane, BorderLayout.CENTER);
@@ -161,11 +177,11 @@ public class StudentFrame extends JFrame {
         
         JPanel headerPanel = new JPanel(new GridBagLayout());
         headerPanel.setBackground(headerColor);
-        headerPanel.setPreferredSize(new Dimension(100, 100)); // Fixed height for header
+        headerPanel.setPreferredSize(new Dimension(100, 100));
 
         
         JLabel iconLabel = new JLabel(iconSymbol);
-        iconLabel.setFont(new Font("Segoe UI Symbol", Font.PLAIN, 40)); // Large Icon
+        iconLabel.setFont(new Font("Segoe UI Symbol", Font.PLAIN, 40));
         iconLabel.setForeground(Color.WHITE);
         headerPanel.add(iconLabel);
 
@@ -175,7 +191,7 @@ public class StudentFrame extends JFrame {
         JPanel textPanel = new JPanel();
         textPanel.setLayout(new BoxLayout(textPanel, BoxLayout.Y_AXIS));
         textPanel.setBackground(cardBg);
-        textPanel.setBorder(new EmptyBorder(20, 20, 20, 20)); // Padding inside text area
+        textPanel.setBorder(new EmptyBorder(20, 20, 20, 20));
 
         
         JLabel titleLbl = new JLabel(title);
@@ -187,7 +203,7 @@ public class StudentFrame extends JFrame {
         textPanel.add(Box.createRigidArea(new Dimension(0, 10)));
 
         
-        JLabel descLbl = new JLabel("<html>" + description + "</html>"); // Wrap text
+        JLabel descLbl = new JLabel("<html>" + description + "</html>");
         descLbl.setFont(new Font("Segoe UI", Font.PLAIN, 13));
         descLbl.setForeground(textDesc);
         descLbl.setAlignmentX(Component.LEFT_ALIGNMENT);
