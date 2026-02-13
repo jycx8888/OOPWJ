@@ -31,18 +31,16 @@ import javax.swing.table.DefaultTableModel;
 public class Assessments extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(Assessments.class.getName());
-    private String currentDataType = null; // Track which data is currently displayed
+    private String currentDataType = null; 
     private String lecturerID;
     private Lecturer_menu parentWindow;
-    private Map<String, String> lecturerModules = new HashMap<>(); // moduleId -> moduleName
-    private Map<String, String> allModuleNames = new HashMap<>(); // moduleId -> moduleName
-    private List<String> originalQuizLines = new ArrayList<>(); // Store original lines from question.txt
-    private List<Integer> displayedQuizLineIndices = new ArrayList<>(); // Map displayed rows to original line indices
-    private List<String> displayedQuizSetKeys = new ArrayList<>(); // Map displayed rows to QuizID|ModuleID
+    private Map<String, String> lecturerModules = new HashMap<>(); 
+    private Map<String, String> allModuleNames = new HashMap<>(); 
+    private List<String> originalQuizLines = new ArrayList<>(); 
+    private List<Integer> displayedQuizLineIndices = new ArrayList<>();
+    private List<String> displayedQuizSetKeys = new ArrayList<>(); 
 
-    /**
-     * Creates new form Assessments
-     */
+
     public Assessments() {
         this(null, null);
     }
@@ -50,15 +48,15 @@ public class Assessments extends javax.swing.JFrame {
     public Assessments(String lecturerID, Lecturer_menu parentWindow) {
         this.lecturerID = lecturerID;
         this.parentWindow = parentWindow;
-        loadLecturerModules(); // Load modules assigned to this lecturer
+        loadLecturerModules(); 
         initComponents();
         resetPanelLayoutForLabel();
         jLabel1.setText("Filter:");
         centerWindow();
         setupTable();
         setupSearchField();
-        loadFilterOptionsToComboBox(); // Populate jComboBox1 with filter options
-        displayAssignedModules(); // Show assigned modules to the lecturer
+        loadFilterOptionsToComboBox(); 
+        displayAssignedModules(); 
         loadQuizData();
         currentDataType = "question";
         jButton1.addActionListener(this::jButton1ActionPerformed);
@@ -412,11 +410,10 @@ public class Assessments extends javax.swing.JFrame {
     private void deleteSelectedRows(int[] selectedRows) {
         DefaultTableModel model = (DefaultTableModel) jTable2.getModel();
 
-        // Collect the indices to delete in descending order
         java.util.Arrays.sort(selectedRows);
 
         if ("question".equals(currentDataType)) {
-            // Create a set of original line indices to delete
+
             java.util.Set<Integer> linesToDelete = new java.util.HashSet<>();
             for (int selectedRow : selectedRows) {
                 if (selectedRow >= 0 && selectedRow < model.getRowCount()) {
@@ -426,12 +423,12 @@ public class Assessments extends javax.swing.JFrame {
                 }
             }
 
-            // Remove from table (in reverse order)
+
             for (int i = selectedRows.length - 1; i >= 0; i--) {
                 model.removeRow(selectedRows[i]);
             }
 
-            // Update the file with remaining data
+
             updateQuizFile(linesToDelete);
             JOptionPane.showMessageDialog(this, "Row(s) deleted successfully", "Success", JOptionPane.INFORMATION_MESSAGE);
             return;
@@ -463,7 +460,7 @@ public class Assessments extends javax.swing.JFrame {
         File totalMarksFile = new File(projectRoot, "src\\main\\java\\oopwj\\data\\TotalQuizMark.txt");
         java.util.Map<String, String> quizTitlesByKey = new java.util.HashMap<>();
 
-        // Update Quiz.txt
+
         if (quizFile.exists()) {
             try (BufferedReader br = new BufferedReader(new FileReader(quizFile))) {
                 String line;
@@ -517,7 +514,7 @@ public class Assessments extends javax.swing.JFrame {
             }
         }
 
-        // Update question.txt and renumber remaining questions
+
         if (questionFile.exists()) {
             List<String> remainingQuestionLines = new ArrayList<>();
             try (BufferedReader br = new BufferedReader(new FileReader(questionFile))) {
@@ -584,7 +581,7 @@ public class Assessments extends javax.swing.JFrame {
             }
         }
 
-        // Update TotalQuizMark.txt for deleted quiz sets
+ 
         deleteTotalQuizMarks(totalMarksFile, quizSetKeysToDelete, quizTitlesByKey);
     }
 
@@ -651,46 +648,44 @@ public class Assessments extends javax.swing.JFrame {
         File quizFile = new File(projectRoot, "src\\main\\java\\oopwj\\data\\question.txt");
         
         try {
-            // First, collect remaining lines and renumber them
-            Map<String, Integer> questionCounters = new HashMap<>(); // Key: "QuizID|ModuleID", Value: counter
+
+            Map<String, Integer> questionCounters = new HashMap<>();
             List<String> updatedLines = new ArrayList<>();
             
             for (int i = 0; i < originalQuizLines.size(); i++) {
                 if (!linesToDelete.contains(i)) {
                     String line = originalQuizLines.get(i);
-                    String[] fields = line.split(",", -1); // Split by comma, keep empty fields
+                    String[] fields = line.split(",", -1); 
                     
                     if (fields.length >= 3) {
-                        // Format: QuestionID[0], QuizID[1], ModuleID[2], ...
+
                         String quizID = fields[1].trim();
                         String moduleID = fields[2].trim();
                         String key = quizID + "|" + moduleID;
                         
-                        // Increment counter for this quiz/module combination
                         int newCount = questionCounters.getOrDefault(key, 0) + 1;
                         questionCounters.put(key, newCount);
                         
-                        // Create new question ID with leading zeros
+
                         String newQuestionID = String.format("Q%03d", newCount);
                         
-                        // Replace the question ID in the first field
+
                         fields[0] = newQuestionID;
                         
-                        // Reconstruct the line with the new question ID
+
                         String updatedLine = String.join(",", fields);
                         updatedLines.add(updatedLine);
                     }
                 }
             }
-            
-            // Write updated lines to file
+
             try (java.io.FileWriter fw = new java.io.FileWriter(quizFile)) {
                 for (String line : updatedLines) {
                     fw.write(line + "\n");
                 }
             }
             
-            // Update originalQuizLines for future operations
+
             originalQuizLines.clear();
             originalQuizLines.addAll(updatedLines);
             
@@ -793,7 +788,7 @@ public class Assessments extends javax.swing.JFrame {
             while ((line = br.readLine()) != null) {
                 String[] fields = parseCSV(line);
 
-                // Check if any field contains the search term
+
                 boolean matches = false;
                 for (String field : fields) {
                     if (field.toLowerCase().contains(searchTerm.toLowerCase())) {
@@ -810,7 +805,6 @@ public class Assessments extends javax.swing.JFrame {
                         }
                     }
 
-                    // question.txt format: QuestionID[0], QuizID[1], ModuleID[2], Question[3], Options[4-7], CorrectAnswer[8], Type[9]
                     if (fields.length == 10) { // Objective
                         String quizID = fields[1].trim();
                         String moduleID = fields[2].trim();
@@ -1050,7 +1044,6 @@ public class Assessments extends javax.swing.JFrame {
         if (tryOpenFeedbackFromSelection()) {
             return;
         }
-        // Create a dialog with module and quiz selection
         javax.swing.JDialog dialog = new javax.swing.JDialog(this, "Provide Feedback", true);
         dialog.setDefaultCloseOperation(javax.swing.JDialog.DISPOSE_ON_CLOSE);
         dialog.setSize(400, 250);
@@ -1060,7 +1053,6 @@ public class Assessments extends javax.swing.JFrame {
         panel.setLayout(new java.awt.GridLayout(4, 2, 10, 10));
         panel.setBorder(javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10));
         
-        // Module selection
         javax.swing.JLabel moduleLabel = new javax.swing.JLabel("Select Module:");
         javax.swing.JComboBox<String> moduleComboBox = new javax.swing.JComboBox<>();
         java.util.Map<String, String> moduleDisplayToId = new java.util.HashMap<>();
@@ -1072,15 +1064,14 @@ public class Assessments extends javax.swing.JFrame {
             moduleDisplayToId.put(display, moduleID);
             moduleComboBox.addItem(display);
         }
-        moduleComboBox.setSelectedIndex(-1); // Show nothing by default
+        moduleComboBox.setSelectedIndex(-1); 
         
-        // Quiz selection
+
         javax.swing.JLabel quizLabel = new javax.swing.JLabel("Select Quiz:");
         javax.swing.JComboBox<String> quizComboBox = new javax.swing.JComboBox<>();
         java.util.Map<String, String> quizDisplayToId = new java.util.HashMap<>();
-        quizComboBox.setSelectedIndex(-1); // Show nothing by default
+        quizComboBox.setSelectedIndex(-1); 
         
-        // Update quiz list when module is selected
         moduleComboBox.addActionListener(e -> {
             quizComboBox.removeAllItems();
             quizDisplayToId.clear();
@@ -1092,7 +1083,7 @@ public class Assessments extends javax.swing.JFrame {
             loadQuizzesForFeedback(selectedModuleId, quizComboBox, quizDisplayToId);
         });
         
-        // Buttons
+
         javax.swing.JButton submitButton = new javax.swing.JButton("Proceed");
         javax.swing.JButton cancelButton = new javax.swing.JButton("Cancel");
         
@@ -1111,29 +1102,27 @@ public class Assessments extends javax.swing.JFrame {
                 return;
             }
             
-            // Open Feedback window for quiz set feedback with parent reference
+
             Feedback feedbackWindow = new Feedback(selectedModuleId, selectedQuizId, lecturerID, true, this);
             feedbackWindow.setVisible(true);
             dialog.dispose();
-            // Close the Assessments window
+
             Assessments.this.setVisible(false);
         });
         
         cancelButton.addActionListener(e -> dialog.dispose());
         
-        // Add components
+
         panel.add(moduleLabel);
         panel.add(moduleComboBox);
         panel.add(quizLabel);
         panel.add(quizComboBox);
-        panel.add(new javax.swing.JLabel()); // Empty label for spacing
-        panel.add(new javax.swing.JLabel()); // Empty label for spacing
+        panel.add(new javax.swing.JLabel());
+        panel.add(new javax.swing.JLabel()); 
         panel.add(submitButton);
         panel.add(cancelButton);
         
         dialog.add(panel);
-        
-        // Do not auto-load quizzes; wait for user selection
         
         dialog.setVisible(true);
     }
@@ -1204,7 +1193,7 @@ public class Assessments extends javax.swing.JFrame {
             try (BufferedReader br = new BufferedReader(new FileReader(quizFile))) {
                 String line;
                 while ((line = br.readLine()) != null) {
-                    String[] fields = line.split(",", 3); // Split into 3 parts max
+                    String[] fields = line.split(",", 3); 
                     if (fields.length >= 3) {
                         String quizModuleID = fields[1].trim();
                         if (quizModuleID.equals(moduleID)) {
@@ -1226,9 +1215,7 @@ public class Assessments extends javax.swing.JFrame {
         }
     }
     
-    /**
-     * Public method to refresh the table data - called when returning from Quiz editing
-     */
+
     public void refreshTableData() {
         if ("question".equals(currentDataType)) {
             loadQuizData();
@@ -1264,7 +1251,7 @@ public class Assessments extends javax.swing.JFrame {
                             allModuleNames.put(moduleId, moduleName);
                         }
                         
-                        // Check if this module is assigned to the current lecturer
+
                         if (lecturerID != null && assignedLecturerId.equals(lecturerID)) {
                             lecturerModules.put(moduleId, moduleName);
                         }
@@ -1275,7 +1262,6 @@ public class Assessments extends javax.swing.JFrame {
             logger.log(java.util.logging.Level.SEVERE, "Error loading modules", ex);
         }
 
-        // Log the modules for debugging
         if (lecturerID != null) {
             if (lecturerModules.isEmpty()) {
                 logger.log(java.util.logging.Level.INFO, "No modules assigned to lecturer: " + lecturerID);
@@ -1319,14 +1305,12 @@ public class Assessments extends javax.swing.JFrame {
         String projectRoot = System.getProperty("user.dir");
         File quizFile = new File(projectRoot, "src\\main\\java\\oopwj\\data\\question.txt");
 
-        // Load total marks per question (ModuleID|QuizID|QuestionID)
         Map<String, String> quizMarks = loadQuizMarks(projectRoot);
         Map<String, String> quizNames = loadQuizNames(projectRoot);
 
-        // Update column names to Module Name, Quiz Name, Question ID, Question, Total Marks
         String[] columnNames = {"Module Name", "Quiz Name", "Question ID", "Question", "Total Marks"};
         List<Object[]> rows = new ArrayList<>();
-        originalQuizLines.clear(); // Clear previous data
+        originalQuizLines.clear(); 
         displayedQuizLineIndices.clear();
         displayedQuizSetKeys.clear();
 
@@ -1336,7 +1320,6 @@ public class Assessments extends javax.swing.JFrame {
                 int lineIndex = 0;
                 while ((line = br.readLine()) != null) {
                     String[] fields = parseCSV(line);
-                    // Store the original line
                     originalQuizLines.add(line);
 
                     if (fields.length >= 3 && lecturerID != null) {
@@ -1347,7 +1330,6 @@ public class Assessments extends javax.swing.JFrame {
                         }
                     }
                     
-                    // New format: QuestionID[0], QuizID[1], ModuleID[2], Question[3], Options[4-7], CorrectAnswer[8], Type[9]
                     if (fields.length == 10 || fields.length == 5) {
                         String quizID = fields[1].trim();
                         String moduleID = fields[2].trim();
@@ -1369,7 +1351,6 @@ public class Assessments extends javax.swing.JFrame {
             }
         }
 
-        // Update the table model with the new data
         DefaultTableModel model = new DefaultTableModel(rows.toArray(new Object[0][]), columnNames);
         jTable2.setModel(model);
         centerAlignTable(jTable2);
@@ -1412,7 +1393,6 @@ public class Assessments extends javax.swing.JFrame {
                 while ((line = br.readLine()) != null) {
                     String[] fields = parseCSV(line);
                     if (fields.length >= 4) {
-                        // Format: ModuleID[0], QuizID[1], QuestionID[2], TotalMarks[3]
                         String moduleID = fields[0].trim();
                         String quizID = fields[1].trim();
                         String questionID = fields[2].trim();
@@ -1510,7 +1490,6 @@ public class Assessments extends javax.swing.JFrame {
         File quizFile = new File(projectRoot, "src\\main\\java\\oopwj\\data\\Quiz.txt");
         File questionFile = new File(projectRoot, "src\\main\\java\\oopwj\\data\\question.txt");
 
-        // Count questions per QuizID and ModuleID combination
         Map<String, Integer> questionCounts = new HashMap<>();
 
         if (questionFile.exists()) {
@@ -1590,7 +1569,6 @@ public class Assessments extends javax.swing.JFrame {
 
         displayedQuizSetKeys.clear();
         
-        // Count questions per QuizID and ModuleID combination
         Map<String, Integer> questionCounts = new HashMap<>();
         
         if (questionFile.exists()) {
@@ -1598,7 +1576,6 @@ public class Assessments extends javax.swing.JFrame {
                 String line;
                 while ((line = br.readLine()) != null) {
                     String[] fields = parseCSV(line);
-                    // question.txt format: QuestionID[0], QuizID[1], ModuleID[2], ...
                     if (fields.length >= 3) {
                         String quizID = fields[1].trim();
                         String modID = fields[2].trim();
@@ -1613,7 +1590,6 @@ public class Assessments extends javax.swing.JFrame {
             }
         }
         
-        // Load quizzes for the selected module
         String[] columnNames = {"ModuleID", "QuizID", "Quiz Title", "Total Questions"};
         List<Object[]> rows = new ArrayList<>();
         
@@ -1621,8 +1597,7 @@ public class Assessments extends javax.swing.JFrame {
             try (BufferedReader br = new BufferedReader(new FileReader(quizFile))) {
                 String line;
                 while ((line = br.readLine()) != null) {
-                    String[] fields = line.split(",", 3); // Split into 3 parts max to preserve quiz title
-                    // Quiz.txt format: QuizID[0], ModuleID[1], QuizName[2]
+                    String[] fields = line.split(",", 3); 
                     if (fields.length >= 3) {
                         String quizModuleID = fields[1].trim();
                         if (quizModuleID.equals(moduleID)) {
@@ -1642,7 +1617,6 @@ public class Assessments extends javax.swing.JFrame {
             }
         }
         
-        // Update the table model with the new data
         DefaultTableModel model = new DefaultTableModel(rows.toArray(new Object[0][]), columnNames);
         jTable2.setModel(model);
         centerAlignTable(jTable2);
