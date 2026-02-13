@@ -1,12 +1,21 @@
 package oopwj.Student;
 
-import oopwj.Model.User;
-import oopwj.Model.StudentService;
-import javax.swing.*;
+import java.awt.BorderLayout;
+import java.awt.Font;
+import java.util.List;
+
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
-import java.awt.*;
-import java.util.List;
+
+import oopwj.Model.StudentService;
+import oopwj.Model.User;
 
 public class ResultDetailsFrame extends JFrame {
 
@@ -19,16 +28,13 @@ public class ResultDetailsFrame extends JFrame {
         JPanel mainPanel = new JPanel(new BorderLayout(10, 10));
         mainPanel.setBorder(new EmptyBorder(20, 20, 20, 20));
 
-        // Header
         JLabel titleLabel = new JLabel("<html>Details for " + moduleID + "<br/>Quiz: " + quizID + "</html>", SwingConstants.CENTER);
         titleLabel.setFont(new Font("Arial", Font.BOLD, 18));
         mainPanel.add(titleLabel, BorderLayout.NORTH);
 
-        // Data
         StudentService service = new StudentService();
         List<String[]> results = service.getDetailedResults(user.getUserID(), moduleID, quizID);
 
-        // Table
         String[] columnNames = {"Q ID", "Type", "Your Answer", "Score / Feedback"};
         DefaultTableModel model = new DefaultTableModel(columnNames, 0) {
             @Override
@@ -48,14 +54,13 @@ public class ResultDetailsFrame extends JFrame {
         table.getTableHeader().setFont(new Font("Arial", Font.BOLD, 14));
         table.setFont(new Font("Arial", Font.PLAIN, 14));
         
-        table.getColumnModel().getColumn(0).setPreferredWidth(60);  // QID
-        table.getColumnModel().getColumn(1).setPreferredWidth(80);  // Type
-        table.getColumnModel().getColumn(2).setPreferredWidth(350); // Answer
-        table.getColumnModel().getColumn(3).setPreferredWidth(100); // Score
+        table.getColumnModel().getColumn(0).setPreferredWidth(60);
+        table.getColumnModel().getColumn(1).setPreferredWidth(80);
+        table.getColumnModel().getColumn(2).setPreferredWidth(350);
+        table.getColumnModel().getColumn(3).setPreferredWidth(100);
 
         mainPanel.add(new JScrollPane(table), BorderLayout.CENTER);
 
-        // Close Button
         JButton closeBtn = new JButton("Close");
         closeBtn.addActionListener(e -> dispose());
         mainPanel.add(closeBtn, BorderLayout.SOUTH);

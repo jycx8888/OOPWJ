@@ -97,7 +97,7 @@ public class LoginFrame extends JFrame {
         gbc.gridy = 1;
         JTextField userIDtextfield = new JTextField();
         userIDtextfield.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        userIDtextfield.setPreferredSize(new Dimension(250, 40)); // Bigger box
+        userIDtextfield.setPreferredSize(new Dimension(250, 40));
         rightPanel.add(userIDtextfield, gbc);
 
         
@@ -186,7 +186,6 @@ public class LoginFrame extends JFrame {
         
         setVisible(true);
     }
-    //test
     
     private void styleButton(JButton btn, Color bgColor) {
         btn.setBackground(bgColor);

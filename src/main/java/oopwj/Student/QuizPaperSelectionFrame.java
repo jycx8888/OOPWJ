@@ -1,11 +1,23 @@
 package oopwj.Student;
 
-import oopwj.Model.User;
-import oopwj.Model.StudentService; 
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Font;
 import java.util.List;
+
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.SwingConstants;
+import javax.swing.border.EmptyBorder;
+
+import oopwj.Model.StudentService;
+import oopwj.Model.User;
 
 public class QuizPaperSelectionFrame extends JFrame {
 
@@ -25,7 +37,6 @@ public class QuizPaperSelectionFrame extends JFrame {
         JPanel listPanel = new JPanel();
         listPanel.setLayout(new BoxLayout(listPanel, BoxLayout.Y_AXIS));
 
-        // Create service to check attempts
         StudentService service = new StudentService();
 
         if (quizzes == null || quizzes.isEmpty()) {
@@ -40,7 +51,6 @@ public class QuizPaperSelectionFrame extends JFrame {
                 btn.setAlignmentX(Component.CENTER_ALIGNMENT);
                 btn.setFont(new Font("Arial", Font.PLAIN, 14));
 
-                // FIX: Check attempts using StudentID AND ModuleID AND QuizID
                 if (service.hasAttemptedQuiz(user.getUserID(), moduleID, quizID)) {
                     btn.setText(quizTitle + " (" + quizID + ") - Completed");
                     btn.setEnabled(false); 
