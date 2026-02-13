@@ -31,16 +31,11 @@ public class Feedback extends javax.swing.JFrame {
     private boolean isQuizSetFeedback = false;
     private javax.swing.JFrame parentWindow = null;
 
-    /**
-     * Creates new form Feedback
-     */
+
     public Feedback() {
         initComponents();
     }
     
-    /**
-     * Creates new form Feedback with parameters (for student feedback)
-     */
     public Feedback(String moduleID, String quizID, String studentID, String lecturerID) {
         this.moduleID = moduleID;
         this.quizID = quizID;
@@ -51,20 +46,14 @@ public class Feedback extends javax.swing.JFrame {
         initComponents();
         setLocationRelativeTo(null);
         
-        // Load existing feedback if available
         loadExistingFeedback();
         
-        // Attach action listener to Save button
         jButton1.addActionListener(evt -> jButton1ActionPerformed(evt));
-        // Attach action listener to Back button
         jButton2.addActionListener(evt -> jButton2ActionPerformed(evt));
         addHoverEffect(jButton1,new Color(70,130,180),new Color(70,130,180));
         addHoverEffect(jButton2,new Color(220,80,80),new Color(220,80,80));
     }
     
-    /**
-     * Creates new form Feedback for quiz set feedback (no specific student)
-     */
     public Feedback(String moduleID, String quizID, String lecturerID, boolean isQuizSetFeedback) {
         this.moduleID = moduleID;
         this.quizID = quizID;
@@ -76,20 +65,15 @@ public class Feedback extends javax.swing.JFrame {
         initComponents();
         setLocationRelativeTo(null);
         
-        // Load existing quiz-set feedback if available
         if (isQuizSetFeedback) {
             loadExistingQuizSetFeedback();
         }
         
-        // Attach action listener to Save button
         jButton1.addActionListener(evt -> jButton1ActionPerformed(evt));
-        // Attach action listener to Back button
         jButton2.addActionListener(evt -> jButton2ActionPerformed(evt));
     }
     
-    /**
-     * Creates new form Feedback for quiz set feedback with parent window reference
-     */
+
     public Feedback(String moduleID, String quizID, String lecturerID, boolean isQuizSetFeedback, javax.swing.JFrame parentWindow) {
         this.moduleID = moduleID;
         this.quizID = quizID;
@@ -101,14 +85,11 @@ public class Feedback extends javax.swing.JFrame {
         initComponents();
         setLocationRelativeTo(null);
         
-        // Load existing quiz-set feedback if available
         if (isQuizSetFeedback) {
             loadExistingQuizSetFeedback();
         }
         
-        // Attach action listener to Save button
         jButton1.addActionListener(evt -> jButton1ActionPerformed(evt));
-        // Attach action listener to Back button
         jButton2.addActionListener(evt -> jButton2ActionPerformed(evt));
     }
 
@@ -231,7 +212,6 @@ public class Feedback extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {
-        // Get feedback from text area
         String feedback = jTextArea1.getText();
         
         if (feedback.trim().isEmpty()) {
@@ -242,9 +222,7 @@ public class Feedback extends javax.swing.JFrame {
             return;
         }
         
-        // Handle based on feedback type
         if (isQuizSetFeedback) {
-            // Save quiz set feedback
             if (!saveQuizSetFeedback(feedback)) {
                 javax.swing.JOptionPane.showMessageDialog(this,
                     "Could not save quiz set feedback.",
@@ -252,12 +230,10 @@ public class Feedback extends javax.swing.JFrame {
                     javax.swing.JOptionPane.ERROR_MESSAGE);
                 return;
             }
-            // Refresh quiz sets table in parent window if available
             if (parentWindow != null && parentWindow instanceof oopwj.Lecturer.Assessments) {
                 ((oopwj.Lecturer.Assessments) parentWindow).refreshTableData();
             }
         } else {
-            // Save student feedback
             String projectRoot = System.getProperty("user.dir");
             String finalGradeFilePath = projectRoot + "\\src\\main\\java\\oopwj\\data\\FinalGrade.txt";
             
@@ -277,12 +253,10 @@ public class Feedback extends javax.swing.JFrame {
     }
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {
-        // If there's a parent window (Assessments), return to it
         if (parentWindow != null) {
             parentWindow.setVisible(true);
             this.dispose();
         } else {
-            // Otherwise, navigate to Grade_Assessment (original behavior)
             Grade_Assessment gradeAssessment;
             if (lecturerID != null && !lecturerID.isEmpty()) {
                 gradeAssessment = new Grade_Assessment(lecturerID);
@@ -295,9 +269,6 @@ public class Feedback extends javax.swing.JFrame {
         }
     }
     
-    /**
-     * Updates the feedback in FinalGrade.txt for the given student
-     */
     private boolean updateFeedbackInFile(String finalGradeFilePath, String feedback) {
         java.io.File finalGradeFile = new java.io.File(finalGradeFilePath);
         if (!finalGradeFile.exists()) {
@@ -317,7 +288,7 @@ public class Feedback extends javax.swing.JFrame {
                     continue;
                 }
                 
-                String[] parts = trimmedLine.split(",", 6); // Split into max 6 parts to preserve feedback quotes
+                String[] parts = trimmedLine.split(",", 6); 
                 if (parts.length >= 5) {
                     String studentIDFromFile = parts[0].trim();
                     String moduleIDFromFile = parts[1].trim();
@@ -325,13 +296,9 @@ public class Feedback extends javax.swing.JFrame {
                     String markFromFile = parts[3].trim();
                     String gradeFromFile = parts[4].trim();
                     
-                    // Match this student's quiz
                     if (studentIDFromFile.equals(studentID) &&
                         moduleIDFromFile.equals(moduleID) &&
                         quizIDFromFile.equals(quizID)) {
-                        
-                        // Reconstruct line with new feedback
-                        // Format: StudentID,ModuleID,QuizID,Mark,Grade,"Feedback"
                         String formattedFeedback = formatFeedbackField(feedback);
                         String updatedLine = studentID + "," + moduleID + "," + quizID + "," +
                                            markFromFile + "," + gradeFromFile + "," + formattedFeedback;
@@ -350,7 +317,6 @@ public class Feedback extends javax.swing.JFrame {
             return false;
         }
         
-        // Write back to file
         if (found) {
             try (BufferedWriter bw = new BufferedWriter(new FileWriter(finalGradeFile))) {
                 for (String line : lines) {
@@ -380,9 +346,6 @@ public class Feedback extends javax.swing.JFrame {
         return "\"" + escaped + "\"";
     }
     
-    /**
-     * Loads existing feedback from FinalGrade.txt and displays it in the text area
-     */
     private void loadExistingFeedback() {
         String projectRoot = System.getProperty("user.dir");
         String finalGradeFilePath = projectRoot + "\\src\\main\\java\\oopwj\\data\\FinalGrade.txt";
@@ -407,14 +370,11 @@ public class Feedback extends javax.swing.JFrame {
                     String moduleIDFromFile = parts[1].trim();
                     String quizIDFromFile = parts[2].trim();
                     
-                    // Match this student's quiz
                     if (studentIDFromFile.equals(studentID) &&
                         moduleIDFromFile.equals(moduleID) &&
                         quizIDFromFile.equals(quizID)) {
-                        
-                        // Extract feedback (6th column)
+                
                         String feedbackField = parts[5].trim();
-                        // Remove surrounding quotes and unescape
                         String feedback = feedbackField;
                         if (feedback.startsWith("\"") && feedback.endsWith("\"")) {
                             feedback = feedback.substring(1, feedback.length() - 1);
@@ -433,9 +393,7 @@ public class Feedback extends javax.swing.JFrame {
         }
     }
     
-    /**
-     * Loads existing quiz set feedback from QuizFeedback.txt
-     */
+
     private void loadExistingQuizSetFeedback() {
         String projectRoot = System.getProperty("user.dir");
         String quizFeedbackFilePath = projectRoot + "\\src\\main\\java\\oopwj\\data\\QuizFeedback.txt";
@@ -454,18 +412,15 @@ public class Feedback extends javax.swing.JFrame {
                     continue;
                 }
                 
-                String[] parts = trimmedLine.split(",", 4); // Split into max 4 parts
+                String[] parts = trimmedLine.split(",", 4); 
                 if (parts.length >= 4) {
                     String moduleIDFromFile = parts[0].trim();
                     String quizIDFromFile = parts[1].trim();
                     String lecturerIDFromFile = parts[2].trim();
                     
-                    // Match this quiz and lecturer
                     if (moduleIDFromFile.equals(moduleID) && quizIDFromFile.equals(quizID)
                         && lecturerIDFromFile.equals(lecturerID)) {
-                        // Extract feedback (4th column)
                         String feedbackField = parts[3].trim();
-                        // Remove surrounding quotes and unescape
                         String feedback = feedbackField;
                         if (feedback.startsWith("\"") && feedback.endsWith("\"")) {
                             feedback = feedback.substring(1, feedback.length() - 1);
@@ -499,9 +454,7 @@ public class Feedback extends javax.swing.JFrame {
         }
     }
     
-    /**
-     * Saves quiz set feedback to QuizFeedback.txt
-     */
+
     private boolean saveQuizSetFeedback(String feedback) {
         String projectRoot = System.getProperty("user.dir");
         String quizFeedbackFilePath = projectRoot + "\\src\\main\\java\\oopwj\\data\\QuizFeedback.txt";
@@ -510,7 +463,6 @@ public class Feedback extends javax.swing.JFrame {
         java.util.List<String> lines = new java.util.ArrayList<>();
         boolean found = false;
         
-        // Read existing content
         if (quizFeedbackFile.exists()) {
             try (BufferedReader br = new BufferedReader(new FileReader(quizFeedbackFile))) {
                 String line;
@@ -527,10 +479,8 @@ public class Feedback extends javax.swing.JFrame {
                         String quizIDFromFile = parts[1].trim();
                         String lecturerIDFromFile = parts[2].trim();
                         
-                        // Match this quiz and lecturer
                         if (moduleIDFromFile.equals(moduleID) && quizIDFromFile.equals(quizID)
                             && lecturerIDFromFile.equals(lecturerID)) {
-                            // Update with new feedback
                             String formattedFeedback = formatFeedbackField(feedback);
                             String updatedLine = moduleID + "," + quizID + "," + lecturerID + "," + formattedFeedback;
                             lines.add(updatedLine);
@@ -560,7 +510,6 @@ public class Feedback extends javax.swing.JFrame {
             }
         }
         
-        // If not found, add new entry
         if (!found) {
             String formattedFeedback = formatFeedbackField(feedback);
             String newLine = moduleID + "," + quizID + "," + lecturerID + "," + formattedFeedback;
@@ -569,7 +518,6 @@ public class Feedback extends javax.swing.JFrame {
 
         sortQuizFeedbackLines(lines);
         
-        // Write back to file
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(quizFeedbackFile))) {
             for (String line : lines) {
                 bw.write(line);
