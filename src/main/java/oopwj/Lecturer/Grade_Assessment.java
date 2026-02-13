@@ -1,3 +1,7 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
+ */
 package oopwj.Lecturer;
 
 import java.awt.event.WindowAdapter;
@@ -19,7 +23,12 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
+/**
+ *
+ * @author User
+ */
 public class Grade_Assessment extends javax.swing.JFrame {
+    // Adds a hover effect to a JButton
     private void addHoverEffect(javax.swing.JButton btn, java.awt.Color normal, java.awt.Color hover) {
         btn.setOpaque(true);
         btn.setContentAreaFilled(true);
@@ -49,22 +58,29 @@ public class Grade_Assessment extends javax.swing.JFrame {
 
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(Grade_Assessment.class.getName());
 
+    /**
+     * Creates new form Grade_Assessment
+     */
     public Grade_Assessment() {
         initComponents();
+        // Set button colors (except Back button)
         java.awt.Color customColor = new java.awt.Color(70, 130, 180);
         jButton2.setBackground(customColor);
         jButton3.setBackground(customColor);
         jButton4.setBackground(customColor);
+        // Set Back button color
         jButton1.setBackground(new java.awt.Color(220, 80, 80));
 
-        addHoverEffect(jButton2, customColor, new java.awt.Color(100, 149, 237));
+        // Add hover effects
+        addHoverEffect(jButton2, customColor, new java.awt.Color(100, 149, 237)); // steel blue to cornflower blue
         addHoverEffect(jButton3, customColor, new java.awt.Color(100, 149, 237));
         addHoverEffect(jButton4, customColor, new java.awt.Color(100, 149, 237));
-        addHoverEffect(jButton1, new java.awt.Color(220, 80, 80), new java.awt.Color(255, 99, 71));
+        addHoverEffect(jButton1, new java.awt.Color(220, 80, 80), new java.awt.Color(255, 99, 71)); // red to tomato
         initSearchResultLabel();
         resetPanelLayoutForLabel();
         setLocationRelativeTo(null);
         clearTable();
+        // No need for initLoadOnShow() here
     }
 
     public Grade_Assessment(String lecturerID) {
@@ -79,12 +95,15 @@ public class Grade_Assessment extends javax.swing.JFrame {
         logger.log(java.util.logging.Level.INFO, "Grade_Assessment created with lecturerID: " + lecturerID);
         
         initComponents();
+        // Set button colors (except Back button)
         java.awt.Color customColor = new java.awt.Color(70, 130, 180);
         jButton2.setBackground(customColor);
         jButton3.setBackground(customColor);
         jButton4.setBackground(customColor);
+        // Set Back button color
         jButton1.setBackground(new java.awt.Color(220, 80, 80));
 
+        // Add hover effects
         addHoverEffect(jButton2, customColor, new java.awt.Color(100, 149, 237));
         addHoverEffect(jButton3, customColor, new java.awt.Color(100, 149, 237));
         addHoverEffect(jButton4, customColor, new java.awt.Color(100, 149, 237));
@@ -94,11 +113,13 @@ public class Grade_Assessment extends javax.swing.JFrame {
         setLocationRelativeTo(null);
         clearTable();
         
+        // Attach action listeners for buttons
         jButton2.addActionListener(this::jButton2ActionPerformed);
         jButton3.addActionListener(this::jButton3ActionPerformed);
         jButton4.addActionListener(this::jButton4ActionPerformed);
         setupSearchHandlers();
         
+        // Add double-click listener to table
         jTable1.addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -112,6 +133,7 @@ public class Grade_Assessment extends javax.swing.JFrame {
         });
         
         initLoadOnShow();
+        // REMOVED: loadAssessmentAnswers() - will be called after window is shown
     }
 
     public void setLecturerID(String lecturerID) {
@@ -204,6 +226,7 @@ public class Grade_Assessment extends javax.swing.JFrame {
         if (columnCount < 2) {
             return;
         }
+        // Hide ModuleID and QuizID columns at the end.
         for (int colIndex = columnCount - 2; colIndex < columnCount; colIndex++) {
             javax.swing.table.TableColumn column = jTable1.getColumnModel().getColumn(colIndex);
             column.setMinWidth(0);
@@ -222,9 +245,10 @@ public class Grade_Assessment extends javax.swing.JFrame {
                 
                 if (lecturerID != null && !lecturerID.isEmpty()) {
                     System.out.println("DEBUG: About to load data in background thread");
+                    // Load data in background to avoid blocking UI
                     new Thread(() -> {
                         try {
-                            Thread.sleep(500);
+                            Thread.sleep(500); // Wait for window to fully render
                         } catch (InterruptedException ex) {
                             ex.printStackTrace();
                         }
@@ -240,7 +264,13 @@ public class Grade_Assessment extends javax.swing.JFrame {
         });
     }
 
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
+     */
     @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
         jDialog1 = new javax.swing.JDialog();
@@ -335,9 +365,10 @@ public class Grade_Assessment extends javax.swing.JFrame {
         );
 
         pack();
-    }
+    }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // Navigate back to lecturer menu
         if (lecturerMenu != null) {
             lecturerMenu.setVisible(true);
         } else {
@@ -345,9 +376,10 @@ public class Grade_Assessment extends javax.swing.JFrame {
             menu.setVisible(true);
         }
         this.dispose();
-    }
+    }//GEN-LAST:event_jButton1ActionPerformed
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        // Check if a row is selected
         int selectedRow = jTable1.getSelectedRow();
         if (selectedRow == -1) {
             javax.swing.JOptionPane.showMessageDialog(this, 
@@ -357,6 +389,7 @@ public class Grade_Assessment extends javax.swing.JFrame {
             return;
         }
         
+        // Get moduleID, quizID, and studentID from selected row
         String moduleID = jTable1.getValueAt(selectedRow, 6).toString();
         String quizID = jTable1.getValueAt(selectedRow, 7).toString();
         String studentID = jTable1.getValueAt(selectedRow, 2).toString();
@@ -365,9 +398,10 @@ public class Grade_Assessment extends javax.swing.JFrame {
         viewGrade.setLocationRelativeTo(null);
         viewGrade.setVisible(true);
         this.dispose();
-    }
+    }//GEN-LAST:event_jButton2ActionPerformed
     
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {
+        // Check if a row is selected
         int selectedRow = jTable1.getSelectedRow();
         if (selectedRow == -1) {
             javax.swing.JOptionPane.showMessageDialog(this, 
@@ -377,16 +411,22 @@ public class Grade_Assessment extends javax.swing.JFrame {
             return;
         }
         
+        // Get moduleID, quizID, and studentID from selected row
         String moduleID = jTable1.getValueAt(selectedRow, 6).toString();
         String quizID = jTable1.getValueAt(selectedRow, 7).toString();
         String studentID = jTable1.getValueAt(selectedRow, 2).toString();
         
+        // Open Feedback window
         Feedback feedback = new Feedback(moduleID, quizID, studentID, lecturerID);
         feedback.setVisible(true);
         this.dispose();
     }
     
+    /**
+     * Shows a popup dialog with all details of the selected row
+     */
     private void showRowDetailsPopup(int row) {
+        // Get data from the selected row
         String moduleName = jTable1.getValueAt(row, 0).toString();
         String quizName = jTable1.getValueAt(row, 1).toString();
         String studentID = jTable1.getValueAt(row, 2).toString();
@@ -394,22 +434,26 @@ public class Grade_Assessment extends javax.swing.JFrame {
         String grade = jTable1.getValueAt(row, 4).toString();
         String feedback = jTable1.getValueAt(row, 5).toString();
         
+        // Create a JDialog for the popup
         javax.swing.JDialog detailsDialog = new javax.swing.JDialog(this, "Student Details", true);
         detailsDialog.setDefaultCloseOperation(javax.swing.JDialog.DISPOSE_ON_CLOSE);
         detailsDialog.setSize(400, 300);
         detailsDialog.setLocationRelativeTo(this);
         
+        // Create a panel for the content
         javax.swing.JPanel panel = new javax.swing.JPanel();
         panel.setLayout(new javax.swing.BoxLayout(panel, javax.swing.BoxLayout.Y_AXIS));
         panel.setBorder(javax.swing.BorderFactory.createEmptyBorder(15, 15, 15, 15));
         panel.setBackground(new java.awt.Color(255, 255, 255));
         
+        // Add labels with the data
         addDetailRow(panel, "Module:", moduleName);
         addDetailRow(panel, "Quiz:", quizName);
         addDetailRow(panel, "Student ID:", studentID);
         addDetailRow(panel, "Total Grade:", totalGrade);
         addDetailRow(panel, "Grade:", grade);
         
+        // Add feedback with a text area
         panel.add(new javax.swing.JLabel("Feedback:"));
         javax.swing.JTextArea feedbackArea = new javax.swing.JTextArea(feedback);
         feedbackArea.setLineWrap(true);
@@ -422,6 +466,7 @@ public class Grade_Assessment extends javax.swing.JFrame {
         
         panel.add(javax.swing.Box.createVerticalStrut(10));
         
+        // Add close button
         javax.swing.JButton closeButton = new javax.swing.JButton("Close");
         closeButton.addActionListener(e -> detailsDialog.dispose());
         javax.swing.JPanel buttonPanel = new javax.swing.JPanel();
@@ -433,6 +478,9 @@ public class Grade_Assessment extends javax.swing.JFrame {
         detailsDialog.setVisible(true);
     }
     
+    /**
+     * Helper method to add a detail row with label and value
+     */
     private void addDetailRow(javax.swing.JPanel panel, String label, String value) {
         javax.swing.JPanel rowPanel = new javax.swing.JPanel();
         rowPanel.setLayout(new java.awt.BorderLayout());
@@ -455,6 +503,7 @@ public class Grade_Assessment extends javax.swing.JFrame {
     private void loadAssessmentAnswers() {
         System.out.println("DEBUG: loadAssessmentAnswers() START");
         
+        // Use absolute paths based on project root
         String projectRoot = System.getProperty("user.dir");
         String modulesFilePath = projectRoot + "\\src\\main\\java\\oopwj\\data\\modules.txt";
         String answersFilePath = projectRoot + "\\src\\main\\java\\oopwj\\data\\student_answers.txt";
@@ -466,6 +515,7 @@ public class Grade_Assessment extends javax.swing.JFrame {
         Map<String, List<String>> quizByModule = new HashMap<>();
         Map<String, String[]> finalGrades = loadFinalGrades(finalGradeFilePath);
 
+        // Debug: Check if lecturerID is set
         if (lecturerID == null || lecturerID.isEmpty()) {
             logger.log(java.util.logging.Level.WARNING, "lecturerID is null or empty");
             javax.swing.JOptionPane.showMessageDialog(this, 
@@ -475,6 +525,7 @@ public class Grade_Assessment extends javax.swing.JFrame {
             return;
         }
 
+        // Validate file existence
         java.io.File modulesFile = new java.io.File(modulesFilePath);
         java.io.File answersFile = new java.io.File(answersFilePath);
         java.io.File quizFile = new java.io.File(quizFilePath);
@@ -513,6 +564,7 @@ public class Grade_Assessment extends javax.swing.JFrame {
         System.out.println("Quiz file path: " + quizFilePath);
         System.out.println("LecturerID: '" + lecturerID + "'");
         
+        // Build set of moduleIDs for this lecturer
         try (BufferedReader br = new BufferedReader(new FileReader(modulesFile))) {
             String line;
             int lineCount = 0;
@@ -558,6 +610,7 @@ public class Grade_Assessment extends javax.swing.JFrame {
             return;
         }
 
+        // Build map of moduleID -> quizIDs
         try (BufferedReader br = new BufferedReader(new FileReader(quizFile))) {
             String line;
             int lineCount = 0;
@@ -592,6 +645,7 @@ public class Grade_Assessment extends javax.swing.JFrame {
             return;
         }
 
+        // Show unique moduleID, quizID, and studentID pairs from student_answers.txt
         Set<String> uniqueTriples = new HashSet<>();
         List<String[]> tableData = new ArrayList<>();
         try (BufferedReader br = new BufferedReader(new FileReader(answersFile))) {
@@ -639,21 +693,21 @@ public class Grade_Assessment extends javax.swing.JFrame {
         );
         for (String[] row : tableData) {
             String[] expandedRow = new String[8];
-            expandedRow[0] = row[0];
-            expandedRow[1] = row[1];
-            expandedRow[2] = row[2];
-            expandedRow[6] = row[3];
-            expandedRow[7] = row[4];
+            expandedRow[0] = row[0]; // Module name
+            expandedRow[1] = row[1]; // Quiz name
+            expandedRow[2] = row[2]; // Student ID
+            expandedRow[6] = row[3]; // Module ID (hidden)
+            expandedRow[7] = row[4]; // Quiz ID (hidden)
             String key = row[2] + "|" + row[3] + "|" + row[4];
             String[] finalGradeRecord = finalGrades.get(key);
             if (finalGradeRecord != null) {
-                expandedRow[3] = finalGradeRecord[0];
-                expandedRow[4] = finalGradeRecord[1];
-                expandedRow[5] = finalGradeRecord[2];
+                expandedRow[3] = finalGradeRecord[0]; // Total Grade (mark)
+                expandedRow[4] = finalGradeRecord[1]; // Grade (letter)
+                expandedRow[5] = finalGradeRecord[2]; // Feedback
             } else {
-                expandedRow[3] = "Pending";
-                expandedRow[4] = "Pending";
-                expandedRow[5] = "Pending";
+                expandedRow[3] = "Pending";  // Total Grade column
+                expandedRow[4] = "Pending";  // Grade column
+                expandedRow[5] = "Pending";  // Feedback column
             }
             model.addRow(expandedRow);
             System.out.println("DEBUG: Added row - " + java.util.Arrays.toString(expandedRow));
@@ -748,6 +802,10 @@ public class Grade_Assessment extends javax.swing.JFrame {
         applySearchFilter();
     }
 
+    /**
+     * Loads final grade data from FinalGrade.txt
+     * Map key: studentID|moduleID|quizID -> [mark, grade, feedback]
+     */
     private Map<String, String[]> loadFinalGrades(String finalGradeFilePath) {
         Map<String, String[]> finalGrades = new HashMap<>();
 
@@ -776,12 +834,14 @@ public class Grade_Assessment extends javax.swing.JFrame {
                     
                     if (parts.length >= 6) {
                         feedback = parts[5].trim();
+                        // Remove surrounding quotes if present
                         if (feedback.startsWith("\"") && feedback.endsWith("\"")) {
                             feedback = feedback.substring(1, feedback.length() - 1);
                             feedback = feedback.replace("\"\"", "\"");
                         }
                     }
                     
+                    // Set to "Pending" if feedback is empty
                     if (feedback.isEmpty()) {
                         feedback = "Pending";
                     }
@@ -797,6 +857,9 @@ public class Grade_Assessment extends javax.swing.JFrame {
         return finalGrades;
     }
     
+    /**
+     * Auto-grades all objective questions for a student in a specific quiz
+     */
     private void autoGradeObjectiveQuestions(String studentID, String moduleID, String quizID) {
         System.out.println("DEBUG: autoGradeObjectiveQuestions() START");
         System.out.println("StudentID: " + studentID + ", ModuleID: " + moduleID + ", QuizID: " + quizID);
@@ -807,16 +870,22 @@ public class Grade_Assessment extends javax.swing.JFrame {
         String totalQuizMarkPath = projectRoot + "\\src\\main\\java\\oopwj\\data\\TotalQuizMark.txt";
         String gradeFilePath = projectRoot + "\\src\\main\\java\\oopwj\\data\\Grade.txt";
         
+        // Load question data (map of questionID -> [correctAnswer, questionType])
         Map<String, String[]> questionData = loadQuestionData(questionFilePath, moduleID, quizID);
         
+        // Load student answers (map of questionID -> studentAnswer)
         Map<String, String> studentAnswers = loadStudentAnswers(answersFilePath, studentID, moduleID, quizID);
         
+        // Load max marks (map of questionID -> maxMark)
         Map<String, Integer> maxMarks = loadMaxMarks(totalQuizMarkPath, moduleID, quizID);
         
+        // Grade each objective question and save to Grade.txt
         List<String> gradesToAdd = new ArrayList<>();
         
+        // Sort question IDs numerically for ordered output
         List<String> sortedQuestionIDs = new ArrayList<>(questionData.keySet());
         sortedQuestionIDs.sort((q1, q2) -> {
+            // Extract numeric part from question IDs (e.g., "Q001" -> 1)
             try {
                 int num1 = Integer.parseInt(q1.replaceAll("[^0-9]", ""));
                 int num2 = Integer.parseInt(q2.replaceAll("[^0-9]", ""));
@@ -831,13 +900,16 @@ public class Grade_Assessment extends javax.swing.JFrame {
             String correctAnswer = qData[0];
             String questionType = qData[1];
             
+            // Only grade objective questions
             if ("Objective".equals(questionType)) {
                 String studentAnswer = studentAnswers.getOrDefault(questionID, "");
                 Integer maxMarkObj = maxMarks.getOrDefault(questionID, 0);
                 int maxMark = (maxMarkObj != null) ? maxMarkObj : 0;
                 
+                // Compare answers (case-insensitive)
                 int mark = correctAnswer.equalsIgnoreCase(studentAnswer) ? maxMark : 0;
                 
+                // Format: studentID,moduleID,quizID,questionID,Objective,correctAnswer,mark
                 String gradeEntry = studentID + "," + moduleID + "," + quizID + "," + questionID + ",Objective," + correctAnswer + "," + mark;
                 gradesToAdd.add(gradeEntry);
                 
@@ -845,6 +917,7 @@ public class Grade_Assessment extends javax.swing.JFrame {
             }
         }
         
+        // Save grades to Grade.txt
         if (!gradesToAdd.isEmpty()) {
             appendGradesToFile(gradeFilePath, gradesToAdd);
             System.out.println("DEBUG: Saved " + gradesToAdd.size() + " grades to Grade.txt");
@@ -853,6 +926,10 @@ public class Grade_Assessment extends javax.swing.JFrame {
         System.out.println("DEBUG: autoGradeObjectiveQuestions() END");
     }
     
+    /**
+     * Loads question data from question.txt for a specific module and quiz
+     * Returns map of questionID -> [correctAnswer, questionType]
+     */
     private Map<String, String[]> loadQuestionData(String questionFilePath, String moduleID, String quizID) {
         Map<String, String[]> questionData = new HashMap<>();
         
@@ -873,13 +950,15 @@ public class Grade_Assessment extends javax.swing.JFrame {
                     String questionID = parts[0].trim();
                     String quizIDFromFile = parts[1].trim();
                     String moduleIDFromFile = parts[2].trim();
-                    String questionType = parts[parts.length - 1].trim();
+                    String questionType = parts[parts.length - 1].trim(); // Last column is type
                     
+                    // Check if this question belongs to the target quiz and module
                     if (quizIDFromFile.equals(quizID) && moduleIDFromFile.equals(moduleID)) {
                         String correctAnswer = "";
                         
                         if ("Objective".equals(questionType) && parts.length >= 9) {
-                            correctAnswer = parts[8].trim();
+                            // For objective: format is Q,QZ,M,question,opt1,opt2,opt3,opt4,correctAns,Type
+                            correctAnswer = parts[8].trim(); // Correct answer is at index 8
                         }
                         
                         questionData.put(questionID, new String[]{correctAnswer, questionType});
@@ -893,6 +972,10 @@ public class Grade_Assessment extends javax.swing.JFrame {
         return questionData;
     }
     
+    /**
+    * Loads student answers from student_answers.txt
+     * Returns map of questionID -> studentAnswer
+     */
     private Map<String, String> loadStudentAnswers(String answersFilePath, String studentID, String moduleID, String quizID) {
         Map<String, String> studentAnswers = new HashMap<>();
         
@@ -908,14 +991,15 @@ public class Grade_Assessment extends javax.swing.JFrame {
                 line = line.trim();
                 if (line.isEmpty() || line.startsWith("#")) continue;
                 
-                String[] parts = line.split(",", 6);
+                String[] parts = line.split(",", 6); // Split into max 6 parts
                 if (parts.length >= 6) {
                     String studentIDFromFile = parts[0].trim();
                     String moduleIDFromFile = parts[1].trim();
                     String quizIDFromFile = parts[2].trim();
                     String questionID = parts[3].trim();
-                    String answer = parts[5].trim();
+                    String answer = parts[5].trim(); // Answer is at index 5
                     
+                    // Match student, module, and quiz
                     if (studentIDFromFile.equals(studentID) && 
                         moduleIDFromFile.equals(moduleID) && 
                         quizIDFromFile.equals(quizID)) {
@@ -930,6 +1014,10 @@ public class Grade_Assessment extends javax.swing.JFrame {
         return studentAnswers;
     }
     
+    /**
+     * Loads max marks from TotalQuizMark.txt
+     * Returns map of questionID -> maxMark
+     */
     private Map<String, Integer> loadMaxMarks(String totalQuizMarkPath, String moduleID, String quizID) {
         Map<String, Integer> maxMarks = new HashMap<>();
         
@@ -952,6 +1040,7 @@ public class Grade_Assessment extends javax.swing.JFrame {
                     String questionID = parts[2].trim();
                     int maxMark = Integer.parseInt(parts[3].trim());
                     
+                    // Match module and quiz
                     if (moduleIDFromFile.equals(moduleID) && quizIDFromFile.equals(quizID)) {
                         maxMarks.put(questionID, maxMark);
                     }
@@ -964,6 +1053,9 @@ public class Grade_Assessment extends javax.swing.JFrame {
         return maxMarks;
     }
     
+    /**
+     * Appends grade entries to Grade.txt file
+     */
     private void appendGradesToFile(String gradeFilePath, List<String> gradesToAdd) {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(gradeFilePath, true))) {
             for (String gradeEntry : gradesToAdd) {
@@ -982,6 +1074,11 @@ public class Grade_Assessment extends javax.swing.JFrame {
     
 
     public static void main(String args[]) {
+        /* Set the Nimbus look and feel */
+        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+         */
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
                 if ("Nimbus".equals(info.getName())) {
@@ -992,12 +1089,15 @@ public class Grade_Assessment extends javax.swing.JFrame {
         } catch (ReflectiveOperationException | javax.swing.UnsupportedLookAndFeelException ex) {
             logger.log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
 
+        /* Create and display the form */
         java.awt.EventQueue.invokeLater(() -> 
-            new Grade_Assessment("L101").setVisible(true)
+            new Grade_Assessment("L101").setVisible(true) // Use a valid lecturerID for testing
         );
     }
 
+    // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
@@ -1007,4 +1107,5 @@ public class Grade_Assessment extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTable1;
     private javax.swing.JTextField jTextField1;
+    // End of variables declaration//GEN-END:variables
 }
