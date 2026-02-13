@@ -21,37 +21,29 @@ import javax.swing.JOptionPane;
 public class Quiz extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(Quiz.class.getName());
-    
-    // Counts questions written for the current session
+
     private int sessionQuestionCount = 0;
-    
-    // Track if this is an edit mode (loaded from question.txt)
+
     private boolean isEditMode = false;
-    // Store original values to detect changes
+
     private String originalQuestion = "";
     private String originalA = "";
     private String originalB = "";
     private String originalC = "";
     private String originalD = "";
     private String originalCorrectAnswer = "";
-
-    // Shorter variable names for answer fields
     private javax.swing.JTextField a;
     private javax.swing.JTextField b;
     private javax.swing.JTextField c;
     private javax.swing.JTextField d;
-    
-    // ButtonGroup to ensure only one radio button is selected
     private javax.swing.ButtonGroup answerGroup;
-    // Track the correct answer (A, B, C, or D)
     private String correctAnswer = "";
     
-    // Session tracking
     private String lecturerID;
     private Assessments parentWindow;
-    private String currentQuizID = ""; // Track the current quiz ID
-    private String currentQuizTitle = ""; // Track the current quiz title
-    private java.util.List<String> quizIdsForDropdown = new java.util.ArrayList<>(); // Match dropdown index to quiz ID
+    private String currentQuizID = ""; 
+    private String currentQuizTitle = ""; 
+    private java.util.List<String> quizIdsForDropdown = new java.util.ArrayList<>(); 
 
     /**
      * Creates new form Quiz
@@ -64,80 +56,55 @@ public class Quiz extends javax.swing.JFrame {
         this.lecturerID = lecturerID;
         this.parentWindow = parentWindow;
         initComponents();
-        // Create aliases for easier access
         a = jTextField2;
         b = jTextField3;
         c = jTextField4;
         d = jTextField6;
-        // Add action listener for jButton6 (Enter button)
         jButton6.addActionListener(this::jButton6ActionPerformed);
-        // Add action listener for jButton5 (Add Quiz Set button)
         jButton5.addActionListener(this::jButton5ActionPerformed);
         this.setLocationRelativeTo(null);
-
-        // Initialize ButtonGroup for radio buttons
         answerGroup = new javax.swing.ButtonGroup();
         answerGroup.add(jRadioButton1);
         answerGroup.add(jRadioButton3);
         answerGroup.add(jRadioButton4);
         answerGroup.add(jRadioButton5);
-
-        // Load modules for the logged-in lecturer
         populateModulesDropdown();
     }
 
-    /**
-     * Constructor for adding a quiz with a preselected module
-     */
+
     public Quiz(String lecturerID, Assessments parentWindow, String moduleId) {
         this.lecturerID = lecturerID;
         this.parentWindow = parentWindow;
         initComponents();
-        // Create aliases for easier access
         a = jTextField2;
         b = jTextField3;
         c = jTextField4;
         d = jTextField6;
-        // Add action listener for jButton6 (Enter button)
         jButton6.addActionListener(this::jButton6ActionPerformed);
-        // Add action listener for jButton5 (Add Quiz Set button)
         jButton5.addActionListener(this::jButton5ActionPerformed);
         this.setLocationRelativeTo(null);
-
-        // Initialize ButtonGroup for radio buttons
         answerGroup = new javax.swing.ButtonGroup();
         answerGroup.add(jRadioButton1);
         answerGroup.add(jRadioButton3);
         answerGroup.add(jRadioButton4);
         answerGroup.add(jRadioButton5);
 
-        // Load modules for the logged-in lecturer
         populateModulesDropdown();
-
-        // Select the module passed from Assessments
         selectModuleById(moduleId);
     }
-    
-    /**
-     * Constructor for editing an existing quiz question
-     */
+
     public Quiz(String question, String ansA, String ansB, String ansC, String ansD, String correctAns) {
         initComponents();
-        // Create aliases for easier access
         a = jTextField2;
         b = jTextField3;
         c = jTextField4;
         d = jTextField6;
         this.setLocationRelativeTo(null);
-
-        // Initialize ButtonGroup for radio buttons
         answerGroup = new javax.swing.ButtonGroup();
         answerGroup.add(jRadioButton1);
         answerGroup.add(jRadioButton3);
         answerGroup.add(jRadioButton4);
         answerGroup.add(jRadioButton5);
-
-        // Mark as edit mode and store original values
         isEditMode = true;
         originalQuestion = question;
         originalA = ansA;
@@ -146,14 +113,11 @@ public class Quiz extends javax.swing.JFrame {
         originalD = ansD;
         originalCorrectAnswer = correctAns;
 
-        // Pre-populate the fields
         jTextArea1.setText(question);
         a.setText(ansA);
         b.setText(ansB);
         c.setText(ansC);
         d.setText(ansD);
-
-        // Set the correct answer radio button
         correctAnswer = correctAns;
         switch (correctAns.toUpperCase()) {
             case "A":
@@ -171,33 +135,24 @@ public class Quiz extends javax.swing.JFrame {
         }
     }
 
-    /**
-     * Constructor for editing a quiz question from Assessments
-     */
     public Quiz(String lecturerID, Assessments parentWindow, String moduleId, String quizId, String questionId,
                 String questionType, String question, String ansA, String ansB, String ansC, String ansD,
                 String correctAns, String marks) {
         this.lecturerID = lecturerID;
         this.parentWindow = parentWindow;
         initComponents();
-        // Create aliases for easier access
         a = jTextField2;
         b = jTextField3;
         c = jTextField4;
         d = jTextField6;
         this.setLocationRelativeTo(null);
-
-        // Initialize ButtonGroup for radio buttons
         answerGroup = new javax.swing.ButtonGroup();
         answerGroup.add(jRadioButton1);
         answerGroup.add(jRadioButton3);
         answerGroup.add(jRadioButton4);
         answerGroup.add(jRadioButton5);
-
-        // Load modules for the logged-in lecturer
         populateModulesDropdown();
 
-        // Select module and quiz
         selectModuleById(moduleId);
         populateQuizDropdown(moduleId);
         if (quizId != null && !quizId.isEmpty()) {
@@ -211,7 +166,6 @@ public class Quiz extends javax.swing.JFrame {
             }
         }
 
-        // Mark as edit mode and store original values
         isEditMode = true;
         originalQuestion = question != null ? question : "";
         originalA = ansA != null ? ansA : "";
@@ -220,17 +174,15 @@ public class Quiz extends javax.swing.JFrame {
         originalD = ansD != null ? ansD : "";
         originalCorrectAnswer = correctAns != null ? correctAns : "";
 
-        // Disable UI components in edit mode
-        jComboBox1.setEnabled(false);  // Module dropdown
-        jComboBox2.setEnabled(false);  // Quiz set dropdown
-        jButton5.setEnabled(false);    // Add Quiz Set button
-        jButton6.setEnabled(false);    // Enter button
-        jTabbedPane1.setEnabled(false); // Tab panel
-        jTextField9.setEditable(true); // Quiz title field
+        jComboBox1.setEnabled(false);  
+        jComboBox2.setEnabled(false);  
+        jButton5.setEnabled(false);    
+        jButton6.setEnabled(false);    
+        jTabbedPane1.setEnabled(false); 
+        jTextField9.setEditable(true); 
 
-        // Display the current QuestionID on jLabel1 and jLabel7 (for editing)
         if (questionId != null && !questionId.isEmpty()) {
-            String questionNumber = String.valueOf(Integer.parseInt(questionId.substring(1))); // Remove "Q" and leading zeros
+            String questionNumber = String.valueOf(Integer.parseInt(questionId.substring(1))); 
             jLabel1.setText("Question: " + questionNumber);
             jLabel7.setText("Question: " + questionNumber);
         }
@@ -284,7 +236,6 @@ public class Quiz extends javax.swing.JFrame {
                     String moduleName = parts[1].trim();
                     String lecturerID = parts[3].trim();
 
-                    // Add module to dropdown if it matches the lecturer's ID
                     if (lecturerID.equals(this.lecturerID)) {
                         jComboBox1.addItem(moduleID + " - " + moduleName);
                     }
@@ -309,7 +260,6 @@ public class Quiz extends javax.swing.JFrame {
             }
         }
 
-        // If not found, try to add the module using its name
         String moduleName = getModuleNameById(moduleId);
         if (moduleName != null && !moduleName.isEmpty()) {
             String display = moduleId + " - " + moduleName;
@@ -409,8 +359,8 @@ public class Quiz extends javax.swing.JFrame {
                 String line;
                 while ((line = br.readLine()) != null) {
                     String[] parts = line.split(",");
-                    if (parts.length > 2 && stripQuotes(parts[2].trim()).equals(moduleId)) { // ModuleID is at index[2]
-                        String questionId = stripQuotes(parts[0].trim()); // QuestionID is at index[0]
+                    if (parts.length > 2 && stripQuotes(parts[2].trim()).equals(moduleId)) {
+                        String questionId = stripQuotes(parts[0].trim());
                         if (questionId.startsWith("Q")) {
                             try {
                                 int id = Integer.parseInt(questionId.substring(1));
@@ -428,7 +378,7 @@ public class Quiz extends javax.swing.JFrame {
             }
         }
 
-        // Increment the max ID and return the new question ID
+
         return String.format("Q%03d", maxId + 1);
     }
 
@@ -446,7 +396,7 @@ public class Quiz extends javax.swing.JFrame {
             while ((line = br.readLine()) != null) {
                 String[] parts = line.split(",");
                 if (parts.length == 10) {
-                    // Objective question
+
                     String moduleId = stripQuotes(parts[0].trim());
                     String moduleName = stripQuotes(parts[1].trim());
                     String questionId = stripQuotes(parts[2].trim());
@@ -458,17 +408,14 @@ public class Quiz extends javax.swing.JFrame {
                     String correctAns = stripQuotes(parts[8].trim());
                     String type = stripQuotes(parts[9].trim());
 
-                    // Process the objective question (e.g., add to UI or data structure)
                     System.out.println("Objective Question: " + question);
                 } else if (parts.length == 5) {
-                    // Subjective question
+
                     String moduleId = stripQuotes(parts[0].trim());
                     String moduleName = stripQuotes(parts[1].trim());
                     String questionId = stripQuotes(parts[2].trim());
                     String question = stripQuotes(parts[3].trim());
                     String type = stripQuotes(parts[4].trim());
-
-                    // Process the subjective question (e.g., add to UI or data structure)
                     System.out.println("Subjective Question: " + question);
                 } else {
                     logger.warning("Invalid question format: " + line);
@@ -490,14 +437,13 @@ public class Quiz extends javax.swing.JFrame {
         }
 
         javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) table.getModel();
-        model.setRowCount(0); // Clear existing rows
+        model.setRowCount(0); 
 
         try (BufferedReader br = new BufferedReader(new FileReader(quizFile))) {
             String line;
             while ((line = br.readLine()) != null) {
                 String[] parts = line.split(",");
                 if (parts.length == 10) {
-                    // Objective question
                     String moduleId = stripQuotes(parts[0].trim());
                     String moduleName = stripQuotes(parts[1].trim());
                     String questionId = stripQuotes(parts[2].trim());
@@ -508,17 +454,14 @@ public class Quiz extends javax.swing.JFrame {
                     String ansD = stripQuotes(parts[7].trim());
                     String correctAns = stripQuotes(parts[8].trim());
 
-                    // Add to table
                     model.addRow(new Object[]{moduleId, moduleName, questionId, question, "Objective"});
                 } else if (parts.length == 5) {
-                    // Subjective question
                     String moduleId = stripQuotes(parts[0].trim());
                     String moduleName = stripQuotes(parts[1].trim());
                     String questionId = stripQuotes(parts[2].trim());
                     String question = stripQuotes(parts[3].trim());
                     String type = stripQuotes(parts[4].trim());
 
-                    // Add to table with sequence 0,1,2,4,3
                     model.addRow(new Object[]{moduleId, moduleName, questionId, type, question});
                 } else {
                     logger.warning("Invalid question format: " + line);
@@ -542,7 +485,6 @@ public class Quiz extends javax.swing.JFrame {
             }
         }
 
-        // Read all existing marks
         java.util.List<String> allLines = new java.util.ArrayList<>();
         boolean updated = false;
         
@@ -556,9 +498,7 @@ public class Quiz extends javax.swing.JFrame {
                         String lineQuizId = parts[1].trim();
                         String lineQuestionId = parts[2].trim();
                         
-                        // Check if this is the entry we want to update
-                                                if (lineModuleId.equals(moduleId) && lineQuizId.equals(normalizedQuizId) && lineQuestionId.equals(questionId)) {
-                            // Update this entry
+                        if (lineModuleId.equals(moduleId) && lineQuizId.equals(normalizedQuizId) && lineQuestionId.equals(questionId)) {
                             StringBuilder sb = new StringBuilder();
                             sb.append(csvEscape(moduleId)).append(",")
                                                             .append(csvEscape(normalizedQuizId)).append(",")
@@ -567,7 +507,6 @@ public class Quiz extends javax.swing.JFrame {
                             allLines.add(sb.toString());
                             updated = true;
                         } else {
-                            // Keep existing entry
                             allLines.add(line);
                         }
                     } else {
@@ -579,7 +518,7 @@ public class Quiz extends javax.swing.JFrame {
             }
         }
         
-        // If not updated, add as new entry
+
         if (!updated) {
             StringBuilder sb = new StringBuilder();
             sb.append(csvEscape(moduleId)).append(",")
@@ -589,7 +528,7 @@ public class Quiz extends javax.swing.JFrame {
             allLines.add(sb.toString());
         }
         
-        // Write all lines back to file
+
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(marksFile))) {
             for (String line : allLines) {
                 bw.write(line);
@@ -1007,7 +946,7 @@ public class Quiz extends javax.swing.JFrame {
     }//GEN-LAST:event_jTextField7ActionPerformed
 
     private void jComboBox2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox2ActionPerformed
-        // Update currentQuizID when a quiz is selected from the dropdown
+
         String selectedQuizTitle = (String) jComboBox2.getSelectedItem();
         String selectedQuizId = getSelectedQuizId();
         String selectedModule = (String) jComboBox1.getSelectedItem();
@@ -1019,7 +958,7 @@ public class Quiz extends javax.swing.JFrame {
         if (selectedQuizId != null && !selectedQuizId.isEmpty()) {
             currentQuizID = selectedQuizId;
 
-            // Use displayed title when available, fallback to file lookup
+
             String quizTitle = selectedQuizTitle != null ? selectedQuizTitle.trim() : "";
             if (quizTitle.isEmpty()) {
                 quizTitle = getQuizTitle(selectedQuizId);
@@ -1029,10 +968,8 @@ public class Quiz extends javax.swing.JFrame {
                 currentQuizTitle = quizTitle;
             }
             
-            // Keep the title field editable even when an existing quiz is selected
             jTextField9.setEditable(true);
-            
-            // Display the next QuestionID on jLabel1 and jLabel7
+
             if (selectedModule != null && !selectedModule.isEmpty()) {
                 String[] moduleParts = selectedModule.split(" - ", 2);
                 String moduleId = moduleParts[0].trim();
@@ -1042,7 +979,6 @@ public class Quiz extends javax.swing.JFrame {
     }//GEN-LAST:event_jComboBox2ActionPerformed
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
-        // New Quiz: Clear title field for new quiz entry
         String selectedModule = (String) jComboBox1.getSelectedItem();
         
         if (selectedModule == null || selectedModule.isEmpty()) {
@@ -1064,24 +1000,19 @@ public class Quiz extends javax.swing.JFrame {
             }
         }
 
-        // Clear the title field and reset current quiz tracking for entering a new title
         jTextField9.setText("");
-        // Make the title field editable for new quiz entry
         jTextField9.setEditable(true);
         currentQuizID = "";
         currentQuizTitle = "";
         jComboBox2.removeAllItems();
         quizIdsForDropdown.clear();
-        // Also clear all input fields as with the Clear button
         clearInputFields();
 
-        // Reset question number label
         jLabel1.setText("Question:");
         jLabel7.setText("Question:");
     }//GEN-LAST:event_jButton5ActionPerformed
 
     private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {
-        // Enter button: Save the quiz title and generate QuizID
         String quizTitle = jTextField9.getText().trim();
         
         if (quizTitle.isEmpty()) {
@@ -1098,7 +1029,6 @@ public class Quiz extends javax.swing.JFrame {
         String[] moduleParts = selectedModule.split(" - ", 2);
         String moduleId = moduleParts[0].trim();
 
-        // If a quiz is already selected, update its title without creating a new QuizID
         String existingQuizId = currentQuizID != null ? currentQuizID.trim() : "";
         if (existingQuizId.isEmpty()) {
             String selectedQuizId = getSelectedQuizId();
@@ -1131,7 +1061,6 @@ public class Quiz extends javax.swing.JFrame {
                 currentQuizTitle = quizTitle;
                 JOptionPane.showMessageDialog(this, "Quiz title updated successfully!\nQuiz ID: " + existingQuizId + "\nTitle: " + quizTitle, "Success", JOptionPane.INFORMATION_MESSAGE);
 
-                // Refresh dropdown display and keep the same quiz selected
                 populateQuizDropdown(moduleId);
                 selectQuizById(existingQuizId);
                 updateQuestionCountLabels(moduleId, existingQuizId);
@@ -1149,7 +1078,6 @@ public class Quiz extends javax.swing.JFrame {
                     currentQuizTitle = quizTitle;
                     JOptionPane.showMessageDialog(this, "Quiz title updated successfully!\nQuiz ID: " + existingQuizId + "\nTitle: " + quizTitle, "Success", JOptionPane.INFORMATION_MESSAGE);
 
-                    // Refresh dropdown display and keep the same quiz selected when possible
                     populateQuizDropdown(moduleId);
                     if (existingQuizId != null && !existingQuizId.trim().isEmpty()) {
                         selectQuizById(existingQuizId);
@@ -1162,25 +1090,19 @@ public class Quiz extends javax.swing.JFrame {
             return;
         }
         
-        // Generate new QuizID
         String newQuizId = generateNextQuizId(moduleId);
         
-        // Save to Quiz.txt with title
         if (saveQuizToFile(newQuizId, moduleId, quizTitle)) {
-            // Set as current quiz
             currentQuizID = newQuizId;
             currentQuizTitle = quizTitle;
             
             JOptionPane.showMessageDialog(this, "Quiz created successfully!\nQuiz ID: " + newQuizId + "\nTitle: " + quizTitle, "Success", JOptionPane.INFORMATION_MESSAGE);
-            
-            // Clear the title field to allow users to add more questions
+
             jTextField9.setText("");
-            
-            // Refresh the quiz dropdown and select the new quiz
+
             populateQuizDropdown(moduleId);
             selectQuizById(newQuizId);
-            
-            // Display the latest question count on jLabel1 and jLabel7
+
             updateQuestionCountLabels(moduleId, newQuizId);
         } else {
             JOptionPane.showMessageDialog(this, "Failed to create quiz.", "Error", JOptionPane.ERROR_MESSAGE);
@@ -1192,15 +1114,13 @@ public class Quiz extends javax.swing.JFrame {
     }
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {
-        // Save: check if in edit mode or add mode
         String projectRoot = System.getProperty("user.dir");
         File temp = new File(projectRoot, "src\\main\\java\\oopwj\\data\\TempQues.txt");
         File quizFile = new File(projectRoot, "src\\main\\java\\oopwj\\data\\question.txt");
 
-        // Check which tab is selected
         int selectedTabIndex = jTabbedPane1.getSelectedIndex();
 
-        if (selectedTabIndex == 0) { // Objective tab
+        if (selectedTabIndex == 0) { 
             String question = jTextArea1.getText().trim();
             String a1 = a.getText().trim();
             String a2 = b.getText().trim();
@@ -1227,7 +1147,7 @@ public class Quiz extends javax.swing.JFrame {
                 JOptionPane.showMessageDialog(this, "Marks must be a whole number greater than 0.", "Validation", JOptionPane.WARNING_MESSAGE);
                 return;
             }
-        } else if (selectedTabIndex == 1) { // Subjective tab
+        } else if (selectedTabIndex == 1) {
             String subjectiveQuestion = jTextArea2.getText().trim();
             String marks = jTextField7.getText().trim();
 
@@ -1246,7 +1166,6 @@ public class Quiz extends javax.swing.JFrame {
                 return;
             }
 
-            // Validate module selection
             String selectedModule = (String) jComboBox1.getSelectedItem();
             if (selectedModule == null || selectedModule.isEmpty()) {
                 JOptionPane.showMessageDialog(this, "Please select a module before saving the question.", "Validation", JOptionPane.WARNING_MESSAGE);
@@ -1254,30 +1173,25 @@ public class Quiz extends javax.swing.JFrame {
             }
         }
 
-        // Validate quiz selection
         if (currentQuizID == null || currentQuizID.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Please create or select a quiz before saving questions.", "Validation", JOptionPane.WARNING_MESSAGE);
             return;
         }
 
-        // Confirm before saving
         int confirmResult = JOptionPane.showConfirmDialog(this, "Are you sure you want to save the questions?", "Confirm Save", JOptionPane.YES_NO_OPTION);
         if (confirmResult != JOptionPane.YES_OPTION) {
             return;
         }
 
         try {
-            // If in edit mode, update the existing question
             if (isEditMode) {
                 updateExistingQuestion(quizFile);
                 JOptionPane.showMessageDialog(this, "Question updated successfully", "Success", JOptionPane.INFORMATION_MESSAGE);
-                // Keep the window open with all data intact for further editing
                 return;
             }
-            
-            // First, transfer from TempQues.txt to question.txt if it exists
+
             if (temp.exists()) {
-                // Read all questions from temp file
+
                 java.util.List<String> newQuestions = new java.util.ArrayList<>();
                 try (BufferedReader br = new BufferedReader(new FileReader(temp))) {
                     String line;
@@ -1290,17 +1204,14 @@ public class Quiz extends javax.swing.JFrame {
                     return;
                 }
 
-                // Insert questions and renumber
                 java.util.List<String> assignedIds = insertQuestionsAndRenumber(quizFile, newQuestions, currentQuizID);
 
-                // delete temporary files
                 try {
                     Files.deleteIfExists(temp.toPath());
                 } catch (IOException ex) {
                     logger.log(java.util.logging.Level.WARNING, null, ex);
                 }
 
-                // clear all fields including title
                 jTextArea1.setText("");
                 a.setText("");
                 b.setText("");
@@ -1310,7 +1221,6 @@ public class Quiz extends javax.swing.JFrame {
                 jTextArea2.setText("");
                 jTextField7.setText("");
 
-                // reset session count after saving
                 sessionQuestionCount = 0;
 
                 String selectedModuleForLabel = (String) jComboBox1.getSelectedItem();
@@ -1321,13 +1231,12 @@ public class Quiz extends javax.swing.JFrame {
                 }
 
                 JOptionPane.showMessageDialog(this, "Quiz saved successfully", "Saved", JOptionPane.INFORMATION_MESSAGE);
-                return; // Exit without processing form fields
+                return; 
             }
 
-            // Save the current form fields based on the selected tab
             StringBuilder sb = new StringBuilder();
             String selectedModule = (String) jComboBox1.getSelectedItem();
-            String[] moduleParts = selectedModule.split(" - ", 2); // Split into ID and name
+            String[] moduleParts = selectedModule.split(" - ", 2); 
             String moduleId = moduleParts[0].trim();
             String quizIdForSave = resolveQuizIdForSave(moduleId);
             if (quizIdForSave.isEmpty()) {
@@ -1335,8 +1244,7 @@ public class Quiz extends javax.swing.JFrame {
                 return;
             }
 
-                        // Build the question line (without QuestionID, will be assigned during insertion)
-                        if (selectedTabIndex == 0) { // Objective tab
+                        if (selectedTabIndex == 0) { 
                                 String question = jTextArea1.getText().trim();
                                 String a1 = a.getText().trim();
                                 String a2 = b.getText().trim();
@@ -1344,10 +1252,10 @@ public class Quiz extends javax.swing.JFrame {
                                 String a4 = d.getText().trim();
                                 String marks = jTextField1.getText().trim();
 
-                                sb.append(csvEscape("TEMP")) // Temporary ID, will be replaced
+                                sb.append(csvEscape("TEMP"))
                                     .append(",")
-                                    .append(csvEscape(quizIdForSave)).append(",") // Append QuizID at index[1]
-                                    .append(csvEscape(moduleId)).append(",") // Append ModuleID at index[2]
+                                    .append(csvEscape(quizIdForSave)).append(",") 
+                                    .append(csvEscape(moduleId)).append(",") 
                                     .append(csvQuote(question)).append(",")
                                     .append(csvEscape(a1)).append(",")
                                     .append(csvEscape(a2)).append(",")
@@ -1356,26 +1264,23 @@ public class Quiz extends javax.swing.JFrame {
                                     .append(csvEscape(correctAnswer)).append(",")
                                     .append(csvEscape("Objective"));
 
-                                // Save marks (will update with correct ID after insertion)
-                                // Note: marks will be saved with the final QuestionID after renumbering
-                        } else if (selectedTabIndex == 1) { // Subjective tab
+                        } else if (selectedTabIndex == 1) {
                                 String subjectiveQuestion = jTextArea2.getText().trim();
                                 String marks = jTextField7.getText().trim();
 
                                 sb.append(csvEscape("TEMP"))
                                     .append(",")
-                                    .append(csvEscape(quizIdForSave)).append(",") // Append QuizID at index[1]
-                                    .append(csvEscape(moduleId)).append(",") // Append ModuleID at index[2]
+                                    .append(csvEscape(quizIdForSave)).append(",") 
+                                    .append(csvEscape(moduleId)).append(",")
                                     .append(csvQuote(subjectiveQuestion)).append(",")
                                     .append(csvEscape("Subjective"));
                         }
 
-            // Insert the single question and renumber
+
             java.util.List<String> singleQuestion = new java.util.ArrayList<>();
             singleQuestion.add(sb.toString());
             java.util.List<String> assignedIds = insertQuestionsAndRenumber(quizFile, singleQuestion, quizIdForSave);
 
-            // Save marks for the single question after final ID is assigned
             if (!assignedIds.isEmpty()) {
                 if (selectedTabIndex == 0) {
                     String marks = jTextField1.getText().trim();
@@ -1394,7 +1299,6 @@ public class Quiz extends javax.swing.JFrame {
             return;
         }
 
-        // clear all fields including title
         jTextArea1.setText("");
         jTextArea2.setText("");
         a.setText("");
@@ -1406,14 +1310,12 @@ public class Quiz extends javax.swing.JFrame {
         answerGroup.clearSelection();
         correctAnswer = "";
 
-        // reset session count after saving
         sessionQuestionCount = 0;
 
         JOptionPane.showMessageDialog(this, "Quiz saved successfully", "Saved", JOptionPane.INFORMATION_MESSAGE);
     }
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {
-        // Check if there's anything to discard
         String projectRoot = System.getProperty("user.dir");
         File temp = new File(projectRoot, "src\\main\\java\\oopwj\\data\\TempQues.txt");
         
@@ -1425,11 +1327,10 @@ public class Quiz extends javax.swing.JFrame {
         
         boolean needsConfirmation = false;
         
-        // Check if TempQues.txt exists (new questions added)
         if (temp.exists()) {
             needsConfirmation = true;
         }
-        // Check if in edit mode and values have changed
+
         else if (isEditMode) {
             boolean valuesChanged = !question.equals(originalQuestion) ||
                                     !a1.equals(originalA) ||
@@ -1441,7 +1342,7 @@ public class Quiz extends javax.swing.JFrame {
                 needsConfirmation = true;
             }
         }
-        // Check if not in edit mode but has form data
+
         else {
             boolean hasFormData = !question.isEmpty() || !a1.isEmpty() || !a2.isEmpty() || !a3.isEmpty() || !a4.isEmpty();
             if (hasFormData) {
@@ -1449,7 +1350,6 @@ public class Quiz extends javax.swing.JFrame {
             }
         }
         
-        // Only confirm if there's something to discard
         if (needsConfirmation) {
             int confirmResult = JOptionPane.showConfirmDialog(this, "Are you sure you want to exit and discard all changes?", "Confirm Exit", JOptionPane.YES_NO_OPTION);
             if (confirmResult != JOptionPane.YES_OPTION) {
@@ -1457,7 +1357,6 @@ public class Quiz extends javax.swing.JFrame {
             }
         }
 
-        // Discard: remove TempQues.txt and return to Assessments
         if (temp.exists()) {
             boolean deleted = temp.delete();
             if (!deleted) {
@@ -1469,13 +1368,11 @@ public class Quiz extends javax.swing.JFrame {
             }
         }
 
-        // reset session count after discarding
         sessionQuestionCount = 0;
 
-        // open Assessments
         java.awt.EventQueue.invokeLater(() -> {
             if (parentWindow != null) {
-                parentWindow.refreshTableData(); // Refresh table data before showing
+                parentWindow.refreshTableData();
                 parentWindow.setVisible(true);
             } else {
                 new Assessments(lecturerID, null).setVisible(true);
@@ -1501,13 +1398,11 @@ public class Quiz extends javax.swing.JFrame {
     }
 
     private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {
-        // When a module is selected, populate the quiz dropdown with quizzes for that module
         String selectedModule = (String) jComboBox1.getSelectedItem();
         if (selectedModule != null && !selectedModule.isEmpty()) {
             String[] moduleParts = selectedModule.split(" - ", 2);
             String moduleId = moduleParts[0].trim();
             populateQuizDropdown(moduleId);
-            // Update question count if a quiz is already selected
             String selectedQuizId = getSelectedQuizId();
             if (selectedQuizId != null && !selectedQuizId.isEmpty()) {
                 updateQuestionCountLabels(moduleId, selectedQuizId);
@@ -1532,7 +1427,6 @@ public class Quiz extends javax.swing.JFrame {
     }
 
     private void clearInputFields() {
-        // Clear all form fields
         jTextArea1.setText("");
         jTextArea2.setText("");
         a.setText("");
@@ -1543,16 +1437,14 @@ public class Quiz extends javax.swing.JFrame {
         jTextField7.setText("");
         answerGroup.clearSelection();
         correctAnswer = "";
-        // Also reset question number label
         jLabel1.setText("Question:");
         jLabel7.setText("Question:");
     }
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {
-        // Validation: check if any input fields are non-empty
         boolean hasData = false;
         int selectedTabIndex = jTabbedPane1.getSelectedIndex();
-        if (selectedTabIndex == 0) { // Objective tab
+        if (selectedTabIndex == 0) { 
             if (!jTextArea1.getText().trim().isEmpty() ||
                 !a.getText().trim().isEmpty() ||
                 !b.getText().trim().isEmpty() ||
@@ -1562,7 +1454,7 @@ public class Quiz extends javax.swing.JFrame {
                 answerGroup.getSelection() != null) {
                 hasData = true;
             }
-        } else if (selectedTabIndex == 1) { // Subjective tab
+        } else if (selectedTabIndex == 1) { 
             if (!jTextArea2.getText().trim().isEmpty() ||
                 !jTextField7.getText().trim().isEmpty()) {
                 hasData = true;
@@ -1583,7 +1475,6 @@ public class Quiz extends javax.swing.JFrame {
         clearInputFields();
     }
 
-    // Helper: normalize a field without adding quotes
     private String csvEscape(String s) {
         if (s == null) return "";
         String value = s.replace("\r", "").replace("\n", " ").trim();
@@ -1623,15 +1514,12 @@ public class Quiz extends javax.swing.JFrame {
         }
     }
     
-    /**
-     * Inserts new questions after existing ones with the same QuizID and ModuleID
-     * and renumbers QuestionIDs only for that specific QuizID+ModuleID combination
-     */
+
     private java.util.List<String> insertQuestionsAndRenumber(File quizFile, java.util.List<String> newQuestions, String targetQuizID) throws IOException {
         java.util.List<String> allLines = new java.util.ArrayList<>();
         java.util.List<String> assignedIds = new java.util.ArrayList<>();
         
-        // Read all existing questions
+
         if (quizFile.exists()) {
             try (BufferedReader br = new BufferedReader(new FileReader(quizFile))) {
                 String line;
@@ -1641,7 +1529,7 @@ public class Quiz extends javax.swing.JFrame {
             }
         }
         
-        // Extract ModuleID from first new question to determine target ModuleID
+
         String targetModuleID = null;
         if (!newQuestions.isEmpty()) {
             String[] firstNewParts = newQuestions.get(0).split(",", -1);
@@ -1650,7 +1538,7 @@ public class Quiz extends javax.swing.JFrame {
             }
         }
         
-        // Find the insertion point (after the last question with the same QuizID and ModuleID)
+
         int insertionIndex = -1;
         for (int i = allLines.size() - 1; i >= 0; i--) {
             String line = allLines.get(i);
@@ -1664,16 +1552,14 @@ public class Quiz extends javax.swing.JFrame {
                 }
             }
         }
-        
-        // If no matching QuizID+ModuleID found, append at the end
+
         if (insertionIndex == -1) {
             insertionIndex = allLines.size();
         }
         
-        // Insert new questions at the found position
+
         allLines.addAll(insertionIndex, newQuestions);
-        
-        // Renumber QuestionIDs ONLY for the target QuizID+ModuleID combination
+
         int questionCounter = 0;
         for (int i = 0; i < allLines.size(); i++) {
             String line = allLines.get(i);
@@ -1682,7 +1568,7 @@ public class Quiz extends javax.swing.JFrame {
                 String quizId = stripQuotes(parts[1].trim());
                 String moduleId = stripQuotes(parts[2].trim());
                 
-                // Only renumber if it belongs to BOTH the target QuizID AND ModuleID
+
                 if (quizId.equals(targetQuizID) && moduleId.equals(targetModuleID)) {
                     questionCounter++;
                     String newQuestionId = String.format("Q%03d", questionCounter);
@@ -1692,7 +1578,6 @@ public class Quiz extends javax.swing.JFrame {
             }
         }
         
-        // Write everything back to the file
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(quizFile))) {
             for (String line : allLines) {
                 bw.write(line);
@@ -1700,7 +1585,6 @@ public class Quiz extends javax.swing.JFrame {
             }
         }
 
-        // Collect assigned QuestionIDs for the inserted questions (in order)
         if (!newQuestions.isEmpty()) {
             int start = Math.max(0, insertionIndex);
             int end = Math.min(allLines.size(), insertionIndex + newQuestions.size());
@@ -1714,30 +1598,25 @@ public class Quiz extends javax.swing.JFrame {
 
         return assignedIds;
     }
-    
-    /**
-     * Updates an existing question in question.txt when in edit mode
-     */
+
     private void updateExistingQuestion(File quizFile) throws IOException {
         String selectedModule = (String) jComboBox1.getSelectedItem();
         String[] moduleParts = selectedModule.split(" - ", 2);
         String moduleId = moduleParts[0].trim();
         String quizIdForSave = resolveQuizIdForSave(moduleId);
         
-        // Get the current question ID from the label
-        String questionIdLabel = jLabel1.getText(); // Format: "Question: X"
+        String questionIdLabel = jLabel1.getText();
         String questionNumber = questionIdLabel.replace("Question:", "").trim();
         String questionId = String.format("Q%03d", Integer.parseInt(questionNumber));
         
         int selectedTabIndex = jTabbedPane1.getSelectedIndex();
         
-        // Build the updated question line
         StringBuilder updatedLine = new StringBuilder();
          updatedLine.append(csvEscape(questionId)).append(",")
              .append(csvEscape(quizIdForSave)).append(",")
              .append(csvEscape(moduleId)).append(",");
         
-        if (selectedTabIndex == 0) { // Objective tab
+        if (selectedTabIndex == 0) { 
             String question = jTextArea1.getText().trim();
             String a1 = a.getText().trim();
             String a2 = b.getText().trim();
@@ -1753,20 +1632,17 @@ public class Quiz extends javax.swing.JFrame {
                        .append(csvEscape(correctAnswer)).append(",")
                        .append(csvEscape("Objective"));
             
-            // Update marks in TotalQuizMark.txt
             saveQuestionMarks(moduleId, quizIdForSave, questionId, marks);
-        } else if (selectedTabIndex == 1) { // Subjective tab
+        } else if (selectedTabIndex == 1) { 
             String subjectiveQuestion = jTextArea2.getText().trim();
             String marks = jTextField7.getText().trim();
             
             updatedLine.append(csvQuote(subjectiveQuestion)).append(",")
                        .append(csvEscape("Subjective"));
             
-            // Update marks in TotalQuizMark.txt
             saveQuestionMarks(moduleId, quizIdForSave, questionId, marks);
         }
         
-        // Read all lines from question.txt
         java.util.List<String> allLines = new java.util.ArrayList<>();
         if (quizFile.exists()) {
             try (BufferedReader br = new BufferedReader(new FileReader(quizFile))) {
@@ -1777,7 +1653,6 @@ public class Quiz extends javax.swing.JFrame {
             }
         }
         
-        // Find and replace the matching question
         boolean found = false;
         for (int i = 0; i < allLines.size(); i++) {
             String line = allLines.get(i);
@@ -1787,7 +1662,6 @@ public class Quiz extends javax.swing.JFrame {
                 String lineQuizId = stripQuotes(parts[1].trim());
                 String lineModuleId = stripQuotes(parts[2].trim());
                 
-                // Match by QuestionID, QuizID, and ModuleID
                 boolean quizIdMatches = lineQuizId.equals(quizIdForSave)
                     || lineQuizId.equals(currentQuizID)
                     || (!currentQuizTitle.isEmpty() && lineQuizId.equals(currentQuizTitle));
@@ -1803,7 +1677,7 @@ public class Quiz extends javax.swing.JFrame {
             throw new IOException("Could not find the question to update in question.txt");
         }
         
-        // Write all lines back to question.txt
+
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(quizFile))) {
             for (String line : allLines) {
                 bw.write(line);
@@ -1812,10 +1686,7 @@ public class Quiz extends javax.swing.JFrame {
         }
     }
     
-    /**
-     * Generates the next QuizID in format QZ00X
-     * Reads existing Quiz.txt and increments the highest ID found
-     */
+
     private String generateNextQuizId(String moduleId) {
         String projectRoot = System.getProperty("user.dir");
         File quizFile = new File(projectRoot, "src\\main\\java\\oopwj\\data\\Quiz.txt");
@@ -1830,7 +1701,6 @@ public class Quiz extends javax.swing.JFrame {
                         String quizId = parts[0].trim();
                         String quizModuleId = parts[1].trim();
                         
-                        // Only count quiz IDs for the current module
                         if (quizModuleId.equals(moduleId) && quizId.startsWith("QZ")) {
                             try {
                                 int id = Integer.parseInt(quizId.substring(2));
@@ -1848,14 +1718,9 @@ public class Quiz extends javax.swing.JFrame {
             }
         }
         
-        // Increment and return new QuizID in format QZ00X, starting from 1 for each module
         return String.format("QZ%03d", maxId + 1);
     }
     
-    /**
-     * Saves QuizID, ModuleID, and Title to Quiz.txt
-     * Format: QuizID, ModuleID, Title
-     */
     private boolean saveQuizToFile(String quizId, String moduleId, String title) {
         String projectRoot = System.getProperty("user.dir");
         File quizFile = new File(projectRoot, "src\\main\\java\\oopwj\\data\\Quiz.txt");
@@ -1889,7 +1754,7 @@ public class Quiz extends javax.swing.JFrame {
         try (BufferedReader br = new BufferedReader(new FileReader(quizFile))) {
             String line;
             while ((line = br.readLine()) != null) {
-                String[] parts = line.split(",", 3); // QuizID, ModuleID, Title
+                String[] parts = line.split(",", 3); 
                 if (parts.length >= 2) {
                     String lineQuizId = normalizeToken(parts[0]);
                     String lineModuleId = normalizeToken(parts[1]);
@@ -1958,7 +1823,7 @@ public class Quiz extends javax.swing.JFrame {
         try (BufferedReader br = new BufferedReader(new FileReader(quizFile))) {
             String line;
             while ((line = br.readLine()) != null) {
-                String[] parts = line.split(",", 3); // QuizID, ModuleID, Title
+                String[] parts = line.split(",", 3); 
                 if (parts.length >= 3) {
                     String lineQuizId = normalizeToken(parts[0]);
                     String lineModuleId = normalizeToken(parts[1]);
@@ -2004,15 +1869,11 @@ public class Quiz extends javax.swing.JFrame {
         }
         return trimmed;
     }
-    
-    /**
-     * Populates the quiz dropdown (jComboBox2) with quizzes for the selected module
-     */
+
     private void populateQuizDropdown(String moduleId) {
         String projectRoot = System.getProperty("user.dir");
         File quizFile = new File(projectRoot, "src\\main\\java\\oopwj\\data\\Quiz.txt");
-        
-        // Clear existing items
+    
         jComboBox2.removeAllItems();
         quizIdsForDropdown.clear();
         
@@ -2023,13 +1884,12 @@ public class Quiz extends javax.swing.JFrame {
         try (BufferedReader br = new BufferedReader(new FileReader(quizFile))) {
             String line;
             while ((line = br.readLine()) != null) {
-                String[] parts = line.split(",", 3); // QuizID, ModuleID, Title
+                String[] parts = line.split(",", 3); 
                 if (parts.length >= 2) {
                     String quizId = parts[0].trim();
                     String quizModuleId = parts[1].trim();
                     String quizTitle = parts.length >= 3 ? parts[2].trim() : "";
-                    
-                    // Add quiz to dropdown if it matches the selected module
+
                     if (quizModuleId.equals(moduleId)) {
                         String displayTitle = (quizTitle == null || quizTitle.isEmpty()) ? quizId : quizTitle;
                         jComboBox2.addItem(displayTitle);
@@ -2042,9 +1902,6 @@ public class Quiz extends javax.swing.JFrame {
         }
     }
 
-    /**
-     * Retrieves the quiz title from Quiz.txt based on QuizID
-     */
     private String getQuizTitle(String quizId) {
         String projectRoot = System.getProperty("user.dir");
         File quizFile = new File(projectRoot, "src\\main\\java\\oopwj\\data\\Quiz.txt");
@@ -2056,11 +1913,10 @@ public class Quiz extends javax.swing.JFrame {
         try (BufferedReader br = new BufferedReader(new FileReader(quizFile))) {
             String line;
             while ((line = br.readLine()) != null) {
-                String[] parts = line.split(",", 3); // Split into max 3 parts: QuizID, ModuleID, Title
+                String[] parts = line.split(",", 3);
                 if (parts.length >= 3) {
                     String id = parts[0].trim();
                     
-                    // If QuizID matches, return the title
                     if (id.equals(quizId)) {
                         String title = parts[2].trim();
                         return title;
@@ -2091,7 +1947,7 @@ public class Quiz extends javax.swing.JFrame {
         try (BufferedReader br = new BufferedReader(new FileReader(quizFile))) {
             String line;
             while ((line = br.readLine()) != null) {
-                String[] parts = line.split(",", 3); // QuizID, ModuleID, Title
+                String[] parts = line.split(",", 3); 
                 if (parts.length >= 2) {
                     String quizId = parts[0].trim();
                     String quizModuleId = parts[1].trim();
@@ -2169,11 +2025,7 @@ public class Quiz extends javax.swing.JFrame {
         jLabel7.setText(labelText);
     }
     
-    /**
-     * Gets the next QuestionID for the given ModuleID and QuizID
-     * Reads from question.txt and finds the highest QuestionID for this combination,
-     * then increments it by 1 in format Q001, Q002, etc.
-     */
+
     private String getNextQuestionID(String moduleId, String quizId) {
         String projectRoot = System.getProperty("user.dir");
         File questionFile = new File(projectRoot, "src\\main\\java\\oopwj\\data\\question.txt");
@@ -2190,9 +2042,7 @@ public class Quiz extends javax.swing.JFrame {
                         String qQuizId = stripQuotes(fields[1].trim());
                         String qModuleId = stripQuotes(fields[2].trim());
                         
-                        // Check if this question belongs to the current module and quiz
                         if (qModuleId.equals(moduleId) && qQuizId.equals(quizId)) {
-                            // Extract the numeric part from QuestionID (e.g., "Q001" -> 1)
                             if (questionId.startsWith("Q")) {
                                 try {
                                     int id = Integer.parseInt(questionId.substring(1));
@@ -2211,7 +2061,6 @@ public class Quiz extends javax.swing.JFrame {
             }
         }
         
-        // Increment the max ID and return the new question ID
         return String.format("Q%03d", maxId + 1);
     }
 
