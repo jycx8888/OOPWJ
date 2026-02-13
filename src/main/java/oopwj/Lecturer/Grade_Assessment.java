@@ -1004,7 +1004,6 @@ public class Grade_Assessment extends javax.swing.JFrame {
                     String questionID = parts[2].trim();
                     int maxMark = Integer.parseInt(parts[3].trim());
                     
-                    // Match module and quiz
                     if (moduleIDFromFile.equals(moduleID) && quizIDFromFile.equals(quizID)) {
                         maxMarks.put(questionID, maxMark);
                     }
