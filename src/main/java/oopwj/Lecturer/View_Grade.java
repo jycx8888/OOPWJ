@@ -54,10 +54,10 @@ public class View_Grade extends javax.swing.JFrame {
         quizName = lookupQuizName(moduleID, quizID);
         setModuleAndStudentInfo(moduleName, quizName, studentID);
         loadQuestionIDs(moduleID, quizID);
-        loadExistingGrades(); // Load already saved grades from Grade.txt
+        loadExistingGrades(); 
         refreshCurrentQuestionDisplay();
         setupSpinnerValidation();
-        setupSpinnerChangeListener(); // Listen for mark changes
+        setupSpinnerChangeListener(); 
     }
     
     /**
@@ -168,9 +168,7 @@ public class View_Grade extends javax.swing.JFrame {
         return quizID;
     }
     
-    /**
-     * Loads maximum marks for each question from TotalQuizMark.txt
-     */
+
     private void loadMaxMarks(String moduleID, String quizID) {
         String projectRoot = System.getProperty("user.dir");
         String totalQuizMarkPath = projectRoot + "\\src\\main\\java\\oopwj\\data\\TotalQuizMark.txt";
@@ -189,7 +187,7 @@ public class View_Grade extends javax.swing.JFrame {
                 line = line.trim();
                 if (line.isEmpty() || line.startsWith("#")) continue;
                 
-                // Format: ModuleID,QuizID,QuestionID,TotalMarks
+
                 String[] parts = line.split(",");
                 if (parts.length >= 4) {
                     String fileModuleID = parts[0].trim();
@@ -213,10 +211,7 @@ public class View_Grade extends javax.swing.JFrame {
             logger.log(java.util.logging.Level.SEVERE, "Error reading TotalQuizMark.txt: " + e.getMessage(), e);
         }
     }
-    
-    /**
-     * Sets up validation for the marks spinner to prevent exceeding maximum marks
-     */
+
     private void setupSpinnerValidation() {
         jSpinner2.addChangeListener(e -> {
             String selectedQuestionID = getSelectedQuestionId();
@@ -241,9 +236,7 @@ public class View_Grade extends javax.swing.JFrame {
         });
     }
     
-    /**
-     * Sets up listener to save marks when spinner value changes
-     */
+
     private void setupSpinnerChangeListener() {
         jSpinner2.addChangeListener(e -> {
             String selectedQuestionID = getSelectedQuestionId();
@@ -255,9 +248,7 @@ public class View_Grade extends javax.swing.JFrame {
         });
     }
     
-    /**
-     * Loads existing grades from Grade.txt for this student/module/quiz
-     */
+
     private void loadExistingGrades() {
         String projectRoot = System.getProperty("user.dir");
         String gradeFilePath = projectRoot + "\\src\\main\\java\\oopwj\\data\\Grade.txt";
@@ -274,7 +265,6 @@ public class View_Grade extends javax.swing.JFrame {
                 line = line.trim();
                 if (line.isEmpty() || line.startsWith("#")) continue;
                 
-                // Format: studentID,moduleID,quizID,questionID,QuestionType,CorrectAnswer,mark
                 String[] parts = line.split(",");
                 if (parts.length >= 7) {
                     String fileStudentID = parts[0].trim();
@@ -283,8 +273,7 @@ public class View_Grade extends javax.swing.JFrame {
                     String fileQuestionID = parts[3].trim();
                     String questionType = parts[4].trim();
                     String markStr = parts[6].trim();
-                    
-                    // Load subjective grades for this student/module/quiz
+
                     if (fileStudentID.equals(studentID) && 
                         fileModuleID.equals(moduleID) && 
                         fileQuizID.equals(quizID) &&
@@ -304,10 +293,7 @@ public class View_Grade extends javax.swing.JFrame {
             logger.log(java.util.logging.Level.SEVERE, "Error reading Grade.txt: " + e.getMessage(), e);
         }
     }
-    
-    /**
-     * Loads all QuestionIDs for the given moduleID and quizID from question.txt
-     */
+
     private void loadQuestionIDs(String moduleID, String quizID) {
         String projectRoot = System.getProperty("user.dir");
         String quizFilePath = projectRoot + "\\src\\main\\java\\oopwj\\data\\question.txt";
@@ -321,8 +307,7 @@ public class View_Grade extends javax.swing.JFrame {
                 javax.swing.JOptionPane.ERROR_MESSAGE);
             return;
         }
-        
-        // Clear existing items
+
         jComboBox1.removeAllItems();
         
         java.util.Set<String> questionIDs = new java.util.LinkedHashSet<>();
@@ -345,7 +330,6 @@ public class View_Grade extends javax.swing.JFrame {
                 }
             }
             
-            // Populate combo box
             for (String qid : questionIDs) {
                 jComboBox1.addItem(qid);
             }
@@ -610,25 +594,19 @@ public class View_Grade extends javax.swing.JFrame {
     }//GEN-LAST:event_jRadioButton1ActionPerformed
 
     private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox1ActionPerformed
-        // Get the selected question ID from the combo box
         String selectedQuestionID = getSelectedQuestionId();
         if (selectedQuestionID == null || selectedQuestionID.isEmpty()) {
             return;
         }
-        
-        // Load question data from question.txt
+
         loadQuestionData(selectedQuestionID);
         
-        // Load student answer from student_answers.txt
         loadStudentAnswer(selectedQuestionID);
-        
-        // Update spinner max value and label for subjective questions
+
         updateMaxMarksDisplay(selectedQuestionID);
     }//GEN-LAST:event_jComboBox1ActionPerformed
     
-    /**
-     * Loads question data from question.txt and displays it in the appropriate panel
-     */
+
     private void loadQuestionData(String questionID) {
         String projectRoot = System.getProperty("user.dir");
         String questionFilePath = projectRoot + "\\src\\main\\java\\oopwj\\data\\question.txt";
@@ -653,33 +631,25 @@ public class View_Grade extends javax.swing.JFrame {
                     
                     if (fileQuestionID.equals(questionID) && fileQuizID.equals(quizID) && fileModuleID.equals(moduleID)) {
                         if (parts.length >= 10) {
-                            // Objective question format: QuestionID,QuizID,ModuleID,Question,A,B,C,D,CorrectAnswer,Type
                             String question = parts[3].trim().replaceAll("^\\\"|\\\"$", "");
                             String answerA = parts[4].trim().replaceAll("^\\\"|\\\"$", "");
                             String answerB = parts[5].trim().replaceAll("^\\\"|\\\"$", "");
                             String answerC = parts[6].trim().replaceAll("^\\\"|\\\"$", "");
                             String answerD = parts[7].trim().replaceAll("^\\\"|\\\"$", "");
                             String correctAnswer = parts[8].trim().replaceAll("^\\\"|\\\"$", "");
-                            
-                            // Fill objective panel
+
                             jTextArea1.setText(question);
                             jTextField1.setText(answerA + " / " + answerB + " / " + answerC + " / " + answerD);
                             jTextField2.setText(correctAnswer);
-                            
-                            // Show objective panel
+
                             swapPanels("Objective");
                         } else if (parts.length >= 5) {
-                            // Subjective question format: QuestionID,QuizID,ModuleID,Question,Type
                             String question = parts[3].trim().replaceAll("^\\\"|\\\"$", "");
-                            
-                            // Fill subjective panel
+
                             jTextArea2.setText(question);
                             jRadioButton1.setSelected(false);
                             jRadioButton2.setSelected(false);
-                            
-                            // Note: Spinner value will be set by updateMaxMarksDisplay() which is called after this
-                            
-                            // Show subjective panel
+
                             swapPanels("Subjective");
                         }
                         return;
@@ -691,42 +661,31 @@ public class View_Grade extends javax.swing.JFrame {
         }
     }
     
-    /**
-     * Updates the display of maximum marks for the selected question
-     */
+
     private void updateMaxMarksDisplay(String questionID) {
         if (maxMarksMap.containsKey(questionID)) {
             int maxMarks = maxMarksMap.get(questionID);
             
-            // Get the saved mark for this question (if exists)
+
             int savedMark = subjectiveGrades.getOrDefault(questionID, 0);
-            
-            // Set spinner model with proper range and saved value
+
             javax.swing.SpinnerNumberModel spinnerModel = new javax.swing.SpinnerNumberModel(savedMark, 0, maxMarks, 1);
             jSpinner2.setModel(spinnerModel);
-            
-            // Create standard number editor
             javax.swing.JSpinner.NumberEditor editor = new javax.swing.JSpinner.NumberEditor(jSpinner2, "0");
             jSpinner2.setEditor(editor);
-            
-            // Update the label to display the total mark for subjective questions
             jLabel6.setText("Mark: " + maxMarks);
-            
-            // Update the label to display the total mark for objective questions
+
             jLabel11.setText("Mark: " + maxMarks);
             
             logger.log(java.util.logging.Level.INFO, "Max marks for " + questionID + " set to: " + maxMarks + ", current value: " + savedMark);
         } else {
             logger.log(java.util.logging.Level.WARNING, "No max marks found for question: " + questionID);
-            // Reset labels if no max marks found
             jLabel6.setText("Mark:");
             jLabel11.setText("Mark:");
         }
     }
     
-    /**
-    * Loads student answer from student_answers.txt and displays it
-     */
+
     private void loadStudentAnswer(String questionID) {
         String projectRoot = System.getProperty("user.dir");
         String answersFilePath = projectRoot + "\\src\\main\\java\\oopwj\\data\\student_answers.txt";
@@ -742,8 +701,7 @@ public class View_Grade extends javax.swing.JFrame {
             while ((line = br.readLine()) != null) {
                 line = line.trim();
                 if (line.isEmpty() || line.startsWith("#")) continue;
-                
-                // Format: StudentID,ModuleID,QuizID,QuestionID,QuestionType,Answer
+
                 String[] parts = line.split(",");
                 if (parts.length >= 6) {
                     String fileStudentID = parts[0].trim();
@@ -757,12 +715,10 @@ public class View_Grade extends javax.swing.JFrame {
                         fileQuizID.equals(quizID) && fileQuestionID.equals(questionID)) {
                         
                         if ("Objective".equalsIgnoreCase(questionType)) {
-                            // Show student's objective answer
                             jTextField1.setText(answer);
                             String correctAnswer = jTextField2.getText().trim();
                             updateObjectiveAutoMark(correctAnswer, answer);
                         } else if ("Subjective".equalsIgnoreCase(questionType)) {
-                            // Set subjective answer
                             jTextArea3.setText(answer);
                         }
                         return;
@@ -793,14 +749,12 @@ public class View_Grade extends javax.swing.JFrame {
     }
     
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {
-        // Navigate back to Grade_Assessment
         Grade_Assessment gradeAssessment = new Grade_Assessment(lecturerID);
         gradeAssessment.setVisible(true);
         this.dispose();
     }
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {
-        // Previous button - navigate to previous question
         int currentIndex = jComboBox1.getSelectedIndex();
         if (currentIndex > 0) {
             jComboBox1.setSelectedIndex(currentIndex - 1);
@@ -813,7 +767,6 @@ public class View_Grade extends javax.swing.JFrame {
     }
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {
-        // Next button - navigate to next question
         int currentIndex = jComboBox1.getSelectedIndex();
         int totalQuestions = jComboBox1.getItemCount();
         if (currentIndex < totalQuestions - 1) {
@@ -827,12 +780,8 @@ public class View_Grade extends javax.swing.JFrame {
     }
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {
-        // Save button - save ALL subjective question grades to Grade.txt
-        
-        // Auto-grade objective questions first
+
         autoGradeObjectiveQuestions(studentID, moduleID, quizID);
-        
-        // Check if there are any subjective grades to save
         if (subjectiveGrades.isEmpty()) {
             javax.swing.JOptionPane.showMessageDialog(this, 
                 "No subjective questions have been graded yet.", 
@@ -840,18 +789,14 @@ public class View_Grade extends javax.swing.JFrame {
                 javax.swing.JOptionPane.WARNING_MESSAGE);
             return;
         }
-        
-        // Save all subjective grades to Grade.txt
+
         saveAllSubjectiveGrades();
-        
-        // Calculate and save final grade to FinalGrade.txt
+
         calculateAndSaveFinalGrade();
-        
-        // Show confirmation with summary
+
         int subjectiveCount = subjectiveGrades.size();
         int totalSubjectiveCount = countSubjectiveQuestions();
-        
-        // Count objective questions that were graded
+
         java.util.Map<String, Integer> objectiveGrades = loadObjectiveGradesFromGradeFile();
         int objectiveCount = objectiveGrades.size();
         int totalObjectiveCount = countObjectiveQuestions();
@@ -861,8 +806,7 @@ public class View_Grade extends javax.swing.JFrame {
         
         StringBuilder message = new StringBuilder();
         message.append("Questions Marked: ").append(totalMarked).append(" out of ").append(totalQuestions).append("\n\n");
-        
-        // Show objective questions marked
+
         if (objectiveCount > 0) {
             message.append("Objective Questions Marked:\n");
             for (java.util.Map.Entry<String, Integer> entry : objectiveGrades.entrySet()) {
@@ -870,8 +814,7 @@ public class View_Grade extends javax.swing.JFrame {
             }
             message.append("\n");
         }
-        
-        // Show subjective questions marked
+
         if (subjectiveCount > 0) {
             message.append("Subjective Questions Marked:\n");
             for (java.util.Map.Entry<String, Integer> entry : subjectiveGrades.entrySet()) {
@@ -880,7 +823,7 @@ public class View_Grade extends javax.swing.JFrame {
             message.append("\n");
         }
         
-        // Show pending questions if any
+
         if (totalMarked < totalQuestions) {
             message.append("Pending Questions to Grade:\n");
             java.util.Set<String> gradedQuestions = new java.util.HashSet<>();
@@ -942,9 +885,7 @@ public class View_Grade extends javax.swing.JFrame {
         updateMaxMarksDisplay(selectedQuestionID);
     }
     
-    /**
-     * Checks if the given question is a subjective question
-     */
+
     private boolean isSubjectiveQuestion(String questionID) {
         String projectRoot = System.getProperty("user.dir");
         String questionFilePath = projectRoot + "\\src\\main\\java\\oopwj\\data\\question.txt";
@@ -968,7 +909,6 @@ public class View_Grade extends javax.swing.JFrame {
                     String fileModuleID = parts[2].trim();
                     
                     if (fileQuestionID.equals(questionID) && fileQuizID.equals(quizID) && fileModuleID.equals(moduleID)) {
-                        // Check question type - subjective has fewer columns (5) vs objective (10)
                         String questionType = parts[parts.length - 1].trim();
                         return "Subjective".equalsIgnoreCase(questionType);
                     }
@@ -981,9 +921,7 @@ public class View_Grade extends javax.swing.JFrame {
         return false;
     }
     
-    /**
-     * Counts the total number of subjective questions for the current module and quiz
-     */
+
     private int countSubjectiveQuestions() {
         String projectRoot = System.getProperty("user.dir");
         String questionFilePath = projectRoot + "\\src\\main\\java\\oopwj\\data\\question.txt";
@@ -1021,9 +959,7 @@ public class View_Grade extends javax.swing.JFrame {
         return count;
     }
     
-    /**
-     * Counts the total number of objective questions for the current module and quiz
-     */
+
     private int countObjectiveQuestions() {
         String projectRoot = System.getProperty("user.dir");
         String questionFilePath = projectRoot + "\\src\\main\\java\\oopwj\\data\\question.txt";
@@ -1060,11 +996,7 @@ public class View_Grade extends javax.swing.JFrame {
         
         return count;
     }
-    
-    /**
-     * Loads objective questions that were just graded from Grade.txt
-     * Returns map of questionID -> marks
-     */
+
     private java.util.Map<String, Integer> loadObjectiveGradesFromGradeFile() {
         java.util.Map<String, Integer> objectiveGrades = new java.util.LinkedHashMap<>();
         
@@ -1082,8 +1014,7 @@ public class View_Grade extends javax.swing.JFrame {
             while ((line = br.readLine()) != null) {
                 line = line.trim();
                 if (line.isEmpty() || line.startsWith("#")) continue;
-                
-                // Format: studentID,moduleID,quizID,questionID,Objective,correctAnswer,mark
+
                 String[] parts = line.split(",");
                 if (parts.length >= 7) {
                     String fileStudentID = parts[0].trim();
@@ -1092,8 +1023,7 @@ public class View_Grade extends javax.swing.JFrame {
                     String fileQuestionID = parts[3].trim();
                     String questionType = parts[4].trim();
                     String markStr = parts[6].trim();
-                    
-                    // Match current student, module, quiz and objective questions
+
                     if (fileStudentID.equals(studentID) &&
                         fileModuleID.equals(moduleID) &&
                         fileQuizID.equals(quizID) &&
@@ -1114,17 +1044,15 @@ public class View_Grade extends javax.swing.JFrame {
         return objectiveGrades;
     }
     
-    /**
-     * Compares two questionIDs numerically (e.g., Q002 < Q010)
-     */
+
     private int compareQuestionIDs(String q1, String q2) {
         try {
-            // Extract numeric part from question IDs (e.g., "Q006" -> 6)
+
             int num1 = Integer.parseInt(q1.replaceAll("[^0-9]", ""));
             int num2 = Integer.parseInt(q2.replaceAll("[^0-9]", ""));
             return Integer.compare(num1, num2);
         } catch (NumberFormatException e) {
-            // If parsing fails, fall back to string comparison
+
             return q1.compareTo(q2);
         }
     }
@@ -1159,10 +1087,6 @@ public class View_Grade extends javax.swing.JFrame {
         }
     }
     
-    /**
-    * Loads subjective question answers from student_answers.txt for the current student/module/quiz
-     * Returns map of questionID -> answer
-     */
     private java.util.Map<String, String> loadSubjectiveAnswers() {
         java.util.Map<String, String> answers = new java.util.HashMap<>();
         String projectRoot = System.getProperty("user.dir");
@@ -1179,18 +1103,16 @@ public class View_Grade extends javax.swing.JFrame {
             while ((line = br.readLine()) != null) {
                 line = line.trim();
                 if (line.isEmpty() || line.startsWith("#")) continue;
-                
-                // Format: StudentID,ModuleID,QuizID,QuestionID,QuestionType,Answer
-                String[] parts = line.split(",", 6); // Split into max 6 parts to preserve commas in answer
+
+                String[] parts = line.split(",", 6);
                 if (parts.length >= 6) {
                     String fileStudentID = parts[0].trim();
                     String fileModuleID = parts[1].trim();
                     String fileQuizID = parts[2].trim();
                     String fileQuestionID = parts[3].trim();
                     String questionType = parts[4].trim();
-                    String answer = parts[5].trim(); // Answer may contain commas
-                    
-                    // Match student, module, quiz, and question type
+                    String answer = parts[5].trim(); 
+
                     if (fileStudentID.equals(studentID) && 
                         fileModuleID.equals(moduleID) && 
                         fileQuizID.equals(quizID) &&
@@ -1206,24 +1128,18 @@ public class View_Grade extends javax.swing.JFrame {
         
         return answers;
     }
-    
-    /**
-     * Saves all subjective question grades in Grade.txt
-     * Format: studentID,moduleID,quizID,questionID,Subjective,Answer,mark
-     */
+
     private void saveAllSubjectiveGrades() {
         String projectRoot = System.getProperty("user.dir");
         String gradeFilePath = projectRoot + "\\src\\main\\java\\oopwj\\data\\Grade.txt";
         
         java.io.File gradeFile = new java.io.File(gradeFilePath);
-        
-        // Load student answers for subjective questions from student_answers.txt
+
         java.util.Map<String, String> subjectiveAnswers = loadSubjectiveAnswers();
-        
-        // Separate lists for different types of lines
-        java.util.List<String> otherLines = new java.util.ArrayList<>(); // Lines not related to this student/module/quiz
-        java.util.List<String> currentQuizGrades = new java.util.ArrayList<>(); // Grades for current student/module/quiz
-        java.util.Set<String> processedQuestions = new java.util.HashSet<>(); // Track which questions we've already handled
+
+        java.util.List<String> otherLines = new java.util.ArrayList<>(); 
+        java.util.List<String> currentQuizGrades = new java.util.ArrayList<>(); 
+        java.util.Set<String> processedQuestions = new java.util.HashSet<>();
         
         if (gradeFile.exists()) {
             try (java.io.BufferedReader br = new java.io.BufferedReader(new java.io.FileReader(gradeFile))) {
@@ -1236,8 +1152,7 @@ public class View_Grade extends javax.swing.JFrame {
                         otherLines.add(originalLine);
                         continue;
                     }
-                    
-                    // Format: studentID,moduleID,quizID,questionID,QuestionType,CorrectAnswer,mark
+
                     String[] parts = line.split(",");
                     if (parts.length >= 7) {
                         String fileStudentID = parts[0].trim();
@@ -1245,19 +1160,16 @@ public class View_Grade extends javax.swing.JFrame {
                         String fileQuizID = parts[2].trim();
                         String fileQuestionID = parts[3].trim();
                         String questionType = parts[4].trim();
-                        
-                        // Check if this grade belongs to current student/module/quiz
+
                         if (fileStudentID.equals(studentID) && 
                             fileModuleID.equals(moduleID) && 
                             fileQuizID.equals(quizID)) {
-                            
-                            // Prevent duplicates - skip if we already processed this question
+
                             if (processedQuestions.contains(fileQuestionID)) {
                                 logger.log(java.util.logging.Level.WARNING, "Skipping duplicate entry for question: " + fileQuestionID);
                                 continue;
                             }
-                            
-                            // If it's a subjective question we're updating, use new value
+
                             if ("Subjective".equalsIgnoreCase(questionType) &&
                                 subjectiveGrades.containsKey(fileQuestionID)) {
                                 
@@ -1269,12 +1181,12 @@ public class View_Grade extends javax.swing.JFrame {
                                 processedQuestions.add(fileQuestionID);
                                 logger.log(java.util.logging.Level.INFO, "Updated existing grade: " + updatedLine);
                             } else {
-                                // Keep existing grade (objective or not updated subjective)
+
                                 currentQuizGrades.add(originalLine);
                                 processedQuestions.add(fileQuestionID);
                             }
                         } else {
-                            // Different student/module/quiz - keep in other lines
+
                             otherLines.add(originalLine);
                         }
                     } else {
@@ -1291,7 +1203,7 @@ public class View_Grade extends javax.swing.JFrame {
             }
         }
         
-        // Add new subjective grades that weren't in the file
+
         for (java.util.Map.Entry<String, Integer> entry : subjectiveGrades.entrySet()) {
             String questionID = entry.getKey();
             int marks = entry.getValue();
@@ -1305,19 +1217,17 @@ public class View_Grade extends javax.swing.JFrame {
             }
         }
         
-        // Sort all grades for this quiz by questionID (numerically)
+
         currentQuizGrades.sort((g1, g2) -> {
-            String q1 = g1.split(",")[3]; // Extract questionID
+            String q1 = g1.split(",")[3]; 
             String q2 = g2.split(",")[3];
             return compareQuestionIDs(q1, q2);
         });
-        
-        // Combine all lines: other lines + sorted current quiz grades
+
         java.util.List<String> allLines = new java.util.ArrayList<>();
         allLines.addAll(otherLines);
         allLines.addAll(currentQuizGrades);
-        
-        // Write all lines back to file
+
         try (java.io.BufferedWriter bw = new java.io.BufferedWriter(new java.io.FileWriter(gradeFile))) {
             for (String line : allLines) {
                 bw.write(line);
@@ -1332,10 +1242,7 @@ public class View_Grade extends javax.swing.JFrame {
                 javax.swing.JOptionPane.ERROR_MESSAGE);
         }
     }
-    
-    /**
-     * Auto-grades all objective questions for a student in a specific quiz
-     */
+
     private void autoGradeObjectiveQuestions(String studentID, String moduleID, String quizID) {
         System.out.println("DEBUG: autoGradeObjectiveQuestions() START");
         System.out.println("StudentID: " + studentID + ", ModuleID: " + moduleID + ", QuizID: " + quizID);
@@ -1345,23 +1252,18 @@ public class View_Grade extends javax.swing.JFrame {
         String answersFilePath = projectRoot + "\\src\\main\\java\\oopwj\\data\\student_answers.txt";
         String totalQuizMarkPath = projectRoot + "\\src\\main\\java\\oopwj\\data\\TotalQuizMark.txt";
         String gradeFilePath = projectRoot + "\\src\\main\\java\\oopwj\\data\\Grade.txt";
-        
-        // Load question data (map of questionID -> [correctAnswer, questionType])
+
         java.util.Map<String, String[]> questionData = loadQuestionData(questionFilePath, moduleID, quizID);
-        
-        // Load student answers (map of questionID -> studentAnswer)
+
         java.util.Map<String, String> studentAnswers = loadStudentAnswers(answersFilePath, studentID, moduleID, quizID);
-        
-        // Load max marks (map of questionID -> maxMark)
+
         java.util.Map<String, Integer> maxMarks = loadMaxMarksMap(totalQuizMarkPath, moduleID, quizID);
-        
-        // Grade each objective question and save to Grade.txt
+
         java.util.List<String> gradesToAdd = new java.util.ArrayList<>();
-        
-        // Sort question IDs numerically for ordered output
+
         java.util.List<String> sortedQuestionIDs = new java.util.ArrayList<>(questionData.keySet());
         sortedQuestionIDs.sort((q1, q2) -> {
-            // Extract numeric part from question IDs (e.g., "Q001" -> 1)
+
             try {
                 int num1 = Integer.parseInt(q1.replaceAll("[^0-9]", ""));
                 int num2 = Integer.parseInt(q2.replaceAll("[^0-9]", ""));
@@ -1375,25 +1277,21 @@ public class View_Grade extends javax.swing.JFrame {
             String[] qData = questionData.get(questionID);
             String correctAnswer = qData[0];
             String questionType = qData[1];
-            
-            // Only grade objective questions
+
             if ("Objective".equals(questionType)) {
                 String studentAnswer = studentAnswers.getOrDefault(questionID, "");
                 Integer maxMarkObj = maxMarks.getOrDefault(questionID, 0);
                 int maxMark = (maxMarkObj != null) ? maxMarkObj : 0;
-                
-                // Compare answers (case-insensitive)
+
                 int mark = correctAnswer.equalsIgnoreCase(studentAnswer) ? maxMark : 0;
-                
-                // Format: studentID,moduleID,quizID,questionID,Objective,correctAnswer,mark
+
                 String gradeEntry = studentID + "," + moduleID + "," + quizID + "," + questionID + ",Objective," + correctAnswer + "," + mark;
                 gradesToAdd.add(gradeEntry);
                 
                 System.out.println("Graded Q" + questionID + ": Student=" + studentAnswer + ", Correct=" + correctAnswer + ", Mark=" + mark);
             }
         }
-        
-        // Save grades to Grade.txt
+
         if (!gradesToAdd.isEmpty()) {
             appendGradesToFile(gradeFilePath, gradesToAdd);
             System.out.println("DEBUG: Saved " + gradesToAdd.size() + " grades to Grade.txt");
@@ -1401,11 +1299,7 @@ public class View_Grade extends javax.swing.JFrame {
         
         System.out.println("DEBUG: autoGradeObjectiveQuestions() END");
     }
-    
-    /**
-     * Loads question data from question.txt for a specific module and quiz
-     * Returns map of questionID -> [correctAnswer, questionType]
-     */
+
     private java.util.Map<String, String[]> loadQuestionData(String questionFilePath, String moduleID, String quizID) {
         java.util.Map<String, String[]> questionData = new java.util.HashMap<>();
         
@@ -1428,13 +1322,12 @@ public class View_Grade extends javax.swing.JFrame {
                     String moduleIDFromFile = parts[2].trim();
                     String questionType = parts[parts.length - 1].trim(); // Last column is type
                     
-                    // Check if this question belongs to the target quiz and module
                     if (quizIDFromFile.equals(quizID) && moduleIDFromFile.equals(moduleID)) {
                         String correctAnswer = "";
                         
                         if ("Objective".equals(questionType) && parts.length >= 9) {
-                            // For objective: format is Q,QZ,M,question,opt1,opt2,opt3,opt4,correctAns,Type
-                            correctAnswer = parts[8].trim(); // Correct answer is at index 8
+
+                            correctAnswer = parts[8].trim(); 
                         }
                         
                         questionData.put(questionID, new String[]{correctAnswer, questionType});
@@ -1448,10 +1341,7 @@ public class View_Grade extends javax.swing.JFrame {
         return questionData;
     }
     
-    /**
-    * Loads student answers from student_answers.txt
-     * Returns map of questionID -> studentAnswer
-     */
+
     private java.util.Map<String, String> loadStudentAnswers(String answersFilePath, String studentID, String moduleID, String quizID) {
         java.util.Map<String, String> studentAnswers = new java.util.HashMap<>();
         
@@ -1467,15 +1357,14 @@ public class View_Grade extends javax.swing.JFrame {
                 line = line.trim();
                 if (line.isEmpty() || line.startsWith("#")) continue;
                 
-                String[] parts = line.split(",", 6); // Split into max 6 parts
+                String[] parts = line.split(",", 6);
                 if (parts.length >= 6) {
                     String studentIDFromFile = parts[0].trim();
                     String moduleIDFromFile = parts[1].trim();
                     String quizIDFromFile = parts[2].trim();
                     String questionID = parts[3].trim();
-                    String answer = parts[5].trim(); // Answer is at index 5
+                    String answer = parts[5].trim(); 
                     
-                    // Match student, module, and quiz
                     if (studentIDFromFile.equals(studentID) && 
                         moduleIDFromFile.equals(moduleID) && 
                         quizIDFromFile.equals(quizID)) {
@@ -1490,10 +1379,7 @@ public class View_Grade extends javax.swing.JFrame {
         return studentAnswers;
     }
     
-    /**
-     * Loads max marks from TotalQuizMark.txt
-     * Returns map of questionID -> maxMark
-     */
+
     private java.util.Map<String, Integer> loadMaxMarksMap(String totalQuizMarkPath, String moduleID, String quizID) {
         java.util.Map<String, Integer> maxMarks = new java.util.HashMap<>();
         
@@ -1515,8 +1401,7 @@ public class View_Grade extends javax.swing.JFrame {
                     String quizIDFromFile = parts[1].trim();
                     String questionID = parts[2].trim();
                     int maxMark = Integer.parseInt(parts[3].trim());
-                    
-                    // Match module and quiz
+
                     if (moduleIDFromFile.equals(moduleID) && quizIDFromFile.equals(quizID)) {
                         maxMarks.put(questionID, maxMark);
                     }
@@ -1528,10 +1413,7 @@ public class View_Grade extends javax.swing.JFrame {
         
         return maxMarks;
     }
-    
-    /**
-     * Appends grade entries to Grade.txt file
-     */
+
     private void appendGradesToFile(String gradeFilePath, java.util.List<String> gradesToAdd) {
         try (java.io.BufferedWriter bw = new java.io.BufferedWriter(new java.io.FileWriter(gradeFilePath, true))) {
             for (String gradeEntry : gradesToAdd) {
@@ -1547,18 +1429,13 @@ public class View_Grade extends javax.swing.JFrame {
                 javax.swing.JOptionPane.ERROR_MESSAGE);
         }
     }
-    
-    /**
-     * Calculates the final grade percentage for the student and saves to FinalGrade.txt
-     * Formula: (Student's total marks / Quiz total marks) * 100%
-     */
+
     private void calculateAndSaveFinalGrade() {
         String projectRoot = System.getProperty("user.dir");
         String totalQuizMarkPath = projectRoot + "\\src\\main\\java\\oopwj\\data\\TotalQuizMark.txt";
         String gradeFilePath = projectRoot + "\\src\\main\\java\\oopwj\\data\\Grade.txt";
         String finalGradeFilePath = projectRoot + "\\src\\main\\java\\oopwj\\data\\FinalGrade.txt";
         
-        // Step 1: Calculate total possible marks for this quiz from TotalQuizMark.txt
         int totalPossibleMarks = 0;
         java.io.File totalQuizMarkFile = new java.io.File(totalQuizMarkPath);
         
@@ -1568,8 +1445,7 @@ public class View_Grade extends javax.swing.JFrame {
                 while ((line = br.readLine()) != null) {
                     line = line.trim();
                     if (line.isEmpty() || line.startsWith("#")) continue;
-                    
-                    // Format: ModuleID,QuizID,QuestionID,TotalMarks
+
                     String[] parts = line.split(",");
                     if (parts.length >= 4) {
                         String fileModuleID = parts[0].trim();
@@ -1595,8 +1471,7 @@ public class View_Grade extends javax.swing.JFrame {
             logger.log(java.util.logging.Level.WARNING, "Total possible marks is 0, cannot calculate percentage");
             return;
         }
-        
-        // Step 2: Calculate student's total marks from Grade.txt
+
         int studentTotalMarks = 0;
         java.io.File gradeFile = new java.io.File(gradeFilePath);
         
@@ -1608,8 +1483,7 @@ public class View_Grade extends javax.swing.JFrame {
                 while ((line = br.readLine()) != null) {
                     line = line.trim();
                     if (line.isEmpty() || line.startsWith("#")) continue;
-                    
-                    // Format: StudentID,ModuleID,QuizID,QuestionID,QuestionType,Answer,MarkObtained
+
                     String[] parts = line.split(",");
                     if (parts.length >= 7) {
                         String fileStudentID = parts[0].trim();
@@ -1621,8 +1495,7 @@ public class View_Grade extends javax.swing.JFrame {
                         if (fileStudentID.equals(studentID) && 
                             fileModuleID.equals(moduleID) && 
                             fileQuizID.equals(quizID)) {
-                            
-                            // Avoid counting duplicate entries for the same question
+
                             if (!processedQuestions.contains(fileQuestionID)) {
                                 try {
                                     studentTotalMarks += Integer.parseInt(marksObtained);
@@ -1639,15 +1512,11 @@ public class View_Grade extends javax.swing.JFrame {
                 return;
             }
         }
-        
-        // Step 3: Calculate percentage (normalize to 100%)
+
         double percentage = ((double) studentTotalMarks / totalPossibleMarks) * 100.0;
-        
-        // Step 3.5: Determine letter grade based on grading.txt
+
         String letterGrade = determineLetterGrade(percentage);
-        
-        // Step 4: Save to FinalGrade.txt
-        // First, read existing file to update or add the record (preserve feedback column)
+
         java.util.Map<String, String> finalGrades = new java.util.LinkedHashMap<>();
         String existingFeedback = "";
         java.io.File finalGradeFile = new java.io.File(finalGradeFilePath);
@@ -1658,27 +1527,22 @@ public class View_Grade extends javax.swing.JFrame {
                 while ((line = br.readLine()) != null) {
                     String trimmedLine = line.trim();
                     if (trimmedLine.isEmpty() || trimmedLine.startsWith("#")) continue;
-                    
-                    // Format: StudentID,ModuleID,QuizID,Mark,Feedback (old 5-col format)
-                    //    or: StudentID,ModuleID,QuizID,Mark,Grade,Feedback (new 6-col format)
+
                     String[] parts = trimmedLine.split(",", 6);
                     if (parts.length >= 4) {
                         String fileStudentID = parts[0].trim();
                         String fileModuleID = parts[1].trim();
                         String fileQuizID = parts[2].trim();
                         String key = fileStudentID + "," + fileModuleID + "," + fileQuizID;
-                        
-                        // Check if this is the current student's record
+
                         if (fileStudentID.equals(studentID) &&
                             fileModuleID.equals(moduleID) &&
                             fileQuizID.equals(quizID)) {
-                            // Preserve existing feedback
-                            // In old format (5 columns): feedback is at index 4
-                            // In new format (6 columns): feedback is at index 5
+
                             if (parts.length == 5) {
-                                existingFeedback = parts[4]; // Old format
+                                existingFeedback = parts[4]; 
                             } else if (parts.length >= 6) {
-                                existingFeedback = parts[5]; // New format
+                                existingFeedback = parts[5]; 
                             }
                         } else {
                             finalGrades.put(key, line);
@@ -1689,18 +1553,16 @@ public class View_Grade extends javax.swing.JFrame {
                 logger.log(java.util.logging.Level.SEVERE, "Error reading FinalGrade.txt: " + e.getMessage(), e);
             }
         }
-        
-        // Add or update current student's final grade
+
         String key = studentID + "," + moduleID + "," + quizID;
-        // Use existing feedback as-is (already formatted), or empty string if none
+
         String feedbackValue = existingFeedback.isEmpty() ? "\"\"" : existingFeedback;
         String finalGradeEntry = String.format("%s,%s,%s,%d,%s,%s",
             studentID, moduleID, quizID, (int)percentage, letterGrade, feedbackValue);
         finalGrades.put(key, finalGradeEntry);
-        
-        // Write all grades back to file (sorted by key)
+
         try (java.io.BufferedWriter bw = new java.io.BufferedWriter(new java.io.FileWriter(finalGradeFile))) {
-            // Sort entries by key in ascending order
+
             finalGrades.entrySet().stream()
                 .sorted(java.util.Map.Entry.comparingByKey())
                 .forEach(entry -> {
@@ -1724,10 +1586,7 @@ public class View_Grade extends javax.swing.JFrame {
     }
 
 
-    
-    /**
-     * Determines the letter grade based on the percentage score using grading.txt
-     */
+
     private String determineLetterGrade(double percentage) {
         String projectRoot = System.getProperty("user.dir");
         String gradingFilePath = projectRoot + "\\src\\main\\java\\oopwj\\data\\grading.txt";
@@ -1744,15 +1603,13 @@ public class View_Grade extends javax.swing.JFrame {
                 line = line.trim();
                 if (line.isEmpty() || line.startsWith("#")) continue;
                 
-                // Format: Grade,MinPercentage,MaxPercentage
                 String[] parts = line.split(",");
                 if (parts.length >= 3) {
                     String grade = parts[0].trim();
                     try {
                         double minPercentage = Double.parseDouble(parts[1].trim());
                         double maxPercentage = Double.parseDouble(parts[2].trim());
-                        
-                        // Check if percentage falls within this grade range (inclusive)
+
                         if (percentage >= minPercentage && percentage <= maxPercentage) {
                             return grade;
                         }
@@ -1764,8 +1621,7 @@ public class View_Grade extends javax.swing.JFrame {
         } catch (java.io.IOException e) {
             logger.log(java.util.logging.Level.SEVERE, "Error reading grading.txt: " + e.getMessage(), e);
         }
-        
-        // Default to F if no grade range matches
+
         return "F";
     }
 
